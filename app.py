@@ -1046,8 +1046,8 @@ def get_quality_gate_dataframe() -> pd.DataFrame:
             "Görsel Muayene": s.get("visual_decision", "-"),
             "Son Test": s.get("boresight_result", "-"),
             "Kayma": s.get("drift_status", "-"),
-            "MTF": s.get("mtf_result", "none"),
-            "Tork İşareti": s.get("torque_result", "none"),
+            "MTF": (lambda v: "—" if v in (None, "none") else v)(s.get("mtf_result")),
+            "Tork İşareti": (lambda v: "—" if v in (None, "none") else v)(s.get("torque_result")),
             "Genel Durum": s.get("genel_durum", f"{s.get('emoji', '')} {s.get('overall', '-')}"),
         })
     return pd.DataFrame(rows)
@@ -1074,10 +1074,11 @@ def on_lookup_serial(serial_no: str) -> tuple[str, pd.DataFrame, pd.DataFrame]:
     emoji = status.get("emoji", "🟡")
     v_dec = status.get("visual_decision", "none")
     b_res = status.get("boresight_result", "none")
-    d_stat = status.get("drift_status", "none")
+    d_stat = {"none": "Ölçülmedi", "ok": "Tolerans içinde", "fail": "Tolerans dışı"}.get(status.get("drift_status", "none"), status.get("drift_status", "none"))
     p_grp = status.get("product_group", "-")
     m_res = status.get("mtf_result", "none")
     t_res = status.get("torque_result", "none")
+    v_dec, b_res, m_res, t_res = [("—" if x in (None, "none") else x) for x in (v_dec, b_res, m_res, t_res)]
 
     if overall == "SEVKE HAZIR":
         card_bg = "#ecfdf5"
