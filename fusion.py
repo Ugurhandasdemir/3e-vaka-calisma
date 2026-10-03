@@ -24,11 +24,16 @@ import math
 import config
 
 
+def anomaly_prob(p_value):
+    """Map a conformal p-value to a 0..1 defect probability on a log scale (see module docstring)."""
+    p = max(float(p_value), 1e-6)
+    return min(1.0, max(0.0, math.log(p) / math.log(0.02)))
+
+
 def fuse(anomaly, detector, vlm, product_group, early_exit=False):
     probs, reasons = {}, []
     if anomaly and anomaly.get("available", True) and anomaly.get("backend"):
-        p = max(float(anomaly["p_value"]), 1e-6)
-        probs["anomaly"] = min(1.0, max(0.0, math.log(p) / math.log(0.02)))
+        probs["anomaly"] = anomaly_prob(anomaly["p_value"])
     if detector and detector.get("available"):
         dets = detector.get("detections", [])
         probs["detector"] = max((d["conf"] for d in dets), default=0.0)

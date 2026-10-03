@@ -11,7 +11,7 @@ from calib import Calibrator
 from engines.anomaly import AnomalyEngine, warm_bank
 from engines.detector import Detector
 from engines.vlm import VLMEngine, _empty
-from fusion import fuse
+from fusion import anomaly_prob, fuse
 
 _anom, _calib = {}, {}
 _detector = None
@@ -74,7 +74,7 @@ def run(image, product_group):
             an["error"] = r["error"]
         else:
             p = cal.p_value(r["score"]) if len(cal.scores) else 1.0
-            an.update(available=True, backend=r["backend"], score=r["score"], p_value=p, prob=1 - p,
+            an.update(available=True, backend=r["backend"], score=r["score"], p_value=p, prob=anomaly_prob(p),
                       latency_ms=r["latency_ms"], error=r["error"])
             overlay = _overlay(image, r["heatmap"])
         anomaly_version = eng.version
