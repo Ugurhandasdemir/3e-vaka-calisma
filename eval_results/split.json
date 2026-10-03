@@ -1,0 +1,3321 @@
+{
+  "seed": 0,
+  "summary": {
+    "metal_nut": {
+      "total": 115,
+      "tune": 57,
+      "test": 58,
+      "tune_good": 11,
+      "tune_defect": 46,
+      "test_good": 11,
+      "test_defect": 47
+    },
+    "transistor": {
+      "total": 100,
+      "tune": 50,
+      "test": 50,
+      "tune_good": 30,
+      "tune_defect": 20,
+      "test_good": 30,
+      "test_defect": 20
+    },
+    "cable": {
+      "total": 150,
+      "tune": 75,
+      "test": 75,
+      "tune_good": 29,
+      "tune_defect": 46,
+      "test_good": 29,
+      "test_defect": 46
+    }
+  },
+  "tune": [
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/020.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/010.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/014.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/013.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/001.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/021.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/011.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/019.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/008.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/006.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/016.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/008.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/010.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/020.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/007.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/024.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/024.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/003.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/019.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/022.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/022.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/021.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/002.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/001.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/019.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/004.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/001.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/021.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/018.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/012.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/019.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/016.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/013.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/021.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/013.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/001.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/003.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/012.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/008.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/005.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/000.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/021.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/003.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/014.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/007.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/022.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/022.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/006.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/013.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/018.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/016.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/012.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/020.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/006.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/015.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/002.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/018.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/011.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/011.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/020.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/007.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/045.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/045.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/058.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/058.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/029.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/029.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/047.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/047.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/005.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/056.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/056.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/042.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/042.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/004.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/012.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/025.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/025.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/026.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/026.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/041.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/041.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/052.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/052.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/015.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/051.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/051.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/033.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/033.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/031.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/031.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/044.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/044.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/057.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/057.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/046.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/046.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/049.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/049.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/013.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/008.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/024.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/024.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/028.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/028.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/037.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/037.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/040.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/040.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/019.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/006.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/005.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/004.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/000.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/003.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/000.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/006.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/002.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/003.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/002.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/001.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/000.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/004.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/007.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/008.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/007.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/007.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/005.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/009.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/005.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/007.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/041.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/041.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/048.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/048.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/031.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/031.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/024.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/024.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/016.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/057.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/057.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/042.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/042.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/006.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/030.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/030.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/015.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/017.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/052.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/052.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/000.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/004.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/008.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/056.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/056.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/039.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/039.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/038.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/038.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/044.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/044.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/046.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/046.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/001.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/021.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/033.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/033.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/007.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/013.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/049.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/049.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/034.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/034.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/053.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/053.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/012.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/003.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/002.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/008.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/007.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/004.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/006.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/004.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/004.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/001.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/005.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/006.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/001.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/000.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/001.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/011.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/006.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/005.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/004.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/001.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/002.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/008.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/005.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/001.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/006.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/006.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/007.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/002.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/001.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/010.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/009.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/002.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/004.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/007.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/011.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/003.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/005.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/000.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/001.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/007.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/009.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/006.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/000.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/010.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/001.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/009.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "tune"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/008.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "tune"
+    }
+  ],
+  "test": [
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/004.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/002.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/005.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/017.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/009.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/007.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/018.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/003.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/000.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/015.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/good/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/good/012.png",
+      "category": "metal_nut",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/009.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/005.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/015.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/001.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/014.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/017.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/016.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/004.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/015.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/017.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/005.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/015.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/015.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/013.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/005.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/006.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/011.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/016.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/000.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/009.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/003.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/008.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/010.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/023.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/023.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/006.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/004.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/010.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/017.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/018.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/007.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/014.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/014.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/008.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/019.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/004.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/002.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/017.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/000.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/009.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/flip/022.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/flip/022.png",
+      "category": "metal_nut",
+      "defect_folder": "flip",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/010.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/020.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/bent/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/bent/009.png",
+      "category": "metal_nut",
+      "defect_folder": "bent",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/002.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/007.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/000.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/color/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/color/012.png",
+      "category": "metal_nut",
+      "defect_folder": "color",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/metal_nut/test/scratch/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/metal_nut/test/scratch/011.png",
+      "category": "metal_nut",
+      "defect_folder": "scratch",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/055.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/055.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/038.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/038.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/032.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/032.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/016.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/016.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/053.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/053.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/011.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/022.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/022.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/054.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/054.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/036.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/036.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/001.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/014.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/027.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/027.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/017.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/017.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/020.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/059.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/059.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/018.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/003.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/030.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/030.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/035.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/035.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/034.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/034.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/002.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/023.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/023.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/043.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/043.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/050.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/050.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/010.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/000.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/009.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/021.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/021.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/039.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/039.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/good/048.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/good/048.png",
+      "category": "transistor",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/008.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/006.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/004.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/000.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/008.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/bent_lead/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/bent_lead/001.png",
+      "category": "transistor",
+      "defect_folder": "bent_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/009.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/003.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/009.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/002.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/008.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/misplaced/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/misplaced/006.png",
+      "category": "transistor",
+      "defect_folder": "misplaced",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/005.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/001.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/009.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/004.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/006.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/001.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/001.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/cut_lead/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/cut_lead/003.png",
+      "category": "transistor",
+      "defect_folder": "cut_lead",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/transistor/test/damaged_case/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/transistor/test/damaged_case/002.png",
+      "category": "transistor",
+      "defect_folder": "damaged_case",
+      "label": 1,
+      "defect_type": "Yüzey çiziği",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/018.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/018.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/026.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/026.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/014.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/014.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/047.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/047.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/045.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/045.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/036.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/036.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/009.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/035.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/035.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/003.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/029.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/029.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/050.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/050.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/055.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/055.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/025.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/025.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/019.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/019.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/027.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/027.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/002.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/051.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/051.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/028.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/028.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/037.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/037.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/054.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/054.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/010.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/020.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/020.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/040.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/040.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/011.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/032.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/032.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/043.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/043.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/023.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/023.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/005.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/good/022.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/good/022.png",
+      "category": "cable",
+      "defect_folder": "good",
+      "label": 0,
+      "defect_type": "Yok",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/003.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/011.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/011.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/011.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/007.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/006.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/003.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/000.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/000.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/003.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/010.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/008.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/003.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/003.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/002.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/007.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/000.png",
+      "category": "cable",
+      "defect_folder": "cut_outer_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/005.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/009.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/008.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/010.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/005.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/013.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/013.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/007.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/009.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/008.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/002.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/009.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_wire/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_wire/002.png",
+      "category": "cable",
+      "defect_folder": "missing_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/003.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/003.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/006.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/006.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/008.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/012.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/009.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/bent_wire/002.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/bent_wire/002.png",
+      "category": "cable",
+      "defect_folder": "bent_wire",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/004.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cable_swap/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cable_swap/005.png",
+      "category": "cable",
+      "defect_folder": "cable_swap",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/008.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/008.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/004.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/005.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/005.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/010.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/010.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/missing_cable/007.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/missing_cable/007.png",
+      "category": "cable",
+      "defect_folder": "missing_cable",
+      "label": 1,
+      "defect_type": "Konektör/montaj kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/combined/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/combined/000.png",
+      "category": "cable",
+      "defect_folder": "combined",
+      "label": 1,
+      "defect_type": "Diğer",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/012.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/012.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/000.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/000.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/004.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/004.png",
+      "category": "cable",
+      "defect_folder": "cut_inner_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    },
+    {
+      "path": "eval_data/mvtec/mvtec/images/cable/test/poke_insulation/009.png",
+      "abs_path": "/mnt/windows/linux/Python/3e-vaka-calisma/eval_data/mvtec/mvtec/images/cable/test/poke_insulation/009.png",
+      "category": "cable",
+      "defect_folder": "poke_insulation",
+      "label": 1,
+      "defect_type": "Kaplama kusuru",
+      "split": "test"
+    }
+  ]
+}

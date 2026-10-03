@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir torch torchvision --index-url https://download.py
 
 # Bake backbone weights into the image so restarts do not re-download them.
 RUN python -c "import torchvision; torchvision.models.wide_resnet50_2(weights='IMAGENET1K_V1')"
+RUN python -c "import torch; torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14')"
 
 COPY . .
 

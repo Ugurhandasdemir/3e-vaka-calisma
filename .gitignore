@@ -17,3 +17,8 @@ docs/.*.log
 .env
 docs/.*.jsonl
 docs/teknik-dokuman.html
+eval_data/
+eval_results/raw/
+docs/.*.jsonl
+models/*resnet18*
+eval_results/cache/

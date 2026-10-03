@@ -24,6 +24,21 @@ Canlı demo Hugging Face Spaces üzerinde **ZeroGPU donanımında CPU çıkarım
 
 ---
 
+## 🏭 İki Aşamalı Üretim ve Kalite Kapısı Mimarisi
+
+Sistem, parça seri numaralarını ve denetim kayıtlarını ortak paylaşan iki temel üretim aşaması ve birleşik kalite kapısından oluşur:
+
+1. **🏭 1. Aşama — Üretim İçi Görsel Muayene (Visual AI):**
+   - **Görsel AI Mimarisi:** visual AI: anomaly PatchCore-WRN50 (+DINOv2 ensemble planned), YOLO11n, Gemini
+   - Montaj öncesi ve montaj esnasında lens, sensör ve gövde yüzey kusurları denetlenir; uzman operatör MobileSAM etkileşimli segmentasyonu ile etiketleme yaparak aktif öğrenme döngüsünü besler.
+2. **🧪 2. Aşama — Üretim Sonrası Test (Post-Production Optical Measurement):**
+   - **Optik Ölçüm:** post-production: OpenCV sub-pixel reticle measurement, max error 0.06 px on synthetic targets
+   - Montajı tamamlanan elektro-optik sistemlerin kolimatör retikülü üzerinde Huber M-tahmincisiyle alt-piksel optik eksen (boresight) kaçıklığı (mrad), görünür-termal kanal hizalaması ve titreşim öncesi/sonrası mekanik eksen kayması (drift) ölçülür.
+3. **🚦 Kalite Kapısı (Quality Gate):**
+   - Parça seri numarası bazında izlenir: Yalnızca görsel muayene insan kararı **KABUL** (ACCEPT) ve son test **GEÇTİ** (PASS) olduğunda (ve titreşim kayması tolerans içindeyse) **SEVKE HAZIR** (🟢) statüsü verilir; aşamalardan biri eksikse **BEKLEMEDE** (🟡), herhangi bir aşama başarısızsa **RET** (🔴) verilir.
+
+---
+
 ## ⚡ Değerlendirme için Hızlı Deneme
 
 Sistemi 1 dakikada canlı olarak test etmek için:

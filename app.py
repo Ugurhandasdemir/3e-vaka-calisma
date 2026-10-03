@@ -30,6 +30,7 @@ import pandas as pd
 from PIL import Image, ImageDraw
 
 import config
+import engines.boresight as boresight_engine
 import engines.sam as sam_engine
 import storage
 from gradio_image_annotation import image_annotator
@@ -995,6 +996,489 @@ def on_export_yolo_click() -> str:
     return str(zip_path)
 
 
+def get_quality_gate_dataframe() -> pd.DataFrame:
+    """Builds a pandas DataFrame for the Quality Gate table."""
+    statuses = storage.list_serial_status()
+    if not statuses:
+        return pd.DataFrame(
+            columns=["Seri No", "Ürün Grubu", "Görsel Muayene", "Son Test", "Kayma", "Genel Durum"]
+        )
+    rows = []
+    for s in statuses:
+        rows.append({
+            "Seri No": s.get("serial_no", "-"),
+            "Ürün Grubu": s.get("product_group", "-"),
+            "Görsel Muayene": s.get("visual_decision", "-"),
+            "Son Test": s.get("boresight_result", "-"),
+            "Kayma": s.get("drift_status", "-"),
+            "Genel Durum": s.get("genel_durum", f"{s.get('emoji', '')} {s.get('overall', '-')}"),
+        })
+    return pd.DataFrame(rows)
+
+
+def on_lookup_serial(serial_no: str) -> tuple[str, pd.DataFrame, pd.DataFrame]:
+    """Retrieves full history across both stages for a given serial number."""
+    if not serial_no or not str(serial_no).strip():
+        empty_html = """
+        <div style="border: 1px dashed #d1d5db; padding: 12px; border-radius: 8px; color: #6b7280; font-family: system-ui, sans-serif;">
+            Lütfen geçmişini sorgulamak istediğiniz bir seri numarası giriniz.
+        </div>
+        """
+        return (
+            empty_html,
+            pd.DataFrame(columns=["Muayene ID", "Tarih", "Muayeneci", "Ürün Grubu", "AI Kararı", "Nihai Karar", "Kusur Türü", "Not"]),
+            pd.DataFrame(columns=["Test ID", "Tarih", "Muayeneci", "Aşama", "Kanal", "dx (px)", "dy (px)", "Açı (mrad)", "Tolerans", "Sonuç", "Kayma"]),
+        )
+
+    sn = str(serial_no).strip()
+    status = storage.serial_status(sn)
+
+    overall = status.get("overall", "BEKLEMEDE")
+    emoji = status.get("emoji", "🟡")
+    v_dec = status.get("visual_decision", "none")
+    b_res = status.get("boresight_result", "none")
+    d_stat = status.get("drift_status", "none")
+    p_grp = status.get("product_group", "-")
+
+    if overall == "SEVKE HAZIR":
+        card_bg = "#ecfdf5"
+        border_c = "#10b981"
+        badge_bg = "#059669"
+        summary_txt = "Tüm üretim içi muayene ve son test kriterleri başarıyla karşılandı. Ürün sevke hazırdır."
+    elif overall == "RET":
+        card_bg = "#fef2f2"
+        border_c = "#ef4444"
+        badge_bg = "#dc2626"
+        summary_txt = "Kalite kapısı kriterleri sağlanamadı. Parçada red veya tolerans dışı ölçüm tespit edildi."
+    else:
+        card_bg = "#fffbeb"
+        border_c = "#f59e0b"
+        badge_bg = "#d97706"
+        summary_txt = "Muayene veya son test aşamalarından en az biri henüz tamamlanmadı. İşlem beklemede."
+
+    card_html = f"""
+    <div style="border: 2px solid {border_c}; background: {card_bg}; border-radius: 12px; padding: 16px 20px; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div>
+                <span style="font-size: 20px; font-weight: 800; color: #111827;">Seri No: <code>{sn}</code></span>
+                <span style="margin-left: 12px; font-size: 14px; color: #4b5563;">Ürün Grubu: <strong>{p_grp}</strong></span>
+            </div>
+            <span style="background: {badge_bg}; color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 14px;">
+                {emoji} {overall}
+            </span>
+        </div>
+        <div style="display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; font-size: 14px;">
+            <div><strong>🏭 Görsel Muayene:</strong> <span style="font-weight: 700;">{v_dec}</span></div>
+            <div><strong>🧪 Son Test (Boresight):</strong> <span style="font-weight: 700;">{b_res}</span></div>
+            <div><strong>📈 Titreşim Kayması:</strong> <span style="font-weight: 700;">{d_stat}</span></div>
+        </div>
+        <div style="margin-top: 8px; font-size: 13px; color: #374151;">{summary_txt}</div>
+    </div>
+    """
+
+    insp_rows = []
+    for r in status.get("inspections", []):
+        insp_rows.append({
+            "Muayene ID": f"#{r.get('id')}",
+            "Tarih": str(r.get("ts", ""))[:19].replace("T", " "),
+            "Muayeneci": r.get("inspector", "-"),
+            "Ürün Grubu": r.get("product_group", "-"),
+            "AI Kararı": r.get("ai_decision", "-"),
+            "Nihai Karar": r.get("human_decision", "-"),
+            "Kusur Türü": r.get("human_defect_type", "-"),
+            "Not": r.get("note", "-"),
+        })
+    insp_df = pd.DataFrame(insp_rows) if insp_rows else pd.DataFrame(
+        columns=["Muayene ID", "Tarih", "Muayeneci", "Ürün Grubu", "AI Kararı", "Nihai Karar", "Kusur Türü", "Not"]
+    )
+
+    bore_rows = []
+    for r in status.get("boresight_tests", []):
+        drift_str = f"{float(r['drift_mrad']):.3f} mrad" if r.get("drift_mrad") is not None else "-"
+        bore_rows.append({
+            "Test ID": f"#{r.get('id')}",
+            "Tarih": str(r.get("ts", ""))[:19].replace("T", " "),
+            "Muayeneci": r.get("inspector", "-"),
+            "Aşama": r.get("stage", "-"),
+            "Kanal": r.get("channel", "-"),
+            "dx (px)": f"{float(r.get('dx_px', 0)):+.2f}",
+            "dy (px)": f"{float(r.get('dy_px', 0)):+.2f}",
+            "Açı (mrad)": f"{float(r.get('err_mrad', 0)):.3f}",
+            "Tolerans": f"{float(r.get('tolerance_mrad', 0)):.2f}",
+            "Sonuç": r.get("result", "-"),
+            "Kayma": drift_str,
+        })
+    bore_df = pd.DataFrame(bore_rows) if bore_rows else pd.DataFrame(
+        columns=["Test ID", "Tarih", "Muayeneci", "Aşama", "Kanal", "dx (px)", "dy (px)", "Açı (mrad)", "Tolerans", "Sonuç", "Kayma"]
+    )
+
+    return (card_html, insp_df, bore_df)
+
+
+def on_copy_serial_to_stage2(sn: str) -> tuple[str, str, gr.update]:
+    """Copies current serial number from Stage 1 to Stage 2."""
+    val = (sn or "").strip()
+    return (
+        val,
+        val,
+        gr.update(value=f"✅ `{val}` son test istasyonuna aktarıldı.", visible=True),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Boresight Station Helpers & Callbacks
+# ---------------------------------------------------------------------------
+def load_boresight_examples() -> list[list[Any]]:
+    """Loads synthetic collimator target examples from samples/boresight/."""
+    bore_dir = config.SAMPLES_DIR / "boresight"
+    if not bore_dir.exists():
+        return []
+    examples: list[list[Any]] = []
+    # Add representative targets
+    for fn in ["vis_offset_0_0.png", "vis_offset_3_2_az.png", "vis_offset_15_0_el.png"]:
+        p = bore_dir / fn
+        if p.exists():
+            examples.append([str(p), "Görünür", 3.45, 50.0, 0.5])
+    for fn in ["thm_offset_0_0.png", "thm_offset_subpix_pass.png", "thm_offset_3_2_az.png"]:
+        p = bore_dir / fn
+        if p.exists():
+            examples.append([str(p), "Termal", 12.0, 25.0, 0.5])
+    return examples
+
+
+def render_boresight_badge(result: dict[str, Any] | None) -> str:
+    """Renders HTML decision badge for boresight test."""
+    if not result:
+        return """
+        <div style="border: 2px dashed #d1d5db; background: #f9fafb; border-radius: 12px; padding: 24px; text-align: center; color: #6b7280; font-family: system-ui, -apple-system, sans-serif;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🎯</div>
+            <div style="font-weight: 700; font-size: 16px; color: #374151;">Optik Eksen Ölçümü Bekleniyor</div>
+            <div style="font-size: 13px; margin-top: 4px;">Sol panelden kolimatör retikül görseli yükleyip <strong>Optik Ekseni Ölç</strong> butonuna basınız.</div>
+        </div>
+        """
+
+    passed = result.get("passed", False)
+    err = float(result.get("err_mrad", 0.0))
+    tol = float(result.get("tolerance_mrad", 0.5))
+    off_px = float(result.get("offset_px", 0.0))
+    dx = float(result.get("dx_px", 0.0))
+    dy = float(result.get("dy_px", 0.0))
+    az = float(result.get("az_mrad", 0.0))
+    el = float(result.get("el_mrad", 0.0))
+    channel = result.get("channel", "Görünür")
+    quality = float(result.get("quality_score", 0.0))
+
+    if passed:
+        bg = "#ecfdf5"
+        border = "#10b981"
+        badge_bg = "#059669"
+        text_color = "#065f46"
+        icon = "✅"
+        title = "GEÇTİ — OPTİK EKSEN TOLERANS DAHİLİNDE (PASS)"
+        desc = f"{channel} kanalında toplam açısal sapma izin verilen {tol:.2f} mrad tolerans sınırının altındadır."
+    else:
+        bg = "#fef2f2"
+        border = "#ef4444"
+        badge_bg = "#dc2626"
+        text_color = "#991b1b"
+        icon = "❌"
+        title = "KALDI — OPTİK EKSEN TOLERANS DIŞI (FAIL)"
+        desc = f"{channel} kanalında toplam açısal sapma {tol:.2f} mrad tolerans sınırını aşmaktadır. Eksen ayarı gereklidir."
+
+    return f"""
+    <div style="border: 2px solid {border}; background: {bg}; border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; font-family: system-ui, -apple-system, sans-serif;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="flex: 1; min-width: 240px;">
+                <span style="display: inline-block; background: {badge_bg}; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">
+                    {icon} {title}
+                </span>
+                <div style="margin-top: 10px; font-size: 15px; color: #1f2937;">
+                    <strong>Toplam Açısal Sapma:</strong> <span style="font-weight: 800; font-size: 20px; color: {text_color};">{err:.3f} mrad</span>
+                    <span style="color: #6b7280; margin-left: 8px;">(Tolerans: <strong>{tol:.2f} mrad</strong>)</span>
+                </div>
+                <div style="margin-top: 4px; font-size: 12px; color: #4b5563;">
+                    {desc}
+                </div>
+            </div>
+            <div style="text-align: right; min-width: 140px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 700; letter-spacing: 0.5px;">Sapma Koordinatları</div>
+                <div style="font-size: 22px; font-weight: 800; color: {text_color}; line-height: 1.2;">Δr = {off_px:.2f} px</div>
+                <div style="font-size: 12px; color: #4b5563; margin-top: 2px;">dx: {dx:+.2f} px | dy: {dy:+.2f} px</div>
+                <div style="font-size: 12px; color: #4b5563;">Az: {az:+.3f} | El: {el:+.3f} mrad</div>
+                <div style="font-size: 11px; color: #6b7280; margin-top: 2px;">Kalite: <strong>%{int(quality * 100)}</strong></div>
+            </div>
+        </div>
+    </div>
+    """
+
+
+def build_boresight_metrics_dataframe(res: dict[str, Any] | None) -> pd.DataFrame:
+    """Builds metrics table dataframe for boresight measurements."""
+    if not res:
+        return pd.DataFrame(columns=["Parametre / Metrik", "Ölçülen Değer", "Birim", "Açıklama"])
+
+    rx, ry = res.get("reticle_center", (0.0, 0.0))
+    cx, cy = res.get("image_center", (0.0, 0.0))
+    dx = res.get("dx_px", 0.0)
+    dy = res.get("dy_px", 0.0)
+    off_px = res.get("offset_px", 0.0)
+    az = res.get("az_mrad", 0.0)
+    el = res.get("el_mrad", 0.0)
+    tot = res.get("err_mrad", 0.0)
+    tol = res.get("tolerance_mrad", 0.5)
+    quality = res.get("quality_score", 0.0)
+    lat = res.get("latency_ms", 0)
+    passed = res.get("passed", False)
+    method = res.get("method", "—")
+
+    rows = [
+        {"Parametre / Metrik": "Görüntü Referans Merkezi (cx, cy)", "Ölçülen Değer": f"({cx:.1f}, {cy:.1f})", "Birim": "piksel", "Açıklama": "Sensör geometrik orta noktası"},
+        {"Parametre / Metrik": "Tespit Edilen Retikül Merkezi", "Ölçülen Değer": f"({rx:.2f}, {ry:.2f})", "Birim": "piksel", "Açıklama": "Alt-piksel hassasiyetinde retikül konumu"},
+        {"Parametre / Metrik": "Yatay Sapma (dx)", "Ölçülen Değer": f"{dx:+.2f}", "Birim": "piksel", "Açıklama": "X ekseni piksel ofseti"},
+        {"Parametre / Metrik": "Dikey Sapma (dy)", "Ölçülen Değer": f"{dy:+.2f}", "Birim": "piksel", "Açıklama": "Y ekseni piksel ofseti"},
+        {"Parametre / Metrik": "Radyal Piksel Ofseti (Δr)", "Ölçülen Değer": f"{off_px:.2f}", "Birim": "piksel", "Açıklama": "sqrt(dx² + dy²)"},
+        {"Parametre / Metrik": "Yatay Açısal Sapma (Azimut)", "Ölçülen Değer": f"{az:+.3f}", "Birim": "mrad", "Açıklama": "atan(dx * pitch / focal)"},
+        {"Parametre / Metrik": "Dikey Açısal Sapma (Yükseliş)", "Ölçülen Değer": f"{el:+.3f}", "Birim": "mrad", "Açıklama": "atan(dy * pitch / focal)"},
+        {"Parametre / Metrik": "Toplam Açısal Sapma (θ)", "Ölçülen Değer": f"{tot:.3f}", "Birim": "mrad", "Açıklama": "atan(Δr * pitch / focal)"},
+        {"Parametre / Metrik": "Tolerans Eşiği", "Ölçülen Değer": f"{tol:.2f}", "Birim": "mrad", "Açıklama": "Maksimum izin verilen açısal hata"},
+        {"Parametre / Metrik": "Test Kararı", "Ölçülen Değer": "GEÇTİ (PASS)" if passed else "KALDI (FAIL)", "Birim": "—", "Açıklama": "Tolerans karşılaştırma sonucu"},
+        {"Parametre / Metrik": "Ölçüm Kalite Skoru", "Ölçülen Değer": f"%{int(quality * 100)}", "Birim": "—", "Açıklama": f"Kontrast, inlier oranı ve kalıntı ({method})"},
+        {"Parametre / Metrik": "Ölçüm Gecikmesi", "Ölçülen Değer": f"{lat}", "Birim": "ms", "Açıklama": "Saf OpenCV alt-piksel işlem süresi"},
+    ]
+    return pd.DataFrame(rows)
+
+
+def on_boresight_channel_change(channel: str) -> tuple[float, float]:
+    """Updates sensible defaults for pixel pitch and focal length when channel toggles."""
+    if channel == "Termal":
+        return 12.0, 25.0
+    return 3.45, 50.0
+
+
+def validate_boresight_image(image: Any) -> Image.Image:
+    """Validates collimator image without downsampling to preserve calibrated optical geometry."""
+    if image is None:
+        raise gr.Error("Lütfen ölçüm için bir kolimatör hedef görseli yükleyiniz veya örneklerden seçiniz.")
+    if not isinstance(image, Image.Image):
+        try:
+            image = Image.open(image)
+        except Exception as e:
+            raise gr.Error(f"Görsel açılamadı: {e}")
+    return image.convert("RGB")
+
+
+def on_measure_boresight(
+    image: Any,
+    pixel_pitch_um: float,
+    focal_length_mm: float,
+    tolerance_mrad: float,
+    channel: str,
+) -> tuple[
+    str,                 # badge_html
+    Image.Image | None,  # annotated_image
+    pd.DataFrame,        # metrics_table
+    dict[str, Any],      # last_boresight_state
+]:
+    """Measures boresight alignment and updates UI."""
+    valid_img = validate_boresight_image(image)
+    pitch = float(pixel_pitch_um) if pixel_pitch_um and pixel_pitch_um > 0 else (12.0 if channel == "Termal" else 3.45)
+    focal = float(focal_length_mm) if focal_length_mm and focal_length_mm > 0 else (25.0 if channel == "Termal" else 50.0)
+    tol = float(tolerance_mrad) if tolerance_mrad and tolerance_mrad > 0 else 0.5
+
+    res = boresight_engine.measure(
+        image=valid_img,
+        pixel_pitch_um=pitch,
+        focal_length_mm=focal,
+        tolerance_mrad=tol,
+        channel=channel,
+    )
+
+    badge_html = render_boresight_badge(res)
+    anno_img = res.get("annotated_image")
+    df = build_boresight_metrics_dataframe(res)
+
+    return (badge_html, anno_img, df, res)
+
+
+def on_save_boresight(
+    last_res: dict[str, Any] | None,
+    image: Any,
+    serial_no: str,
+    inspector: str,
+    stage: str,
+    channel: str,
+    tolerance_mrad: float,
+) -> tuple[str, str]:
+    """Persists boresight measurement record to SQLite database."""
+    if not last_res:
+        raise gr.Error("Lütfen önce 'Optik Ekseni Ölç' butonuna basarak ölçüm yapınız.")
+
+    valid_img = validate_boresight_image(image) if image is not None else None
+    tol = float(tolerance_mrad) if tolerance_mrad and tolerance_mrad > 0 else float(last_res.get("tolerance_mrad", 0.5))
+
+    params = {
+        "pixel_pitch_um": last_res.get("pixel_pitch_um"),
+        "focal_length_mm": last_res.get("focal_length_mm"),
+        "quality_score": last_res.get("quality_score"),
+        "reticle_center": last_res.get("reticle_center"),
+        "image_center": last_res.get("image_center"),
+        "az_mrad": last_res.get("az_mrad"),
+        "el_mrad": last_res.get("el_mrad"),
+        "method": last_res.get("method"),
+    }
+
+    record_id = storage.save_boresight(
+        inspector=inspector,
+        serial_no=serial_no,
+        stage=stage,
+        channel=channel,
+        dx_px=last_res.get("dx_px", 0.0),
+        dy_px=last_res.get("dy_px", 0.0),
+        err_mrad=last_res.get("err_mrad", 0.0),
+        tolerance_mrad=tol,
+        result=last_res.get("result", "PASS"),
+        image=last_res.get("annotated_image") or valid_img,
+        params=params,
+    )
+
+    conf_msg = (
+        f"✅ **Boresight Testi Kaydedildi!** Kayıt ID: **#{record_id}** "
+        f"(Seri No: **{serial_no}**, Aşama: **{stage}**, Kanal: **{channel}**, "
+        f"Açı: **{last_res.get('err_mrad', 0.0):.3f} mrad**, Sonuç: **{last_res.get('result', 'PASS')}**)"
+    )
+    new_sn = generate_default_serial()
+    return conf_msg, new_sn
+
+
+def on_compare_channels(
+    vis_img: Any,
+    thm_img: Any,
+    vis_pitch: float,
+    vis_focal: float,
+    thm_pitch: float,
+    thm_focal: float,
+    inter_tol: float,
+) -> tuple[str, Image.Image | None, pd.DataFrame]:
+    """Calculates inter-channel alignment between visible and thermal sensors."""
+    if vis_img is None or thm_img is None:
+        raise gr.Error("Lütfen hem görünür hem de termal kanal için birer hedef görseli yükleyiniz.")
+
+    valid_vis = validate_boresight_image(vis_img)
+    valid_thm = validate_boresight_image(thm_img)
+
+    comp = boresight_engine.compare_channels(
+        visible_img=valid_vis,
+        thermal_img=valid_thm,
+        visible_pitch_um=float(vis_pitch or 3.45),
+        visible_focal_mm=float(vis_focal or 50.0),
+        thermal_pitch_um=float(thm_pitch or 12.0),
+        thermal_focal_mm=float(thm_focal or 25.0),
+        tolerance_mrad=float(inter_tol or 0.5),
+    )
+
+    passed = comp.get("passed", False)
+    inter_mrad = comp.get("inter_channel_mrad", 0.0)
+    tol = comp.get("tolerance_mrad", 0.5)
+    d_az = comp.get("d_az_mrad", 0.0)
+    d_el = comp.get("d_el_mrad", 0.0)
+
+    badge_bg = "#059669" if passed else "#dc2626"
+    title = "KANAL HİZALAMASI: GEÇTİ (PASS)" if passed else "KANAL HİZALAMASI: KALDI (FAIL)"
+    desc = "Görünür ve termal kanallar arasındaki eksen farkı tolerans sınırları içindedir." if passed else "İki kanal arasındaki eksen paralelliği tolerans sınırını aşmaktadır."
+
+    badge_html = f"""
+    <div style="border: 2px solid {'#10b981' if passed else '#ef4444'}; background: {'#ecfdf5' if passed else '#fef2f2'}; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; font-family: system-ui, -apple-system, sans-serif;">
+        <span style="display: inline-block; background: {badge_bg}; color: white; padding: 4px 12px; border-radius: 16px; font-weight: 700; font-size: 13px;">
+            {'✅' if passed else '❌'} {title}
+        </span>
+        <div style="margin-top: 8px; font-size: 15px; color: #1f2937;">
+            <strong>Eksenler Arası Açısal Fark:</strong> <span style="font-weight: 800; font-size: 18px; color: {'#065f46' if passed else '#991b1b'};">{inter_mrad:.3f} mrad</span>
+            <span style="color: #6b7280; margin-left: 8px;">(Tolerans: <strong>{tol:.2f} mrad</strong>, ΔAz: <strong>{d_az:+.3f}</strong>, ΔEl: <strong>{d_el:+.3f}</strong>)</span>
+        </div>
+        <div style="font-size: 12px; color: #4b5563; margin-top: 2px;">{desc}</div>
+    </div>
+    """
+
+    vis_res = comp["visible_result"]
+    thm_res = comp["thermal_result"]
+
+    rows = [
+        {"Kanal": "Görünür (Visible)", "Piksel (µm)": vis_pitch, "Odak (mm)": vis_focal, "dx (px)": f"{vis_res['dx_px']:+.2f}", "dy (px)": f"{vis_res['dy_px']:+.2f}", "Az (mrad)": f"{vis_res['az_mrad']:+.3f}", "El (mrad)": f"{vis_res['el_mrad']:+.3f}", "Toplam Açı (mrad)": f"{vis_res['err_mrad']:.3f}", "Sonuç": vis_res["result"]},
+        {"Kanal": "Termal (Thermal)", "Piksel (µm)": thm_pitch, "Odak (mm)": thm_focal, "dx (px)": f"{thm_res['dx_px']:+.2f}", "dy (px)": f"{thm_res['dy_px']:+.2f}", "Az (mrad)": f"{thm_res['az_mrad']:+.3f}", "El (mrad)": f"{thm_res['el_mrad']:+.3f}", "Toplam Açı (mrad)": f"{thm_res['err_mrad']:.3f}", "Sonuç": thm_res["result"]},
+        {"Kanal": "Fark / Karşılaştırma", "Piksel (µm)": "—", "Odak (mm)": "—", "dx (px)": "—", "dy (px)": "—", "Az (mrad)": f"Δ {d_az:+.3f}", "El (mrad)": f"Δ {d_el:+.3f}", "Toplam Açı (mrad)": f"{inter_mrad:.3f}", "Sonuç": "PASS" if passed else "FAIL"},
+    ]
+    df = pd.DataFrame(rows)
+
+    return (badge_html, comp.get("comparison_image"), df)
+
+
+def on_calculate_drift(serial_no: str, drift_tol: float) -> tuple[str, pd.DataFrame, str]:
+    """Calculates pre/post vibration drift from recorded tests for the given serial number."""
+    if not serial_no or not serial_no.strip():
+        raise gr.Error("Lütfen bir seri numarası giriniz.")
+
+    records = storage.list_boresight(serial_no=serial_no.strip(), limit=50)
+
+    if len(records) < 2:
+        badge_html = f"""
+        <div style="border: 2px dashed #f59e0b; background: #fffbeb; border-radius: 10px; padding: 14px 18px; color: #92400e; font-family: system-ui, -apple-system, sans-serif;">
+            <strong>⚠️ Yetersiz Kayıt:</strong> <code>{serial_no}</code> seri numarası için veri tabanında {len(records)} adet kayıt bulundu.
+            Kayma (drift) analizi yapabilmek için en az 2 test kaydı (örn. 'titreşim öncesi' ve 'titreşim sonrası') gereklidir.
+        </div>
+        """
+        empty_df = pd.DataFrame([{"Aşama": r.get("stage"), "Tarih": r.get("ts")[:19], "Kanal": r.get("channel"), "Açı (mrad)": r.get("err_mrad"), "Sonuç": r.get("result")} for r in records])
+        return badge_html, empty_df, "*En az iki test kaydı bulunduğunda drift hesaplanacaktır.*"
+
+    # Last two records
+    after_rec = records[0]
+    before_rec = records[1]
+
+    d_res = boresight_engine.drift(
+        before=before_rec.get("params", {}),
+        after=after_rec.get("params", {}),
+        tolerance_mrad=float(drift_tol or 0.5),
+    )
+
+    drift_val = d_res.get("drift_mrad", 0.0)
+    passed = d_res.get("passed", False)
+    tol = d_res.get("tolerance_mrad", 0.5)
+    d_az = d_res.get("drift_az_mrad", 0.0)
+    d_el = d_res.get("drift_el_mrad", 0.0)
+
+    badge_bg = "#059669" if passed else "#dc2626"
+    title = "TİTREŞİM KAYMASI: GEÇTİ (PASS)" if passed else "TİTREŞİM KAYMASI: KALDI (FAIL)"
+    desc = f"İki test arasındaki eksen kayması ({drift_val:.3f} mrad), izin verilen {tol:.2f} mrad sınırının altındadır. Mekanik stabilite onaylandı." if passed else f"İki test arasındaki eksen kayması ({drift_val:.3f} mrad), {tol:.2f} mrad sınırını aşmaktadır. Mekanik gevşeme veya montaj hatası şüphesi mevcuttur."
+
+    badge_html = f"""
+    <div style="border: 2px solid {'#10b981' if passed else '#ef4444'}; background: {'#ecfdf5' if passed else '#fef2f2'}; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; font-family: system-ui, -apple-system, sans-serif;">
+        <span style="display: inline-block; background: {badge_bg}; color: white; padding: 4px 12px; border-radius: 16px; font-weight: 700; font-size: 13px;">
+            {'✅' if passed else '❌'} {title}
+        </span>
+        <div style="margin-top: 8px; font-size: 15px; color: #1f2937;">
+            <strong>Mekanik Eksen Kayması (Drift):</strong> <span style="font-weight: 800; font-size: 18px; color: {'#065f46' if passed else '#991b1b'};">{drift_val:.3f} mrad</span>
+            <span style="color: #6b7280; margin-left: 8px;">(Tolerans: <strong>{tol:.2f} mrad</strong>, ΔAz: <strong>{d_az:+.3f}</strong>, ΔEl: <strong>{d_el:+.3f}</strong>)</span>
+        </div>
+        <div style="font-size: 12px; color: #4b5563; margin-top: 2px;">{desc}</div>
+    </div>
+    """
+
+    rows = [
+        {"Test": f"1. Ölçüm ({before_rec.get('stage')})", "Tarih/Saat": str(before_rec.get("ts", ""))[:19].replace("T", " "), "Kanal": before_rec.get("channel"), "dx (px)": before_rec.get("dx_px"), "dy (px)": before_rec.get("dy_px"), "Hata (mrad)": before_rec.get("err_mrad"), "Sonuç": before_rec.get("result")},
+        {"Test": f"2. Ölçüm ({after_rec.get('stage')})", "Tarih/Saat": str(after_rec.get("ts", ""))[:19].replace("T", " "), "Kanal": after_rec.get("channel"), "dx (px)": after_rec.get("dx_px"), "dy (px)": after_rec.get("dy_px"), "Hata (mrad)": after_rec.get("err_mrad"), "Sonuç": after_rec.get("result")},
+        {"Test": "Kayma Farkı (Drift)", "Tarih/Saat": "Δ Fark", "Kanal": "—", "dx (px)": f"{after_rec.get('dx_px', 0) - before_rec.get('dx_px', 0):+.2f}", "dy (px)": f"{after_rec.get('dy_px', 0) - before_rec.get('dy_px', 0):+.2f}", "Hata (mrad)": f"{drift_val:.3f}", "Sonuç": "PASS" if passed else "FAIL"},
+    ]
+    df = pd.DataFrame(rows)
+
+    exp_md = f"""
+    ### 🔬 Titreşim Testi Kayma Değerlendirmesi
+    - **Analiz Edilen Seri:** `{serial_no}`
+    - **Karşılaştırılan Aşamalar:** `{before_rec.get('stage')}` ➡️ `{after_rec.get('stage')}`
+    - **Açısal Eksen Kayması:** `{drift_val:.3f} mrad` (İzin verilen: `{tol:.2f} mrad`)
+    - **Değerlendirme:** {'Ürün çevresel şok ve titreşim profilini mekanik deformasyona uğramadan başarıyla tamamlamıştır.' if passed else 'DİKKAT: Titreşim testi sonrasında tolerans dışı kayma saptanmıştır. Optik sabitleme vidaları ve yapıştırıcı hatları incelenmelidir.'}
+    """
+    return badge_html, df, exp_md
+
+
 # ---------------------------------------------------------------------------
 # Gradio UI Construction
 # ---------------------------------------------------------------------------
@@ -1021,9 +1505,15 @@ with gr.Blocks(
 
     with gr.Tabs() as tabs:
         # ===================================================================
-        # TAB 1: MUAYENE
+        # TAB 1: ÜRETİM İÇİ MUAYENE
         # ===================================================================
-        with gr.Tab("Muayene", id="tab_muayene"):
+        with gr.Tab("🏭 Üretim İçi Muayene", id="tab_muayene"):
+            gr.Markdown(
+                """
+                **Aşama Amacı:** Üretim ve montaj hattındaki elektro-optik bileşenlerin (lens, sensör, gövde, kablo) yüzey çizikleri, kaplama deformasyonları ve montaj kusurları denetlenir.  
+                **Muayene Yöntemi:** Derin öğrenme tabanlı yapay zeka modelleri (PatchCore anomali tespiti, YOLO11n nesne tespiti, Gemini multimodal muhakeme ve MobileSAM) ile uzman operatör destekli görsel denetim yapılır.
+                """
+            )
             with gr.Row():
                 # LEFT COLUMN: Inputs & Controls
                 with gr.Column(scale=5):
@@ -1049,6 +1539,15 @@ with gr.Blocks(
                             interactive=True,
                             scale=2,
                         )
+
+                    with gr.Row():
+                        copy_to_stage2_btn = gr.Button(
+                            "Son test için bu seri no'yu kullan",
+                            variant="secondary",
+                            size="sm",
+                            scale=3,
+                        )
+                        copy_to_stage2_status = gr.Markdown(value="", visible=False, scale=2)
 
                     image_input = gr.Image(
                         label="Muayene Görseli (JPG/PNG, Maks. 10 MB)",
@@ -1176,15 +1675,244 @@ with gr.Blocks(
                     confirmation_view = gr.Markdown(value="", scale=3)
 
         # ===================================================================
-        # TAB 2: GEÇMİŞ VE PANO
+        # TAB 2: ÜRETİM SONRASI TEST
         # ===================================================================
-        with gr.Tab("Geçmiş ve Pano", id="tab_pano"):
+        with gr.Tab("🧪 Üretim Sonrası Test", id="tab_boresight"):
+            last_boresight_state = gr.State(value=None)
+
+            gr.Markdown(
+                """
+                **Aşama Amacı:** Montajı tamamlanan elektro-optik sistemlerin optik eksen (boresight) doğruluğu, görünür/termal kanal hizalaması ve titreşim sonrası açısal sapması (drift) denetlenir.  
+                **Muayene Yöntemi:** Kolimatör hedefleri üzerinden OpenCV alt-piksel retikül tespiti, Huber M-tahmincisi ve geometrik dönüşümlerle doğrudan hassas optik ölçüm (<0.06 px sentetik hedef hatası) yapılır.
+                """
+            )
+
+            with gr.Row():
+                # LEFT COLUMN: Inputs & Controls
+                with gr.Column(scale=5):
+                    gr.Markdown("### 📥 Test Parametreleri ve Hedef Görseli")
+                    with gr.Row():
+                        serial_input_boresight = gr.Textbox(
+                            label="Seri No",
+                            value=generate_default_serial,
+                            interactive=True,
+                            scale=3,
+                        )
+                        inspector_input_boresight = gr.Textbox(
+                            label="Muayeneci",
+                            value="Muayene Uzmanı",
+                            placeholder="Ad Soyad",
+                            interactive=True,
+                            scale=2,
+                        )
+
+                    with gr.Row():
+                        stage_dropdown_boresight = gr.Dropdown(
+                            label="Aşama",
+                            choices=["son test", "titreşim öncesi", "titreşim sonrası"],
+                            value="son test",
+                            interactive=True,
+                            scale=3,
+                        )
+                        channel_dropdown_boresight = gr.Dropdown(
+                            label="Kanal",
+                            choices=["Görünür", "Termal"],
+                            value="Görünür",
+                            interactive=True,
+                            scale=3,
+                        )
+
+                    with gr.Row():
+                        pitch_input_boresight = gr.Number(
+                            label="Piksel Boyutu (µm)",
+                            value=3.45,
+                            interactive=True,
+                            scale=2,
+                        )
+                        focal_input_boresight = gr.Number(
+                            label="Odak Uzaklığı (mm)",
+                            value=50.0,
+                            interactive=True,
+                            scale=2,
+                        )
+                        tolerance_input_boresight = gr.Number(
+                            label="Tolerans (mrad)",
+                            value=0.5,
+                            interactive=True,
+                            scale=2,
+                        )
+
+                    image_input_boresight = gr.Image(
+                        label="Kolimatör Hedef Görseli (JPG/PNG)",
+                        type="pil",
+                        sources=["upload", "clipboard"],
+                    )
+
+                    measure_boresight_btn = gr.Button(
+                        "🎯 Optik Ekseni Ölç",
+                        variant="primary",
+                        size="lg",
+                    )
+
+                    boresight_sample_examples = load_boresight_examples()
+                    if boresight_sample_examples:
+                        gr.Markdown("#### 📁 Referans Kolimatör Hedefleri")
+                        gr.Examples(
+                            examples=boresight_sample_examples,
+                            inputs=[
+                                image_input_boresight,
+                                channel_dropdown_boresight,
+                                pitch_input_boresight,
+                                focal_input_boresight,
+                                tolerance_input_boresight,
+                            ],
+                            label="Sentetik Kolimatör Numuneleri",
+                        )
+
+                # RIGHT COLUMN: Results & Overlays
+                with gr.Column(scale=7):
+                    gr.Markdown("### 📊 Optik Eksen Ölçüm Sonuçları")
+                    badge_boresight_view = gr.HTML(value=render_boresight_badge(None))
+
+                    image_boresight_view = gr.Image(
+                        label="İşaretlenmiş Eksen ve Hata Vektörü Görseli",
+                        interactive=False,
+                    )
+
+                    gr.Markdown("#### 📐 Ölçüm Metrikleri Tablosu")
+                    table_boresight_view = gr.Dataframe(
+                        value=build_boresight_metrics_dataframe(None),
+                        interactive=False,
+                    )
+
+                    gr.Markdown(
+                        """
+                        ---
+                        #### ℹ️ Ölçüm Metodolojisi ve Kabul Standartları
+                        - **Alt-Piksel Retikül Tespiti:** Görsel gri seviyeye çevrilir; kutup tespiti ile aydınlık/karanlık fon ayrıştırılır.
+                          Vinyetleme top-hat morfolojisiyle elendikten sonra yatay ve dikey kollar Huber M-tahmincisiyle kesiştirilerek **< 0.05 piksel** hata ile merkez bulunur.
+                        - **Açısal Hata Bağıntısı (mrad):**
+                          $$\\theta_{\\text{mrad}} = 1000 \\times \\arctan\\left(\\frac{\\Delta r \\times p \\times 10^{-3}}{f}\\right), \\quad \\Delta r = \\sqrt{\\Delta x^2 + \\Delta y^2}$$
+                          burada $p$: piksel boyutu ($\\mu\\text{m}$), $f$: odak uzaklığı ($\\text{mm}$).
+                        - **Neden Önemli? (Termal Kamera Modülü Recall Dersi):**
+                          Termal kamera modüllerinde optik eksen kaçıklığı sahadaki hedef tespit ve menzil kestiriminde kritik sapmalara yol açar.
+                          Mekanik montaj gevşemelerini tespit etmek için elektro-optik birimler **titreşim (vibration/shock) testi öncesinde ve sonrasında** test edilir;
+                          iki test arasındaki eksen kayması (**drift**), sahadaki en yaygın hata kök nedenidir.
+                        """
+                    )
+
+            # Kaydetme Butonu
+            gr.Markdown("---")
+            with gr.Row():
+                save_boresight_btn = gr.Button(
+                    "💾 Boresight Testini Kaydet ve Veritabanına İşle",
+                    variant="primary",
+                    scale=2,
+                )
+                save_boresight_confirmation = gr.Markdown(value="", scale=3)
+
+            # ACCORDION 1: KANAL ARASI HİZALAMA
+            with gr.Accordion("Kanal arası hizalama (görünür + termal)", open=False):
+                gr.Markdown(
+                    "Görünür (visible) ve termal (thermal) optik kanallarının optik eksen eşmerkezliliğini hesaplar.\n"
+                    "Her iki kanalın retikül merkezi kendi piksel boyutu ve odak uzaklığıyla açısal uzaya (mrad) dönüştürülüp aralarındaki fark alınır."
+                )
+                with gr.Row():
+                    with gr.Column(scale=6):
+                        vis_image_input = gr.Image(label="Görünür Kanal Görseli (1280x1024)", type="pil")
+                        with gr.Row():
+                            vis_pitch_input = gr.Number(label="Görünür Piksel (µm)", value=3.45)
+                            vis_focal_input = gr.Number(label="Görünür Odak (mm)", value=50.0)
+                    with gr.Column(scale=6):
+                        thm_image_input = gr.Image(label="Termal Kanal Görseli (640x512)", type="pil")
+                        with gr.Row():
+                            thm_pitch_input = gr.Number(label="Termal Piksel (µm)", value=12.0)
+                            thm_focal_input = gr.Number(label="Termal Odak (mm)", value=25.0)
+
+                with gr.Row():
+                    inter_tol_input = gr.Number(label="İzin Verilen Eksenler Arası Tolerans (mrad)", value=0.5, scale=2)
+                    compare_channels_btn = gr.Button("⚖️ Kanal Arası Eksen Farkını Hesapla", variant="secondary", scale=2)
+
+                inter_badge_view = gr.HTML(value="")
+                inter_image_view = gr.Image(label="Yan Yana Kanal Karşılaştırma Görseli", interactive=False)
+                inter_table_view = gr.Dataframe(interactive=False)
+
+            # ACCORDION 2: TİTREŞİM KAYMA (DRIFT) ANALİZİ
+            with gr.Accordion("Titreşim öncesi/sonrası kayma (Drift Analizi)", open=False):
+                gr.Markdown(
+                    "Aynı seri numarasına ait 'titreşim öncesi' ve 'titreşim sonrası' test kayıtlarını veritabanından çekerek açısal kayma miktarını hesaplar."
+                )
+                with gr.Row():
+                    drift_serial_input = gr.Textbox(
+                        label="Seri No",
+                        placeholder="Örn: TC-20261003-002",
+                        value="TC-20261003-002",
+                        scale=3,
+                    )
+                    drift_tol_input = gr.Number(
+                        label="İzin Verilen Azami Kayma (mrad)",
+                        value=0.5,
+                        scale=2,
+                    )
+                    calc_drift_btn = gr.Button("📈 Kayma (Drift) Miktarını Hesapla", variant="secondary", scale=2)
+
+                drift_badge_view = gr.HTML(value="")
+                drift_table_view = gr.Dataframe(interactive=False)
+                drift_explanation_view = gr.Markdown(value="")
+
+        # ===================================================================
+        # TAB 3: GEÇMİŞ VE PANO
+        # ===================================================================
+        with gr.Tab("📊 Geçmiş ve Pano", id="tab_pano"):
             with gr.Row():
                 gr.Markdown("### 📈 Muayene İstatistikleri ve Kalite Kontrol Panosu")
                 refresh_btn = gr.Button("🔄 Panoyu Yenile", variant="secondary", size="sm")
 
             initial_stats = storage.stats()
             metrics_cards_view = gr.HTML(value=render_metrics_cards(initial_stats))
+
+            # ===============================================================
+            # SERİ NUMARASI BAZINDA KALİTE KAPISI (QUALITY GATE)
+            # ===============================================================
+            gr.Markdown("---")
+            gr.Markdown("### 🚦 Seri Numarası Bazında Kalite Kapısı")
+            gr.Markdown(
+                "*Üretim içi görsel muayene ve üretim sonrası son test (boresight ve titreşim kayması) "
+                "aşamalarını tek potada birleştiren kalite kapısı durum tablosu ve seri sorgulama paneli.*"
+            )
+
+            quality_gate_table = gr.Dataframe(
+                value=get_quality_gate_dataframe,
+                interactive=False,
+                label="Seri Numarası Bazında Kalite Kapısı Tablosu",
+            )
+
+            gr.Markdown("#### 🔍 Seri Numarası Geçmiş Sorgulama (Tüm Aşamalar)")
+            with gr.Row():
+                serial_lookup_input = gr.Textbox(
+                    label="Seri No",
+                    placeholder="Örn: LN-20261001-014, TC-20261003-002 veya SN-GATE-1",
+                    scale=4,
+                )
+                serial_lookup_btn = gr.Button("🔍 Geçmişi Sorgula", variant="primary", scale=1)
+
+            serial_lookup_card_view = gr.HTML(value="")
+
+            with gr.Row():
+                with gr.Column(scale=6):
+                    gr.Markdown("##### 🏭 1. Aşama: Görsel Muayene Kayıtları")
+                    serial_insp_history_table = gr.Dataframe(
+                        value=pd.DataFrame(columns=["Muayene ID", "Tarih", "Muayeneci", "Ürün Grubu", "AI Kararı", "Nihai Karar", "Kusur Türü", "Not"]),
+                        interactive=False,
+                    )
+                with gr.Column(scale=6):
+                    gr.Markdown("##### 🧪 2. Aşama: Boresight / Son Test Kayıtları")
+                    serial_bore_history_table = gr.Dataframe(
+                        value=pd.DataFrame(columns=["Test ID", "Tarih", "Muayeneci", "Aşama", "Kanal", "dx (px)", "dy (px)", "Açı (mrad)", "Tolerans", "Sonuç", "Kayma"]),
+                        interactive=False,
+                    )
+
+            gr.Markdown("---")
 
             with gr.Row():
                 with gr.Column(scale=6):
@@ -1209,7 +1937,8 @@ with gr.Blocks(
                         """
                     )
                     with gr.Row():
-                        export_csv_btn = gr.Button("📥 Tüm Kayıtları İndir (CSV)", variant="secondary")
+                        export_csv_btn = gr.Button("📥 Muayene Kayıtlarını İndir (CSV)", variant="secondary")
+                        export_boresight_csv_btn = gr.Button("🎯 Boresight Kayıtlarını İndir (CSV)", variant="secondary")
                         export_yolo_btn = gr.Button("📦 YOLO Etiket Paketini İndir (ZIP)", variant="primary")
                     export_file_view = gr.File(label="İndirme Bağlantısı", interactive=False)
 
@@ -1220,19 +1949,48 @@ with gr.Blocks(
             )
 
         # ===================================================================
-        # TAB 3: HAKKINDA
+        # TAB 4: HAKKINDA
         # ===================================================================
-        with gr.Tab("Hakkında", id="tab_hakkinda"):
+        with gr.Tab("ℹ️ Hakkında", id="tab_hakkinda"):
             gr.Markdown(
                 f"""
-                ## 3E Elektro Optik — AI Destekli Görsel Kalite Kontrol PoC
+                ## 3E Elektro Optik — AI Destekli Görsel Kalite Kontrol ve Boresight PoC
 
                 Bu uygulama, 3E Elektro Optik üretim ve kalite kontrol süreçlerinde kullanılmak üzere
-                geliştirilmiş bir yapay zeka destekli muayene prototipidir.
+                geliştirilmiş iki aşamalı bir yapay zeka ve optik ölçüm prototipidir.
 
                 ---
 
-                ### 🔄 Sistem Mimarisi ve Karar Akışı
+                ### 🏭 1. Aşama: Üretim İçi Görsel Muayene (Visual AI)
+                Montaj öncesi ve montaj esnasında parça yüzey kusurları, kaplama hataları ve montaj anomalileri denetlenir:
+                - **Görsel AI Mimarisi:** visual AI: anomaly PatchCore-WRN50 (+DINOv2 ensemble planned), YOLO11n, Gemini
+                - **Anomali Motoru:** PatchCore-WRN50 (wide_resnet50_2) referans bellek bankası ve EfficientAD-S (ONNX) ile piksel düzeyinde anomali haritası ve kalibre edilmiş conformal $p$-değeri ($a = \\text{{clip}}(\\log p / \\log 0.02, 0, 1)$). Gelecek aşamada DINOv2 topluluk (ensemble) mimarisi planlanmaktadır.
+                - **Kusur Dedektörü:** YOLO11n ONNX nesne tespiti ile sınır kutusu koordinatları, kusur sınıfı ve güven skoru hesabı.
+                - **Görsel Muhakeme (VLM):** Google Gemini multimodal modeli ile çoklu örnekleme (×3), kusur tipi çoğunluk oylaması ve Türkçe gerekçelendirme.
+                - **Operatör Doğrulama & SAM:** MobileSAM etkileşimli segmentasyon ile uzman operatörün işaretlediği kusurların maskelenmesi ve YOLO aktif öğrenme veri paketine (ZIP) aktarılması.
+
+                ---
+
+                ### 🧪 2. Aşama: Üretim Sonrası Test (Post-Production Optical Measurement)
+                Montaj hattından çıkan elektro-optik sistemlerin nihai fonksiyonel kabulünde doğrudan hassas optik ölçüm yapılır:
+                - **Optik Ölçüm Yöntemi:** post-production: OpenCV sub-pixel reticle measurement, max error 0.06 px on synthetic targets
+                - **Alt-Piksel Retikül Tespiti:** Kolimatör hedef görsellerinde kutup analizi, top-hat morfolojik arka plan düzeltme ve Huber M-tahmincisi ile retikül eksen kesişimi tespit edilir. Sentetik kolimatör hedeflerinde azami merkez hatası 0.06 piksel altındadır.
+                - **Açısal Hata Bağıntısı (mrad):** Alt-piksel merkez kaçıklığı ($\\Delta x, \\Delta y$), sensör piksel boyutu ($p$, $\\mu\\text{{m}}$) ve odak uzaklığı ($f$, $\\text{{mm}}$) parametreleriyle fiziksel açısal uzaya (mrad) dönüştürülür:
+                  $$\\theta_{{\\text{{mrad}}}} = 1000 \\times \\arctan\\left(\\frac{{\\Delta r \\times p \\times 10^{{-3}}}}{{f}}\\right), \\quad \\Delta r = \\sqrt{{\\Delta x^2 + \\Delta y^2}}$$
+                - **Kanal Arası Hizalama:** Görünür (visible) ve termal (thermal) optik kanallarının bağımsız eksen ölçümleri mrad uzayında kıyaslanarak eşmerkezlilik ($\\Delta\\text{{Az}}, \\Delta\\text{{El}}$) doğrulanır.
+                - **Titreşim Kayma (Drift) Analizi:** Çevresel titreşim/şok testleri öncesinde ve sonrasında eksen ölçümleri kıyaslanarak sahadaki gevşeme ve mekanik stabilite sapmaları elenir.
+
+                ---
+
+                ### 🚦 Kalite Kapısı (Quality Gate) Entegrasyonu
+                Her parça seri numarası bazında izlenir:
+                - **🟢 SEVKE HAZIR:** Üretim içi görsel muayene operatör nihai kararı **KABUL** (ACCEPT) ve üretim sonrası son test sonucu **GEÇTİ** (PASS) olduğunda (ve titreşim öncesi/sonrası testler mevcutsa kayma tolerans içindeyse) verilir.
+                - **🟡 BEKLEMEDE:** Muayene veya son test aşamalarından biri henüz tamamlanmamışsa.
+                - **🔴 RET:** Görsel muayenede ret verilmişse, son test toleransı aşılmışsa veya titreşim kayması tolerans dışıysa.
+
+                ---
+
+                ### 🔄 Karar Akışı ve Füzyon Şeması
                 ```text
                 [ Muayene Görseli ] (Optik Lens / Termal Kamera / Gözetleme)
                          │
@@ -1240,7 +1998,7 @@ with gr.Blocks(
                          ▼                                        ▼
                 ┌────────────────────────┐               ┌────────────────────────┐
                 │    Anomali Motoru      │               │    Kusur Dedektörü     │
-                │ EfficientAD /PatchCore │               │   YOLO11s-seg (ONNX)   │
+                │ PatchCore-WRN50 / EffAD│               │      YOLO11n (ONNX)    │
                 └──────────┬─────────────┘               └──────────┬─────────────┘
                            │                                        │
                            └───────────────┬────────────────────────┘
@@ -1253,7 +2011,7 @@ with gr.Blocks(
                                            ▼
                                 ┌────────────────────────┐
                                 │   VLM Akıl Yürütme     │
-                                │ Gemini 3.8 Flash (×3)  │
+                                │    Gemini Multimodal   │
                                 └──────────┬─────────────┘
                                            │
                                            ▼
@@ -1273,7 +2031,7 @@ with gr.Blocks(
                                            │
                                            ▼
                               ┌────────────────────────┐
-                              │ SQLite & Aktif Öğrenme │
+                              │ SQLite & Kalite Kapısı │
                               │ (CSV & YOLO ZIP Paket) │
                               └────────────────────────┘
                 ```
@@ -1293,8 +2051,10 @@ with gr.Blocks(
                    - *Termal kamera modülü* → `transistor`
                    - *Gözetleme ünitesi* → `cable`
                 2. **Fiziksel Ölçüm Gerektiren Kusurlar:**
-                   - **Optik Eksen Hizalaması:** Salt 2D kamera görselinden optik eksen kaçıklığı
-                     kesin doğrulanamaz; optik kolimatör veya interferometre ölçümü şarttır.
+                   - **Optik Eksen Hizalaması (Boresight İstasyonu):** Görsel kontrolden sonraki montaj
+                     sonrası fonksiyonel test istasyonumuz ('🧪 Üretim Sonrası Test'), kolimatör retikülü
+                     üzerinden alt-piksel analizi yaparak mrad cinsinden optik eksen kaçıklığını, kanal
+                     arası (inter-channel) hizalamayı ve titreşim testi öncesi/sonrası kaymayı (drift) denetler.
                    - **Konektör Mekanik Gevşekliği:** Tork ölçer veya pin soket kuvvet testi gerektirir.
                    Sistem şüpheli durumlarda operatörü fiziksel teste yönlendirir.
                 3. **Bulut API ve Veri Güvenliği:**
@@ -1404,6 +2164,144 @@ with gr.Blocks(
         inputs=[],
         outputs=[export_file_view],
         api_name="export_yolo",
+    )
+
+    export_boresight_csv_btn.click(
+        fn=storage.export_boresight_csv,
+        inputs=[],
+        outputs=[export_file_view],
+        api_name="export_boresight_csv",
+    )
+
+    channel_dropdown_boresight.change(
+        fn=on_boresight_channel_change,
+        inputs=[channel_dropdown_boresight],
+        outputs=[pitch_input_boresight, focal_input_boresight],
+    )
+
+    measure_boresight_btn.click(
+        fn=on_measure_boresight,
+        inputs=[
+            image_input_boresight,
+            pitch_input_boresight,
+            focal_input_boresight,
+            tolerance_input_boresight,
+            channel_dropdown_boresight,
+        ],
+        outputs=[
+            badge_boresight_view,
+            image_boresight_view,
+            table_boresight_view,
+            last_boresight_state,
+        ],
+        api_name="measure_boresight",
+    )
+
+    save_boresight_btn.click(
+        fn=on_save_boresight,
+        inputs=[
+            last_boresight_state,
+            image_input_boresight,
+            serial_input_boresight,
+            inspector_input_boresight,
+            stage_dropdown_boresight,
+            channel_dropdown_boresight,
+            tolerance_input_boresight,
+        ],
+        outputs=[
+            save_boresight_confirmation,
+            serial_input_boresight,
+        ],
+        api_name="save_boresight",
+    )
+
+    compare_channels_btn.click(
+        fn=on_compare_channels,
+        inputs=[
+            vis_image_input,
+            thm_image_input,
+            vis_pitch_input,
+            vis_focal_input,
+            thm_pitch_input,
+            thm_focal_input,
+            inter_tol_input,
+        ],
+        outputs=[
+            inter_badge_view,
+            inter_image_view,
+            inter_table_view,
+        ],
+        api_name="compare_channels",
+    )
+
+    calc_drift_btn.click(
+        fn=on_calculate_drift,
+        inputs=[
+            drift_serial_input,
+            drift_tol_input,
+        ],
+        outputs=[
+            drift_badge_view,
+            drift_table_view,
+            drift_explanation_view,
+        ],
+        api_name="calculate_drift",
+    )
+
+    copy_to_stage2_btn.click(
+        fn=on_copy_serial_to_stage2,
+        inputs=[serial_no_input],
+        outputs=[serial_input_boresight, drift_serial_input, copy_to_stage2_status],
+    )
+
+    serial_no_input.change(
+        fn=lambda s: s,
+        inputs=[serial_no_input],
+        outputs=[serial_input_boresight],
+    )
+
+    serial_input_boresight.change(
+        fn=lambda s: s,
+        inputs=[serial_input_boresight],
+        outputs=[serial_no_input],
+    )
+
+    serial_lookup_btn.click(
+        fn=on_lookup_serial,
+        inputs=[serial_lookup_input],
+        outputs=[
+            serial_lookup_card_view,
+            serial_insp_history_table,
+            serial_bore_history_table,
+        ],
+    )
+
+    serial_lookup_input.submit(
+        fn=on_lookup_serial,
+        inputs=[serial_lookup_input],
+        outputs=[
+            serial_lookup_card_view,
+            serial_insp_history_table,
+            serial_bore_history_table,
+        ],
+    )
+
+    refresh_btn.click(
+        fn=get_quality_gate_dataframe,
+        inputs=[],
+        outputs=[quality_gate_table],
+    )
+
+    save_btn.click(
+        fn=get_quality_gate_dataframe,
+        inputs=[],
+        outputs=[quality_gate_table],
+    )
+
+    save_boresight_btn.click(
+        fn=get_quality_gate_dataframe,
+        inputs=[],
+        outputs=[quality_gate_table],
     )
 
 

@@ -1,0 +1,13 @@
+method,category,auroc,recall_at_p005,fpr_at_p005,mean_latency_ms,num_images,num_defect,num_good
+PatchCore (wide_resnet50_2),metal_nut,0.9839,0.914,0.0,170.5,115,93,22
+PatchCore (wide_resnet50_2),transistor,0.9892,0.95,0.05,181.7,100,40,60
+PatchCore (wide_resnet50_2),cable,0.9689,0.8587,0.0862,159.1,150,92,58
+PatchCore (resnet18),metal_nut,0.978,0.9462,0.0455,49.1,115,93,22
+PatchCore (resnet18),transistor,0.9342,0.95,0.1667,37.4,100,40,60
+PatchCore (resnet18),cable,0.92,0.6739,0.0172,35.8,150,92,58
+AnomalyDINO (ViT-S/14),metal_nut,1.0,1.0,0.0,443.3,115,93,22
+AnomalyDINO (ViT-S/14),transistor,0.9846,0.875,0.05,470.0,100,40,60
+AnomalyDINO (ViT-S/14),cable,0.9488,0.7174,0.0345,467.0,150,92,58
+EfficientAD (ONNX),metal_nut,N/A (model yok),N/A,N/A,N/A,0,0,0
+EfficientAD (ONNX),transistor,N/A (model yok),N/A,N/A,N/A,0,0,0
+EfficientAD (ONNX),cable,N/A (model yok),N/A,N/A,N/A,0,0,0

@@ -1,0 +1,290 @@
+[
+  {
+    "filename": "vis_offset_0_0.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_0_0.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      640.0,
+      512.0
+    ],
+    "true_dx": 0.0,
+    "true_dy": 0.0,
+    "true_offset_px": 0.0,
+    "true_err_mrad": 0.0,
+    "true_pass": true,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "vis_offset_3_2_az.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_3_2_az.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      643.2,
+      512.0
+    ],
+    "true_dx": 3.2,
+    "true_dy": 0.0,
+    "true_offset_px": 3.2,
+    "true_err_mrad": 0.2208,
+    "true_pass": true,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "vis_offset_15_0_el.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_15_0_el.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      640.0,
+      527.0
+    ],
+    "true_dx": 0.0,
+    "true_dy": 15.0,
+    "true_offset_px": 15.0,
+    "true_err_mrad": 1.035,
+    "true_pass": false,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "vis_offset_40_0_diag.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_40_0_diag.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      668.284,
+      540.284
+    ],
+    "true_dx": 28.284,
+    "true_dy": 28.284,
+    "true_offset_px": 39.9996,
+    "true_err_mrad": 2.76,
+    "true_pass": false,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "vis_offset_diag_neg.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_diag_neg.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      634.6,
+      515.8
+    ],
+    "true_dx": -5.4,
+    "true_dy": 3.8,
+    "true_offset_px": 6.603,
+    "true_err_mrad": 0.4556,
+    "true_pass": true,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "vis_offset_subpix.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/vis_offset_subpix.png",
+    "channel": "Görünür",
+    "width": 1280,
+    "height": 1024,
+    "image_center": [
+      640.0,
+      512.0
+    ],
+    "true_center": [
+      641.7,
+      509.6
+    ],
+    "true_dx": 1.7,
+    "true_dy": -2.4,
+    "true_offset_px": 2.9411,
+    "true_err_mrad": 0.2029,
+    "true_pass": true,
+    "pixel_pitch_um": 3.45,
+    "focal_length_mm": 50.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": false
+  },
+  {
+    "filename": "thm_offset_0_0.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_0_0.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      320.0,
+      256.0
+    ],
+    "true_dx": 0.0,
+    "true_dy": 0.0,
+    "true_offset_px": 0.0,
+    "true_err_mrad": 0.0,
+    "true_pass": true,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  },
+  {
+    "filename": "thm_offset_3_2_az.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_3_2_az.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      323.2,
+      256.0
+    ],
+    "true_dx": 3.2,
+    "true_dy": 0.0,
+    "true_offset_px": 3.2,
+    "true_err_mrad": 1.536,
+    "true_pass": false,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  },
+  {
+    "filename": "thm_offset_subpix_pass.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_subpix_pass.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      320.6,
+      255.5
+    ],
+    "true_dx": 0.6,
+    "true_dy": -0.5,
+    "true_offset_px": 0.781,
+    "true_err_mrad": 0.3749,
+    "true_pass": true,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  },
+  {
+    "filename": "thm_offset_15_0_el.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_15_0_el.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      320.0,
+      241.0
+    ],
+    "true_dx": 0.0,
+    "true_dy": -15.0,
+    "true_offset_px": 15.0,
+    "true_err_mrad": 7.1999,
+    "true_pass": false,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  },
+  {
+    "filename": "thm_offset_40_0_diag.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_40_0_diag.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      345.0,
+      226.0
+    ],
+    "true_dx": 25.0,
+    "true_dy": -30.0,
+    "true_offset_px": 39.0512,
+    "true_err_mrad": 18.7424,
+    "true_pass": false,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  },
+  {
+    "filename": "thm_offset_diag_neg.png",
+    "path": "/mnt/windows/linux/Python/3e-vaka-calisma/samples/boresight/thm_offset_diag_neg.png",
+    "channel": "Termal",
+    "width": 640,
+    "height": 512,
+    "image_center": [
+      320.0,
+      256.0
+    ],
+    "true_center": [
+      311.5,
+      249.7
+    ],
+    "true_dx": -8.5,
+    "true_dy": -6.3,
+    "true_offset_px": 10.5802,
+    "true_err_mrad": 5.0784,
+    "true_pass": false,
+    "pixel_pitch_um": 12.0,
+    "focal_length_mm": 25.0,
+    "tolerance_mrad": 0.5,
+    "is_inverted": true
+  }
+]

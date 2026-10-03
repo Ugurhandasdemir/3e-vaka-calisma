@@ -23,6 +23,7 @@ import config
 DB_PATH = config.DATA_DIR / "qc.db"
 IMAGES_DIR = config.DATA_DIR / "images"
 MASKS_DIR = config.DATA_DIR / "masks"
+BORESIGHT_DIR = config.DATA_DIR / "boresight"
 EXPORTS_DIR = config.DATA_DIR / "exports"
 
 
@@ -38,6 +39,7 @@ def init_db() -> None:
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
     IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     MASKS_DIR.mkdir(parents=True, exist_ok=True)
+    BORESIGHT_DIR.mkdir(parents=True, exist_ok=True)
     EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     with get_db() as conn:
@@ -76,6 +78,27 @@ def init_db() -> None:
                 mask_path TEXT,
                 source TEXT NOT NULL,
                 FOREIGN KEY (inspection_id) REFERENCES inspections (id)
+            );
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS boresight_tests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ts TEXT NOT NULL,
+                inspector TEXT,
+                serial_no TEXT,
+                stage TEXT,
+                channel TEXT,
+                dx_px REAL,
+                dy_px REAL,
+                err_mrad REAL,
+                tolerance_mrad REAL,
+                result TEXT,
+                image_path TEXT,
+                inter_channel_mrad REAL,
+                drift_mrad REAL,
+                params TEXT
             );
             """
         )
@@ -395,6 +418,115 @@ def list_inspections(limit: int = 100) -> list[dict[str, Any]]:
     return results
 
 
+def save_boresight(
+    inspector: str,
+    serial_no: str,
+    stage: str,
+    channel: str,
+    dx_px: float,
+    dy_px: float,
+    err_mrad: float,
+    tolerance_mrad: float,
+    result: str,
+    image: Image.Image | str | Path | None = None,
+    inter_channel_mrad: float | None = None,
+    drift_mrad: float | None = None,
+    params: dict[str, Any] | None = None,
+) -> int:
+    """Saves a post-assembly boresight optical axis test record to SQLite and image to DATA_DIR/boresight/<id>.png.
+
+    Returns the inserted record ID.
+    """
+    init_db()
+    ts = datetime.now(timezone.utc).isoformat()
+    clean_params = _clean_for_json(params or {})
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO boresight_tests (
+                ts, inspector, serial_no, stage, channel,
+                dx_px, dy_px, err_mrad, tolerance_mrad, result,
+                image_path, inter_channel_mrad, drift_mrad, params
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                ts,
+                inspector or "Muayene Uzmanı",
+                serial_no or f"SN-{int(datetime.now().timestamp())}",
+                stage or "son test",
+                channel or "Görünür",
+                float(dx_px),
+                float(dy_px),
+                float(err_mrad),
+                float(tolerance_mrad),
+                result or ("PASS" if float(err_mrad) <= float(tolerance_mrad) else "FAIL"),
+                "",
+                float(inter_channel_mrad) if inter_channel_mrad is not None else None,
+                float(drift_mrad) if drift_mrad is not None else None,
+                json.dumps(clean_params, ensure_ascii=False),
+            ),
+        )
+        record_id = cursor.lastrowid
+        assert record_id is not None
+
+        if image is not None:
+            img_dest = BORESIGHT_DIR / f"{record_id}.png"
+            if isinstance(image, Image.Image):
+                image.convert("RGB").save(img_dest, format="PNG")
+            elif isinstance(image, (str, Path)) and Path(image).exists():
+                Image.open(image).convert("RGB").save(img_dest, format="PNG")
+            cursor.execute(
+                "UPDATE boresight_tests SET image_path = ? WHERE id = ?",
+                (str(img_dest), record_id),
+            )
+
+        conn.commit()
+
+    return record_id
+
+
+def list_boresight(
+    serial_no: str | None = None,
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    """Returns the most recent boresight test records, optionally filtered by serial number."""
+    init_db()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        if serial_no:
+            cursor.execute(
+                """
+                SELECT * FROM boresight_tests
+                WHERE serial_no = ?
+                ORDER BY id DESC
+                LIMIT ?
+                """,
+                (serial_no, limit),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT * FROM boresight_tests
+                ORDER BY id DESC
+                LIMIT ?
+                """,
+                (limit,),
+            )
+        rows = cursor.fetchall()
+
+    results: list[dict[str, Any]] = []
+    for r in rows:
+        d = dict(r)
+        try:
+            d["params"] = json.loads(d["params"]) if d.get("params") else {}
+        except Exception:
+            pass
+        results.append(d)
+    return results
+
+
 def stats() -> dict[str, Any]:
     """Computes summary statistics for the dashboard:
 
@@ -503,10 +635,38 @@ def stats() -> dict[str, Any]:
         }
 
 
+def export_boresight_csv(dest_path: Path | str | None = None) -> Path:
+    """Exports all boresight test records to a CSV file.
+
+    Returns the Path to the generated CSV.
+    """
+    init_db()
+    if dest_path is None:
+        target = EXPORTS_DIR / "boresight_tests.csv"
+    else:
+        target = Path(dest_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM boresight_tests ORDER BY id ASC")
+        rows = cursor.fetchall()
+        column_names = [d[0] for d in cursor.description]
+
+    with open(target, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(column_names)
+        for row in rows:
+            writer.writerow(list(row))
+
+    return target
+
+
 def export_csv(dest_path: Path | str | None = None) -> Path:
     """Exports all inspections to a CSV file.
 
     Returns the Path to the generated CSV.
+    Also ensures boresight_tests.csv is updated in EXPORTS_DIR.
     """
     init_db()
     if dest_path is None:
@@ -526,6 +686,33 @@ def export_csv(dest_path: Path | str | None = None) -> Path:
         writer.writerow(column_names)
         for row in rows:
             writer.writerow(list(row))
+
+    # Also generate boresight_tests.csv alongside inspections.csv
+    try:
+        export_boresight_csv(EXPORTS_DIR / "boresight_tests.csv")
+    except Exception:
+        pass
+
+    return target
+
+
+def export_csv_bundle(dest_path: Path | str | None = None) -> Path:
+    """Bundles inspections.csv and boresight_tests.csv into a single ZIP archive."""
+    init_db()
+    if dest_path is None:
+        target = EXPORTS_DIR / "qc_audit_logs.zip"
+    else:
+        target = Path(dest_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    insp_csv = export_csv()
+    bore_csv = export_boresight_csv()
+
+    with zipfile.ZipFile(target, mode="w", compression=zipfile.ZIP_DEFLATED) as zip_f:
+        if insp_csv.exists():
+            zip_f.write(insp_csv, arcname="inspections.csv")
+        if bore_csv.exists():
+            zip_f.write(bore_csv, arcname="boresight_tests.csv")
 
     return target
 
@@ -745,8 +932,11 @@ def seed_demo() -> None:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM inspections")
         count = cursor.fetchone()[0]
-        if count > 0:
-            return
+        cursor.execute("SELECT COUNT(*) FROM boresight_tests")
+        b_count = cursor.fetchone()[0]
+
+    if count > 0 or b_count > 0:
+        return
 
     demo_records = [
         # Optik lens grubu (metal_nut)
@@ -902,71 +1092,370 @@ def seed_demo() -> None:
         },
     ]
 
-    for rec in demo_records:
-        # Create a visually distinct dummy image with text
-        demo_img = Image.new("RGB", (512, 512), color=rec["color"])
-        draw = ImageDraw.Draw(demo_img)
-        draw.rectangle([20, 20, 492, 492], outline=(180, 180, 180), width=2)
-        draw.text((40, 40), f"3E Elektro Optik - {rec['product_group']}", fill=(240, 240, 240))
-        draw.text((40, 70), f"SN: {rec['serial_no']}", fill=(200, 200, 200))
-        draw.text((40, 100), f"Durum: {rec['ai_decision']}", fill=(255, 200, 100))
+    if count == 0:
+        for rec in demo_records:
+            # Create a visually distinct dummy image with text
+            demo_img = Image.new("RGB", (512, 512), color=rec["color"])
+            draw = ImageDraw.Draw(demo_img)
+            draw.rectangle([20, 20, 492, 492], outline=(180, 180, 180), width=2)
+            draw.text((40, 40), f"3E Elektro Optik - {rec['product_group']}", fill=(240, 240, 240))
+            draw.text((40, 70), f"SN: {rec['serial_no']}", fill=(200, 200, 200))
+            draw.text((40, 100), f"Durum: {rec['ai_decision']}", fill=(255, 200, 100))
 
-        for det in rec["detections"]:
-            b = det["box"]
-            draw.rectangle(b, outline=(255, 50, 50), width=3)
-            draw.text((b[0] + 4, b[1] + 4), f"{det['label_tr']} ({det['conf']:.2f})", fill=(255, 100, 100))
+            for det in rec["detections"]:
+                b = det["box"]
+                draw.rectangle(b, outline=(255, 50, 50), width=3)
+                draw.text((b[0] + 4, b[1] + 4), f"{det['label_tr']} ({det['conf']:.2f})", fill=(255, 100, 100))
 
-        engine_outputs = {
-            "anomaly": {
-                "available": True,
-                "backend": "efficientad-onnx",
-                "score": 1.0 - rec["anomaly_p"],
-                "p_value": rec["anomaly_p"],
-                "prob": round(1.0 - rec["anomaly_p"], 2),
-                "latency_ms": 38,
-                "error": None,
-            },
-            "detector": {
-                "available": True,
-                "detections": rec["detections"],
-                "prob": round(max([d["conf"] for d in rec["detections"]], default=0.04), 2),
-                "latency_ms": 32,
-                "error": None,
-            },
-            "vlm": {
-                "available": True,
-                "called": (rec["ai_decision"] != "ACCEPT"),
-                "model": config.GEMINI_MODEL,
-                "results": [],
-                "majority_type": rec["ai_defect_type"] if rec["ai_decision"] != "ACCEPT" else None,
-                "consistency": 1.0,
-                "prob": rec["defect_score"],
-                "reasoning": f"Görsel incelemesinde tespit: {rec['note']}",
-                "location": "Merkez bölge",
-                "latency_ms": 420 if rec["ai_decision"] != "ACCEPT" else 0,
-                "error": None,
-            },
-        }
+            engine_outputs = {
+                "anomaly": {
+                    "available": True,
+                    "backend": "efficientad-onnx",
+                    "score": 1.0 - rec["anomaly_p"],
+                    "p_value": rec["anomaly_p"],
+                    "prob": round(1.0 - rec["anomaly_p"], 2),
+                    "latency_ms": 38,
+                    "error": None,
+                },
+                "detector": {
+                    "available": True,
+                    "detections": rec["detections"],
+                    "prob": round(max([d["conf"] for d in rec["detections"]], default=0.04), 2),
+                    "latency_ms": 32,
+                    "error": None,
+                },
+                "vlm": {
+                    "available": True,
+                    "called": (rec["ai_decision"] != "ACCEPT"),
+                    "model": config.GEMINI_MODEL,
+                    "results": [],
+                    "majority_type": rec["ai_defect_type"] if rec["ai_decision"] != "ACCEPT" else None,
+                    "consistency": 1.0,
+                    "prob": rec["defect_score"],
+                    "reasoning": f"Görsel incelemesinde tespit: {rec['note']}",
+                    "location": "Merkez bölge",
+                    "latency_ms": 420 if rec["ai_decision"] != "ACCEPT" else 0,
+                    "error": None,
+                },
+            }
 
-        model_versions = {
-            "anomaly": "efficientad-v1.0",
-            "detector": "yolo11s-seg-v1.0",
-            "vlm": config.GEMINI_MODEL,
-            "app": config.APP_VERSION,
-        }
+            model_versions = {
+                "anomaly": "efficientad-v1.0",
+                "detector": "yolo11s-seg-v1.0",
+                "vlm": config.GEMINI_MODEL,
+                "app": config.APP_VERSION,
+            }
 
-        save_inspection(
-            inspector=rec["inspector"],
-            product_group=rec["product_group"],
-            serial_no=rec["serial_no"],
-            image=demo_img,
-            ai_decision=rec["ai_decision"],
-            ai_defect_type=rec["ai_defect_type"],
-            confidence=rec["confidence"],
-            defect_score=rec["defect_score"],
-            human_decision=rec["human_decision"],
-            human_defect_type=rec["human_defect_type"],
-            note=rec["note"],
-            model_versions=model_versions,
-            engine_outputs=engine_outputs,
+            save_inspection(
+                inspector=rec["inspector"],
+                product_group=rec["product_group"],
+                serial_no=rec["serial_no"],
+                image=demo_img,
+                ai_decision=rec["ai_decision"],
+                ai_defect_type=rec["ai_defect_type"],
+                confidence=rec["confidence"],
+                defect_score=rec["defect_score"],
+                human_decision=rec["human_decision"],
+                human_defect_type=rec["human_defect_type"],
+                note=rec["note"],
+                model_versions=model_versions,
+                engine_outputs=engine_outputs,
+            )
+
+    # Seed demo boresight records
+    demo_bore_records = [
+        {
+            "inspector": "Ahmet Yılmaz",
+            "serial_no": "LN-20261001-014",
+            "stage": "son test",
+            "channel": "Görünür",
+            "dx_px": 1.15,
+            "dy_px": -0.82,
+            "err_mrad": 0.098,
+            "tolerance_mrad": 0.5,
+            "result": "PASS",
+            "inter_channel_mrad": None,
+            "drift_mrad": None,
+            "params": {"pixel_pitch_um": 3.45, "focal_length_mm": 50.0, "quality_score": 0.94, "note": "demo kaydı: Boresight eksen testi başarılı, tolerans içinde."},
+        },
+        {
+            "inspector": "Caner Demir",
+            "serial_no": "TC-20261003-002",
+            "stage": "titreşim öncesi",
+            "channel": "Termal",
+            "dx_px": 0.42,
+            "dy_px": -0.31,
+            "err_mrad": 0.251,
+            "tolerance_mrad": 0.5,
+            "result": "PASS",
+            "inter_channel_mrad": None,
+            "drift_mrad": None,
+            "params": {"pixel_pitch_um": 12.0, "focal_length_mm": 25.0, "quality_score": 0.91, "az_mrad": 0.201, "el_mrad": -0.150, "note": "demo kaydı: Titreşim öncesi referans eksen ölçümü."},
+        },
+        {
+            "inspector": "Caner Demir",
+            "serial_no": "TC-20261003-002",
+            "stage": "titreşim sonrası",
+            "channel": "Termal",
+            "dx_px": 0.61,
+            "dy_px": -0.45,
+            "err_mrad": 0.364,
+            "tolerance_mrad": 0.5,
+            "result": "PASS",
+            "inter_channel_mrad": None,
+            "drift_mrad": 0.113,
+            "params": {"pixel_pitch_um": 12.0, "focal_length_mm": 25.0, "quality_score": 0.92, "az_mrad": 0.292, "el_mrad": -0.216, "note": "demo kaydı: Titreşim sonrası eksen ölçümü, kayma 0.113 mrad (tolerans <0.50 mrad)."},
+        },
+        {
+            "inspector": "Caner Demir",
+            "serial_no": "TC-20261002-031",
+            "stage": "son test",
+            "channel": "Termal",
+            "dx_px": 2.45,
+            "dy_px": -1.88,
+            "err_mrad": 1.482,
+            "tolerance_mrad": 0.5,
+            "result": "FAIL",
+            "inter_channel_mrad": None,
+            "drift_mrad": None,
+            "params": {"pixel_pitch_um": 12.0, "focal_length_mm": 25.0, "quality_score": 0.88, "note": "demo kaydı: Optik eksen kaçıklığı toleransı aştı (1.482 mrad > 0.500 mrad)."},
+        },
+    ]
+    for b_rec in demo_bore_records:
+        save_boresight(
+            inspector=b_rec["inspector"],
+            serial_no=b_rec["serial_no"],
+            stage=b_rec["stage"],
+            channel=b_rec["channel"],
+            dx_px=b_rec["dx_px"],
+            dy_px=b_rec["dy_px"],
+            err_mrad=b_rec["err_mrad"],
+            tolerance_mrad=b_rec["tolerance_mrad"],
+            result=b_rec["result"],
+            inter_channel_mrad=b_rec["inter_channel_mrad"],
+            drift_mrad=b_rec["drift_mrad"],
+            params=b_rec["params"],
         )
+
+
+class SerialStatus(dict):
+    """Custom dictionary representing serial number quality gate status.
+
+    Supports equality comparison with string status (e.g. status == 'SEVKE HAZIR')
+    so that both `serial_status(sn) == 'SEVKE HAZIR'` and `serial_status(sn)['overall'] == 'SEVKE HAZIR'` work.
+    """
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, str):
+            return (
+                self.get("overall") == other
+                or self.get("status") == other
+                or self.get("genel_durum") == other
+            )
+        return super().__eq__(other)
+
+    def __ne__(self, other: Any) -> bool:
+        return not self.__eq__(other)
+
+
+def serial_status(serial_no: str) -> SerialStatus:
+    """Evaluates the quality gate status for a given serial number.
+
+    Returns a SerialStatus dictionary containing:
+    - serial_no: serial number string
+    - product_group: product group name or '-'
+    - visual_decision: 'KABUL' | 'RET' | 'none'
+    - boresight_result: 'GEÇTİ' | 'KALDI' | 'none'
+    - drift_status: 'GEÇTİ' | 'KALDI' | 'none'
+    - overall: 'SEVKE HAZIR' | 'BEKLEMEDE' | 'RET'
+    - emoji: '🟢' | '🟡' | '🔴'
+
+    Quality Gate Logic:
+    - 'SEVKE HAZIR': only if visual human decision == ACCEPT and latest boresight == PASS
+      (and drift within tolerance if both pre/post exist).
+    - 'RET': if ANY stage failed (visual human decision == REJECT, latest boresight == FAIL,
+      or vibration drift exceeds tolerance).
+    - 'BEKLEMEDE': if a required stage is missing and no stage has failed.
+    """
+    init_db()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT * FROM inspections
+            WHERE serial_no = ?
+            ORDER BY id DESC
+            """,
+            (serial_no,),
+        )
+        insp_rows = [dict(r) for r in cursor.fetchall()]
+
+        cursor.execute(
+            """
+            SELECT * FROM boresight_tests
+            WHERE serial_no = ?
+            ORDER BY id DESC
+            """,
+            (serial_no,),
+        )
+        bore_rows = [dict(r) for r in cursor.fetchall()]
+
+    # Product group from latest inspection (or boresight params)
+    product_group = "-"
+    if insp_rows and insp_rows[0].get("product_group"):
+        product_group = insp_rows[0]["product_group"]
+    elif bore_rows:
+        try:
+            p = json.loads(bore_rows[0]["params"]) if isinstance(bore_rows[0].get("params"), str) else (bore_rows[0].get("params") or {})
+            product_group = p.get("product_group", "-")
+        except Exception:
+            product_group = "-"
+
+    # 1. Visual Inspection Human Decision
+    visual_human_raw = None
+    visual_decision = "none"
+    visual_passed = False
+    visual_failed = False
+    visual_missing = True
+
+    if insp_rows:
+        visual_missing = False
+        latest_insp = insp_rows[0]
+        hum_dec = (latest_insp.get("human_decision") or "").strip().upper()
+        visual_human_raw = hum_dec
+        if hum_dec in ("ACCEPT", "KABUL", "PASS", "ONAY"):
+            visual_decision = "KABUL"
+            visual_passed = True
+        elif hum_dec in ("REJECT", "RET", "FAIL"):
+            visual_decision = "RET"
+            visual_failed = True
+        else:
+            visual_decision = "none"
+
+    # 2. Latest Boresight Test Result
+    boresight_raw = None
+    boresight_result = "none"
+    boresight_passed = False
+    boresight_failed = False
+    boresight_missing = True
+
+    if bore_rows:
+        boresight_missing = False
+        latest_bore = bore_rows[0]
+        res = (latest_bore.get("result") or "").strip().upper()
+        boresight_raw = res
+        if res in ("PASS", "GEÇTI", "GECTI", "GEÇTİ"):
+            boresight_result = "GEÇTİ"
+            boresight_passed = True
+        elif res in ("FAIL", "KALDI", "REJECT", "RET"):
+            boresight_result = "KALDI"
+            boresight_failed = True
+        else:
+            boresight_result = "none"
+
+    # 3. Vibration Drift Check (if pre and post vibration records exist)
+    pre_bore = None
+    post_bore = None
+    for b in bore_rows:
+        stg = (b.get("stage") or "").lower()
+        if ("öncesi" in stg or "oncesi" in stg or "pre" in stg) and pre_bore is None:
+            pre_bore = b
+        elif ("sonrası" in stg or "sonrasi" in stg or "post" in stg) and post_bore is None:
+            post_bore = b
+
+    drift_status = "none"
+    drift_passed = None
+    drift_failed = False
+    drift_val = None
+
+    if pre_bore is not None and post_bore is not None:
+        tol = float(post_bore.get("tolerance_mrad") or 0.5)
+        if post_bore.get("drift_mrad") is not None:
+            drift_val = float(post_bore["drift_mrad"])
+            if drift_val <= tol:
+                drift_passed = True
+                drift_status = "GEÇTİ"
+            else:
+                drift_passed = False
+                drift_failed = True
+                drift_status = "KALDI"
+        else:
+            try:
+                p_pre = json.loads(pre_bore["params"]) if isinstance(pre_bore.get("params"), str) else (pre_bore.get("params") or {})
+                p_post = json.loads(post_bore["params"]) if isinstance(post_bore.get("params"), str) else (post_bore.get("params") or {})
+                az1 = p_pre.get("az_mrad")
+                el1 = p_pre.get("el_mrad")
+                az2 = p_post.get("az_mrad")
+                el2 = p_post.get("el_mrad")
+
+                if az1 is not None and el1 is not None and az2 is not None and el2 is not None:
+                    drift_val = float(((float(az2) - float(az1))**2 + (float(el2) - float(el1))**2)**0.5)
+                else:
+                    pitch = float(p_post.get("pixel_pitch_um") or 3.45)
+                    focal = float(p_post.get("focal_length_mm") or 50.0)
+                    dx_diff = float(post_bore.get("dx_px", 0.0)) - float(pre_bore.get("dx_px", 0.0))
+                    dy_diff = float(post_bore.get("dy_px", 0.0)) - float(pre_bore.get("dy_px", 0.0))
+                    dr_px = (dx_diff**2 + dy_diff**2)**0.5
+                    drift_val = float(np.arctan(dr_px * pitch * 1e-3 / focal) * 1000.0)
+
+                if drift_val <= tol:
+                    drift_passed = True
+                    drift_status = "GEÇTİ"
+                else:
+                    drift_passed = False
+                    drift_failed = True
+                    drift_status = "KALDI"
+            except Exception:
+                drift_status = "none"
+
+    # 4. Overall Decision
+    if visual_failed or boresight_failed or drift_failed:
+        overall = "RET"
+        emoji = "🔴"
+    elif visual_missing or boresight_missing or not visual_passed or not boresight_passed:
+        overall = "BEKLEMEDE"
+        emoji = "🟡"
+    elif visual_passed and boresight_passed and (drift_passed is None or drift_passed is True):
+        overall = "SEVKE HAZIR"
+        emoji = "🟢"
+    else:
+        overall = "BEKLEMEDE"
+        emoji = "🟡"
+
+    return SerialStatus({
+        "serial_no": serial_no,
+        "product_group": product_group,
+        "visual_decision": visual_decision,
+        "boresight_result": boresight_result,
+        "drift_status": drift_status,
+        "drift_mrad": drift_val,
+        "overall": overall,
+        "status": overall,
+        "emoji": emoji,
+        "gorsel_muayene": visual_decision,
+        "son_test": boresight_result,
+        "kayma": drift_status,
+        "genel_durum": f"{emoji} {overall}",
+        "visual_raw": visual_human_raw,
+        "boresight_raw": boresight_raw,
+        "inspections": insp_rows,
+        "boresight_tests": bore_rows,
+    })
+
+
+def list_serial_status() -> list[SerialStatus]:
+    """Returns quality gate status for all distinct serial numbers."""
+    init_db()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT serial_no, MAX(ts) as max_ts FROM (
+                SELECT serial_no, ts FROM inspections WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
+                UNION ALL
+                SELECT serial_no, ts FROM boresight_tests WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
+            ) GROUP BY serial_no ORDER BY max_ts DESC
+            """
+        )
+        serials = [r[0] for r in cursor.fetchall()]
+    return [serial_status(s) for s in serials]
