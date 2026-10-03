@@ -1,4 +1,3 @@
---extra-index-url https://download.pytorch.org/whl/cpu
 gradio>=5.0
 numpy
 pillow
@@ -10,3 +9,4 @@ ultralytics
 google-genai
 pydantic
 huggingface_hub
+spaces

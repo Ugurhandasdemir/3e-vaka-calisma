@@ -9,6 +9,17 @@ import io
 import os
 import threading
 from datetime import datetime
+
+# Hugging Face ZeroGPU hosting requires at least one @spaces.GPU function at startup.
+# Inference itself runs on CPU; this probe is never called.
+try:
+    import spaces
+
+    @spaces.GPU(duration=5)
+    def _zerogpu_probe():
+        return True
+except ImportError:
+    pass
 from pathlib import Path
 from typing import Any
 
