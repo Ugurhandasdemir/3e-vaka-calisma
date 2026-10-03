@@ -37,6 +37,9 @@ def _empty(error, called=False, latency=0):
             "severity": None, "latency_ms": latency, "error": error}
 
 
+_LAST_MODEL = [config.GEMINI_MODEL]  # model that answered the latest request (fallbacks may differ)
+
+
 class VLMEngine:
     def __init__(self):
         self.key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
@@ -74,11 +77,30 @@ class VLMEngine:
 
     def _one(self, parts):
         from google.genai import types
+        import time
         client = self._client()  # keep a reference: a temporary Client is closed when garbage-collected
-        r = client.models.generate_content(
-            model=config.GEMINI_MODEL, contents=parts,
-            config=types.GenerateContentConfig(response_mime_type="application/json",
-                                               response_schema=VLMResult, temperature=0.4))
+        cfg = types.GenerateContentConfig(response_mime_type="application/json",
+                                          response_schema=VLMResult, temperature=0.4)
+        # Overloaded (503) or rate-limited (429) models are retried once, then the next model is tried.
+        r, last_err = None, None
+        for model in [config.GEMINI_MODEL, *config.GEMINI_FALLBACK_MODELS]:
+            for attempt in range(2):
+                try:
+                    r = client.models.generate_content(model=model, contents=parts, config=cfg)
+                    _LAST_MODEL[0] = model
+                    break
+                except Exception as e:  # noqa: BLE001 - SDK raises several error types
+                    last_err = e
+                    msg = str(e)
+                    if not any(c in msg for c in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED")):
+                        if "404" not in msg:
+                            raise
+                        break  # model not available: go to next model
+                    time.sleep(1.5 * (attempt + 1))
+            if r is not None:
+                break
+        if r is None:
+            raise last_err
         if getattr(r, "parsed", None) is not None:
             res = r.parsed
         else:
@@ -129,7 +151,7 @@ def aggregate(results, latency_ms=0):
         mcount = len(agree)
     first = agree[0] if agree else results[0]
     prob = (len(pos) / n) * (sum(r["self_confidence"] for r in pos) / len(pos)) if pos else 0.0
-    return {"available": True, "called": True, "model": config.GEMINI_MODEL, "results": results,
+    return {"available": True, "called": True, "model": _LAST_MODEL[0], "results": results,
             "majority_type": mtype, "consistency": mcount / n, "prob": float(prob),
             "reasoning": first["reasoning"], "location": first["location"],
             "severity": first["severity"] if present else None, "latency_ms": latency_ms, "error": None}

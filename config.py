@@ -72,6 +72,8 @@ YOLO_MODEL = MODELS_DIR / os.getenv("YOLO_MODEL_FILE", "yolo.onnx")  # .onnx or 
 
 # VLM
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+GEMINI_FALLBACK_MODELS = [m for m in os.getenv(
+    "GEMINI_FALLBACK_MODELS", "gemini-3.5-flash-lite,gemini-3.1-flash-lite").split(",") if m]
 VLM_SAMPLES = int(os.getenv("VLM_SAMPLES", "3"))
 VLM_TIMEOUT_S = 25
 
