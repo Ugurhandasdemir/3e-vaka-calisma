@@ -71,9 +71,9 @@ def calib_file(category: str) -> Path:
 YOLO_MODEL = MODELS_DIR / os.getenv("YOLO_MODEL_FILE", "yolo.onnx")  # .onnx or .pt, det or seg
 
 # VLM
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 GEMINI_FALLBACK_MODELS = [m for m in os.getenv(
-    "GEMINI_FALLBACK_MODELS", "gemini-3.5-flash-lite,gemini-3.1-flash-lite").split(",") if m]
+    "GEMINI_FALLBACK_MODELS", "gemini-3.8-flash,gemini-3.1-flash-lite").split(",") if m]
 VLM_SAMPLES = int(os.getenv("VLM_SAMPLES", "3"))
 VLM_TIMEOUT_S = 25
 

@@ -62,7 +62,7 @@ Sistem, muayene uzmanının yerini almak yerine; operatörü hızlandırmak, ins
                             ▼
                  ┌─────────────────────────┐
                  │    VLM Akıl Yürütme     │
-                 │ Google Gemini 3.8 Flash │ (Orijinal + Isı Haritası + Kutular)
+                 │ Google Gemini 3.5 Flash-Lite │ (Orijinal + Isı Haritası + Kutular)
                  └──────────┬──────────────┘
                             │ [Kusur Tipi + Muhakeme + Şiddet]
                             ▼
@@ -98,7 +98,7 @@ Sistem, muayene uzmanının yerini almak yerine; operatörü hızlandırmak, ins
 - **Arayüz:** Gradio 6 (Blocks API, Soft Theme, mobil uyumlu)
 - **Anomali Tespiti:** EfficientAD-S (ONNX Runtime) & PatchCore (PyTorch ResNet-18 hafıza bankası yedeği)
 - **Nesne Tespiti / Segmentasyon:** YOLO11s-seg ONNX
-- **Görsel Muhakeme (VLM):** Google Gemini 3.8 Flash (Yapılandırılmış JSON şeması, sıcaklık 0.4)
+- **Görsel Muhakeme (VLM):** Google Gemini 3.5 Flash-Lite (Yapılandırılmış JSON şeması, sıcaklık 0.4)
 - **Füzyon:** Conformal Prediction $p$-değeri, eşik oylaması ve belirsizlik kapısı
 - **Veri Tabanı & Depolama:** SQLite (`data/qc.db`), PNG görsel deposu
 - **Dışa Aktarma:** Standart CSV ve YOLOv8/11 formatında etiketlenmiş aktif öğrenme ZIP paketi
@@ -123,7 +123,7 @@ pip install -r requirements.txt
 cp .env.example .env
 # .env dosyasını düzenleyin:
 # GEMINI_API_KEY=AIzaSy...
-# GEMINI_MODEL=gemini-3.8-flash
+# GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 *(Alternatif olarak terminalde `export GEMINI_API_KEY="anahtarınız"` komutunu çalıştırabilirsiniz).*
 
