@@ -10,3 +10,4 @@ google-genai
 pydantic
 huggingface_hub
 spaces
+onnx

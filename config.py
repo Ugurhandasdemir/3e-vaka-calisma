@@ -79,7 +79,8 @@ VLM_TIMEOUT_S = 25
 
 # Fusion (see fusion.py docstring for semantics)
 WEIGHTS = {"anomaly": 0.45, "detector": 0.25, "vlm": 0.30}
-VOTE_THRESHOLDS = {"anomaly": 0.95, "detector": 0.40, "vlm": 0.50}
+VOTE_THRESHOLDS = {"anomaly": 0.75,  # a >= 0.75  <=>  p_value <= ~0.053
+                   "detector": 0.40, "vlm": 0.50}
 ACCEPT_BELOW = 0.30
 REJECT_ABOVE = 0.70
 EARLY_EXIT_P = 0.50  # p_value above this and no detections -> skip VLM, suggest accept

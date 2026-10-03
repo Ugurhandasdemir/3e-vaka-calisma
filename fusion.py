@@ -1,6 +1,7 @@
 """Decision fusion (rule set).
 
-Engine probabilities:  anomaly a = 1 - p_value;  detector y = max detection conf (0 if none);
+Engine probabilities:  anomaly a = clip(log(p_value) / log(0.02), 0, 1)  (p=0.02 -> 1, p=0.05 -> 0.77,
+p=0.5 -> 0.18; a plain 1 - p would give good parts ~0.5 on average because their p is uniform);  detector y = max detection conf (0 if none);
 VLM v = (fraction of samples saying defect) * mean self_confidence of those.
 
 Rules:
@@ -12,19 +13,22 @@ Rules:
    REVIEW  : everything else (conflict, borderline score, single engine).
    A single available engine never produces an automatic ACCEPT/REJECT.
 5. Early exit (pipeline): p_value > EARLY_EXIT_P and no detections -> VLM skipped, ACCEPT suggested;
-   high-risk groups get REVIEW instead.
+   high-risk groups never take the early exit (all engines run, normal fusion).
 6. Risk rule: for config.HIGH_RISK_GROUPS any defect vote means at least REVIEW (never ACCEPT).
 7. confidence = agreement * max(defect_score, 1 - defect_score).
 8. defect_type: VLM majority type (if not "Yok"), else top-confidence detector label, else
    "Diğer" (decision != ACCEPT) / "Yok".
 """
+import math
+
 import config
 
 
 def fuse(anomaly, detector, vlm, product_group, early_exit=False):
     probs, reasons = {}, []
     if anomaly and anomaly.get("available", True) and anomaly.get("backend"):
-        probs["anomaly"] = 1.0 - anomaly["p_value"]
+        p = max(float(anomaly["p_value"]), 1e-6)
+        probs["anomaly"] = min(1.0, max(0.0, math.log(p) / math.log(0.02)))
     if detector and detector.get("available"):
         dets = detector.get("detections", [])
         probs["detector"] = max((d["conf"] for d in dets), default=0.0)

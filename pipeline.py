@@ -92,7 +92,9 @@ def run(image, product_group):
 
     # VLM / early exit
     vlm_engine = _get_vlm()
-    early = an["available"] and an["p_value"] > config.EARLY_EXIT_P and not dets
+    # High-risk groups (thermal module, recall history) never take the early exit: all engines run.
+    early = (an["available"] and an["p_value"] > config.EARLY_EXIT_P and not dets
+             and product_group not in config.HIGH_RISK_GROUPS)
     if early:
         v = _empty(None if vlm_engine.has_key else "GEMINI_API_KEY yok", called=False)
         v["available"] = vlm_engine.has_key
