@@ -1,80 +1,71 @@
-# 3E Elektro Optik — AI Destekli Kalite Kontrol Sistemi (PoC)
-## Teknik Vaka Dokümanı ve Mimari Rapor
+# 3E Elektro Optik — AI Kalite Kontrol PoC Raporu
+Canlı: [HF Spaces](https://huggingface.co/spaces/ugurhandasdemir/3e-vaka-calisma) (ZeroGPU, CPU) | Kod: [GitHub](https://github.com/Ugurhandasdemir/3e-vaka-calisma)
 
 ### 1. Problem ve Çözüm Özeti
-Günlük 85 adet kritik elektro-optik muayene hacmi, 1.200 adet etiketsiz parça görseli ve ayda 3 kaçan kusurun (özellikle geri çağırma riski yüksek termal modüllerde) yarattığı kalite riski temel operasyonel darboğazdır. Çözüm; gözetimsiz anomali tespiti (PatchCore / EfficientAD-S), nesne dedektörü (YOLO11n) ve görsel dil modelini (Gemini 3.5 Flash-Lite) conformal kalibrasyonla birleştiren insan-döngüde (human-in-the-loop) hibrit bir karar destek sistemidir. Sistem uzmanı hızlandırır, kaçan kusurları engeller ve AS9100 uyumlu tam izlenebilirlik sunar.
+Günlük 85 kritik muayene, 1.200 etiketsiz görsel ve 6 ayda müşteriye ulaşan 3 kusur (biri termal modül geri çağırması) mevcut manuel sürecin sınırlarını gösteriyor. Çözüm; anomali tespiti (PatchCore / EfficientAD-S), dedektör (YOLO11n) ve VLM'i (Gemini 3.5 Flash-Lite) conformal kalibrasyonla birleştiren insan-döngüde hibrit karar desteğidir. Sistem uzmanı hızlandırır, AS9100 uyumlu izlenebilirlik sunar. Canlı gecikme VLM ile ~4–6 sn, erken çıkışta ~2–3 sn'dir. Hibrit kazanımı: VLM'in tek başına kaçırdığı `misplaced` transistör montaj kusuru, anomali skoru ve risk kuralıyla yakalanıp insan incelemesine (`REVIEW`) yönlendirilmiştir.
 
 ### 2. Kullanılan AI Modelleri ve Teknolojileri
-Sistem **"iki aşamalı sistem"** mimarisidir: Aşama 1 (anomali) etiketsiz bölge önerisi (RPN rolü) üretir; Aşama 2 (YOLO/VLM) bu bölgeleri sınıflandırıp gerekçelendirir.
+Aşama 1 (anomali) bölge önerir; Aşama 2 (YOLO/VLM) sınıflandırıp gerekçelendirir.
 
-| Katman | Seçilen Model | Neden Seçildi? | Alternatifler ve Kıyas |
-| :--- | :--- | :--- | :--- |
-| **Anomali** *(Öneri)* | **PatchCore** (`wide_resnet50_2`) + **EfficientAD-S** (ONNX) | PatchCore sıfır eğitimle yalnız sağlam görsel bankasıyla çalışır (soğuk başlangıç). EfficientAD-S (Colab, ONNX) varsa otomatik kullanılır; CPU ~100–300 ms, GPU 2–3 ms ile F/P lideridir. | Dinomaly (~%99,6 AUROC, ViT-B omurgası CPU için ağır); Zero-shot CLIP (~%90–92 AUROC, ince kusurda zayıf). |
-| **Dedektör** *(Sınıflandırma)* | **YOLO11n** (Colab, MVTec maskelerinden etiket) | Hızlı CPU çıkarımı (~90 ms), tek komutla ONNX uyumu ve düşük bellek tüketimi. Bilinen kusurları kutularla sınırlar. | Faster/Cascade/Mask R-CNN (küçük kusurda iyi, CPU 1–3 sn ağır, ONNX ihracı riskli). |
-| **VLM** *(Muhakeme)* | **Gemini 3.5 Flash-Lite** (Pydantic JSON şema, 3 örnek tutarlılık) | Yapılandırılmış JSON garantisi. Isı haritası ve YOLO kutularını birlikte işler; Myriad (arXiv:2310.19070) uzman ipucu fikrinin eğitimsiz (in-context) görsel uyarlamasıdır. 3 paralel çağrıyla çoğunluk ve tutarlılık ($c/3$) hesaplar. | GPT-4o / Pro (pahalı/yavaş); On-prem Qwen-VL (GPU gerektirir; açık kaynak üretim hedefi). |
-| **Füzyon** *(Karar)* | **Conformal $p$-değeri** + Ağırlıklı Skor + 3 Bölge + Risk Kuralı | Skor yerine istatistiksel belirsizlik. Ağırlıklar: Anomali 0.45, Dedektör 0.25, VLM 0.30. Yüksek riskli grupta (*Termal modül*) kusur oyunda otomatik kabul verilmez; doğrudan incelemeye gider. | Saf lojistik regresyon veya kural dışı LLM kararı (halüsinasyon, açıklanamazlık). |
+| Katman | Seçilen Model ve Gerekçe | Alternatifler |
+| :--- | :--- | :--- |
+| **Anomali** *(Öneri)* | **PatchCore** (`wide_resnet50_2`, 60 ref, %10 coreset, CPU ~120–150 ms) + **EfficientAD-S** (ONNX, Colab T4 metal_nut AUROC 0.9868, 80 dk). Eğitimsiz hızlı başlangıç; ONNX varsa otomatik devrededir. | Dinomaly (ViT-B CPU'da ağır); CLIP (lokalde zayıf). |
+| **Dedektör** *(Sınıflandırma)* | **YOLO11n** (ONNX CPU ~50 ms). 10 MVTec sınıfı gerçek kusurlarından 3 sınıfa Colab'da eğitildi (~1.000 artırılmış veri). Kusurları kutular. | Faster R-CNN (CPU 1–3 sn, ONNX hantal). |
+| **VLM** *(Muhakeme)* | **Gemini 3.5 Flash-Lite** (yedek: 3.8-Flash, 3.1-Flash-Lite; ~2 sn). JSON şemalı; görsel, ısı haritası ve YOLO kutularını Myriad tarzı ipucu alır; 3 paralel örnekle çoğunluk/tutarlılık üretir. | GPT-4o (maliyet); On-prem Qwen-VL (PoC'de API esnekliği). |
+| **Füzyon** *(Karar)* | **Conformal $p$ + Ağırlıklı Skor + Risk Kuralı**. Ağırlık: Anomali 0.45, Dedektör 0.25, VLM 0.30. Termal modülde kusur oyunda otomatik kabul engellenir. | Bağımsız LLM kararı; Lojistik regresyon. |
 
 ### 3. Veri Yaklaşımı ve Kalibrasyon
-- **Etiketsiz Başlangıç:** 1.200 etiketsiz görsel için ön etiketleme gerektirmeden gözetimsiz anomali tespitiyle sıfırıncı günden çalışır.
-- **Temsili Veri (MVTec AD - CC BY-NC-SA 4.0):** Optik lens grubu $\rightarrow$ `metal_nut` (çizik, kaplama); Termal kamera modülü $\rightarrow$ `transistor` [Yüksek Risk] (konektör/montaj); Gözetleme ünitesi $\rightarrow$ `cable` (kablo/montaj).
-- **Conformal Kalibrasyon:** Ayrılmış sağlam görsellerden ($n=40$) skor dağılımı saklanır; $p = (1 + \sum [s_{cal} \ge s]) / (n_{cal} + 1)$ hesaplanır. $p > 0.50$ ve tespit yoksa VLM atlanarak **erken çıkışla (early exit)** KABUL önerilir.
-- **İnsan Kararları & YOLO Export:** Operatör onay/düzeltmeleri SQLite veri tabanına yazılır. Pano sekmesinden indirilen normalize YOLO ZIP paketi (görseller + `.txt` koordinatlar + `classes.txt`) aktif öğrenmeyi besler.
-- **SAM Ön Etiketleme Yol Haritası:** 1.200 görselde ısı haritası tepe noktalarından SAM nokta istemiyle otomatik maske/kutu üretilip operatör onayına sunularak etiketleme 40 saatten birkaç saate indirilir.
+- **Temsili Veri (MVTec AD - CC BY-NC-SA 4.0):** Optik lens $\rightarrow$ `metal_nut`, Termal kamera $\rightarrow$ `transistor` (Yüksek Risk), Gözetleme ünitesi $\rightarrow$ `cable`.
+- **Dedektör:** YOLO11n; 10 MVTec sınıfından gerçek kusur maskelerinden kutu üretilip çevrimdışı artırımla ~1.000 eğitim görseliyle Colab'da eğitildi (3 uygulama + vida, kapsül, hap, şişe, fındık, ahşap, fayans; val yalnızca gerçek kusurlar).
+- **Conformal Kalibrasyon:** 40 sağlam görselle $p = (1 + \sum [s_{cal} \ge s]) / (n_{cal} + 1)$ hesaplanır. Anomali olasılığı $a = \text{clip}(\log p / \log 0.02, 0, 1)$; $a \ge 0.75$ ($p \le \sim 0.05$) kusur oyudur.
+- **Erken Çıkış (Early Exit):** $p > 0.50$ ve tespit yoksa VLM atlanıp gecikme ~2–3 sn'ye iner; termal kamera erken çıkış almaz, tüm motorlar çalışır.
+- **Geri Bildirim:** Kararlar SQLite'a yazılır; indirilen YOLO formatlı ZIP aktif öğrenmeyi besler.
 
 ### 4. Temel Sistem Mimarisi
 ```text
-[Muayene Görseli] ────────────────────────────────────────────────────────┐
-       │                                                                  │
-       ▼                                                                  ▼
-[Anomali Motoru] ──(Isı haritası + p-değeri)──► [Erken Çıkış?] ◄── [YOLO11 Dedektör]
-(PatchCore/EffAD)                                  │ Evet                 │
-       │                                           ▼                      │ (Tespit/Kutu)
-       │ (Şüpheli / p ≤ 0.50)               [KABUL Önerisi]               │
-       └─────────────────────────┬────────────────────────────────────────┘
-                                 ▼
-                     [Gemini 3.5 Flash-Lite VLM ×3] (Isı haritası + YOLO kutuları ipucu)
-                                 │ (Tutarlılık + Kusur Tipi + Gerekçe)
-                                 ▼
-                   [Conformal & Risk Tabanlı Füzyon]
-                    ├── KABUL Önerisi   : defect_score < 0.30 & oy birliği
-                    ├── İNSAN İNCELEMESİ: çelişki, sınır skor, termal risk kuralı
-                    └── RET Önerisi     : defect_score ≥ 0.70 & ≥2 kusur oyu
-                                 │
-                   [Operatör Kararı] ──► [SQLite / AS9100 Kayıt & YOLO ZIP Export]
+[Görsel] ──► [Anomali: PatchCore/EffAD] ──(Isı haritası + p)──┐
+         ──► [Dedektör: YOLO11n] ────────(Kutular)─────────────┼─► [Erken Çıkış? (p>0.5, yok)]
+                                                               │    ├── Evet: [KABUL]
+                                                               └──► └── Hayır: [Gemini 3.5 ×3]
+                                                                                   │
+[Karar Füzyonu] ◄──────────────────────────────────────────────────────────────────┘
+ ├── KABUL Önerisi   : skor < 0.30 & tüm motorlar sağlam
+ ├── RET Önerisi     : skor ≥ 0.70 & ≥2 kusur oyu
+ └── İNSAN İNCELEMESİ: çelişki / sınır skor / termal risk / tek motor
 ```
+*Güven = $\text{tutarlılık} \times \max(\text{skor}, 1 - \text{skor})$. Tek motor asla otomatik karar veremez.*
 
 ### 5. Güvenlik, Denetim ve Savunma Sanayii Uyumluluğu
-- **Sistem ve API Güvenliği:** `GEMINI_API_KEY` env/secret ile saklanır, koda gömülmez. Yüklemeler 10 MB ile sınırlıdır; PIL ile yeniden kodlanarak zararlı baytlar ve EXIF verileri temizlenir (maks. 1024 px). Gradio `concurrency_limit=2` kuyruk limiti DoS riskini önler.
-- **PoC vs. Üretim:** PoC'de temsili MVTec verisi harici API'ye gider. Üretimde hiçbir görsel dışarı çıkamaz; air-gapped on-prem modeller zorunludur.
-- **RBAC ve AS9100 İzlenebilirlik:** Rol tabanlı erişim kontrolü (RBAC: operatör, kalite mühendisi, denetçi) ve SQLite denetim kaydı (audit trail): Görsel, model sürümleri (`anomaly`, `detector`, `vlm`, `app`), motor çıktıları/p-değeri, AI önerisi, insan kararı, kullanıcı sicili, zaman damgası ve operatör notu.
-- **Karar Otoritesi:** VLM veya AI nihai karar vermez; yalnızca gerekçe sunar. `REVIEW` durumunda "Onayla" kilitlenerek operatör fiziksel incelemeye zorlanır.
+- **API ve Hijyen:** `GEMINI_API_KEY` ortam değişkenindedir. Yüklemeler 10 MB ile sınırlı; görsel RGB'ye çevrilip en fazla 1024 px'e küçültülür (VLM'e 768 px gider), meta veri taşınmaz. Gradio kuyruğu eşzamanlı işi 2 ile sınırlar.
+- **Savunma Sanayii:** PoC'de veri Google API'ye çıkar; üretimde savunma gizliliği gereği veri dışarı çıkamaz, sistem hava boşluklu (air-gapped) yerel GPU'da çalışır.
+- **AS9100 İzlenebilirlik:** Görsel, model sürümleri (`anomaly`, `detector`, `vlm`, `app`), $p$-değeri, AI önerisi, nihai karar, muayeneci adı ve zaman damgası SQLite denetim izinde (audit trail) saklanır.
+- **Karar Otoritesi:** AI karar vermez, önerir. İnceleme (`REVIEW`) sonucunda "AI önerisini onayla" seçeneği kapanır; uzman Kabul veya Ret seçmek zorundadır.
 
 ### 6. Sistemin Sınırlılıkları
-1. **Temsili Veri:** MVTec AD laboratuvar verisidir; gerçek lens yansımalarını ve fabrika ortamını tam kapsamaz.
-2. **Fiziksel Ölçüm Sınırları:** Optik eksen hizalama/kaçıklığı ve konektör gevşekliği tek 2D görselden ölçülemez; kolimatör ve tork/çekme testi zorunludur (arayüzde bilgi kartıyla belirtilir).
-3. **VLM Kalibrasyonu:** VLM öz-güveni aşırı iyimserdir; 3 paralel çağrının oy oranıyla çarpılarak ($p_{vlm} = \text{oran} \times \bar{c}$) dengelenmiştir.
-4. **Altyapı:** Ücretsiz HF Space kalıcı disk sunmaz (`seed_demo` ile başlar); CPU çıkarımı 1–2 sn gecikir; $n=40$ kalibrasyon kümesi istatistiksel sınır testleri için küçüktür.
+1. **Veri Örtüşmesi:** MVTec test kümesi YOLO eğitim/artırımında kullanıldığından demo örneklerinde örtüşme (overlap) olabilir; laboratuvar koşulları fabrika parlamalarını tam içermez.
+2. **Fiziksel Ölçüm:** Optik eksen kaçıklığı ve konektör gevşekliği tek 2D fotoğraftan ölçülemez; kolimatör ve tork/çekme aparatıyla fiziksel ölçüm şarttır (arayüzde uyarılır).
+3. **VLM Kalibrasyonu:** VLM öz-güveni (`self_confidence`) kalibre değildir; çoğunluk oranıyla ($p_{vlm} = \text{oran} \times \bar{c}$) dengelenmiştir.
+4. **Altyapı:** HF Spaces geçici disk (ephemeral) kullanır; veriler sıfırlanabilir. PoC'de veri Google API'ye çıkar; kalibrasyon 40 görselle sınırlıdır.
 
 ### 7. Üretime Geçiş Yol Haritası
-- **Fikstür ve Aydınlatma:** Sabit fikstür, telecentric lens ve difüz kubbe aydınlatma ile kontrollü görüntüleme.
-- **Veri ve Etiketleme:** 1.200 hat görselinin toplanması, self-hosted CVAT + SAM ile hızlı ön etiketleme.
-- **Model Geliştirme:** Tüm parçaları kapsayan tek Dinomaly modeli; hat verisiyle fine-tune edilmiş YOLO11-seg.
-- **On-Premise VLM:** Bulut bağımlılığını kaldıran yerel GPU sunucusunda Qwen2.5-VL (7B/8B) koşturulması; AnomalyR1 tarzı GRPO pekiştirmeli öğrenme ile muayene muhakemesinin eğitilmesi.
-- **ERP/MES Entegrasyonu:** İş emri çekme, seri no eşleme ve muayene sonucunun ERP'ye CSV/API ile aktarımı.
-- **MSA / Gage R&R ve Pilot:** Ölçüm sistemleri analizi (Gage R&R) ile operatör varyansı doğrulaması; 2 aylık paralel pilot çalışma.
-- **Model İzleme (MLOps):** Veri kayması tespiti ve değiştirilen kararlardan otomatik yeniden eğitim döngüsü.
-- **Maliyet / Yatırım:** Gemini API maliyeti ihmal edilebilir (< ~$100/yıl); asıl kazanç 85 muayene/günde %60–70 uzman süresi tasarrufu ve sıfır kaçan kusurdur. Üretim için tek seferlik on-prem GPU iş istasyonu (RTX 4090 / L40S) yeterlidir.
+- **On-Premise Modeller:** Dinomaly veya INP-Former ile anomali; fabrika verisiyle ince ayarlı (fine-tuned) YOLO segmentasyon.
+- **Yerel VLM:** Veri gizliliği için yerel GPU'da AD-Copilot veya IAD-R1 mimarisinde kompakt VLM (ör. Qwen2.5-VL).
+- **Referans Kıyaslama:** Sabit fikstür, telecentric lens ve difüz aydınlatma; şüpheli parçayı referans numuneyle doğrudan kıyaslama.
+- **SAM Ön Etiketleme:** 1.200 görselin SAM ile otomatik etiketlenip uzman kontrolüne sunulması.
+- **Metroloji ve Pilot:** MSA / Gage R&R ile operatör varyansı analizi; mevcut manuel süreçle paralel gölge pilot (öneri).
+- **ERP / MES Entegrasyonu:** İş emri ve seri no eşleşmesi; muayene kararının ERP/MES'e kalite kapısı olarak aktarımı.
 
 ### 8. Doğrulama ve Metrik Tablosu
 
-| Model / Katman | Doğrulama Ölçütü | PoC Ölçülen / Durum | Hedef Üretim Değeri |
-| :--- | :--- | :--- | :--- |
-| **PatchCore** (`wide_resnet50_2`) | Image AUROC / Gecikme | [METRİK: PatchCore AUROC] / ~1.2 sn (CPU) | > %99,2 / < 80 ms (GPU) |
-| **EfficientAD-S** (ONNX) | Image AUROC / Gecikme | [METRİK: EfficientAD AUROC] / [METRİK: CPU ms] | > %98,8 / < 25 ms (GPU) |
-| **YOLO11n Dedektör** | mAP50 / Gecikme | [METRİK: YOLO mAP50] / ~90 ms (CPU) | > %85,0 / < 15 ms (GPU) |
-| **Gemini 3.5 Flash-Lite VLM** | JSON Şema Uyumu / Tutarlılık | %100 Şema Uyumu / [METRİK: VLM Tutarlılık] | > %95 Tutarlılık (On-prem) |
-| **Füzyon Karar Kapısı** | İnsan İnceleme (Review) Oranı | [METRİK: Review Oranı] | < %15 (85 muayene/gün) |
-| **Canlı Prototip** | Dağıtım Durumu | [LİNK: HF Space] | On-Prem Air-gapped Küme |
+| Bileşen / Model | Ölçülen Metrik (PoC) | Ortam / Detay |
+| :--- | :--- | :--- |
+| **PatchCore** (`wide_resnet50_2`) | Gecikme: ~120–150 ms/görsel | CPU, 60 sağlam ref, %10 coreset |
+| **EfficientAD-S** (ONNX) | Image AUROC: 0.9868 (metal_nut) | Colab T4 (80 dk), varsa otomatik devrede |
+| **YOLO11n Dedektör** | mAP50: 0.814, mAP50-95: 0.518 | ONNX CPU ~50 ms (10 MVTec sınıfı, ~1.000 veri) |
+| **YOLO11n Hedef Sınıflar** | mAP50: 0.779 (3 hedef kategori) | scratch: 0.813, coating: 0.839, conn: 0.790 |
+| **Gemini 3.5 Flash-Lite** | Çıkarım: ~2.0 sn, 3 paralel örnek | Pydantic JSON, Myriad görsel yönlendirme |
+| **Uçtan Uca Boru Hattı** | ~4–6 sn (Erken çıkış: ~2–3 sn) | Canlı HF Spaces (ZeroGPU, CPU çıkarımı) |
+| **Füzyon Kuralı** | Ağırlık: 0.45 Anom, 0.25 Ded, 0.30 VLM | Kabul: <0.30, Ret: ≥0.70 & ≥2 kusur oyu |
 
 ---
 *AI destekli geliştirme: kod Claude/Gemini kodlama ajanlarıyla yazıldı, mimari ve kararlar aday tarafından.*
