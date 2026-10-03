@@ -508,9 +508,8 @@ def format_reasons(reasons: list[str]) -> str:
 def format_vlm_reasoning(vlm_data: dict[str, Any]) -> str:
     """Formats VLM reasoning markdown."""
     if not vlm_data.get("available", False):
-        return (
-            "> ⚠️ *VLM (Gemini) API anahtarı tanımlı olmadığı için VLM gerekçelendirmesi üretilmedi.*"
-        )
+        err = vlm_data.get("error") or "API anahtarı tanımlı değil"
+        return f"> ⚠️ *VLM (Gemini) kullanılamadı: {str(err)[:200]}*"
     if not vlm_data.get("called", False):
         return (
             "> ℹ️ *VLM motoru erken çıkış (early exit) kuralı ile atlandı. "
@@ -996,7 +995,7 @@ with gr.Blocks(
                                            ▼
                                 ┌────────────────────────┐
                                 │   VLM Akıl Yürütme     │
-                                │ Gemini 2.5 Flash (×3)  │
+                                │ Gemini 3.8 Flash (×3)  │
                                 └──────────┬─────────────┘
                                            │
                                            ▼

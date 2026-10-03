@@ -47,12 +47,12 @@ class VLMEngine:
         return bool(self.key)
 
     def _client(self):
-        if self.client is None:
-            from google import genai
-            from google.genai import types
-            self.client = genai.Client(api_key=self.key,
-                                       http_options=types.HttpOptions(timeout=int(config.VLM_TIMEOUT_S * 1000)))
-        return self.client
+        # A fresh client per request: a shared client can end up closed after an API error,
+        # which then fails every later call with "client has been closed".
+        from google import genai
+        from google.genai import types
+        return genai.Client(api_key=self.key,
+                            http_options=types.HttpOptions(timeout=int(config.VLM_TIMEOUT_S * 1000)))
 
     def _prompt(self, product_group, anomaly, detector):
         dets = detector.get("detections", []) if detector else []

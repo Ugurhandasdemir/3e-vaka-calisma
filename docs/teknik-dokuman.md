@@ -2,7 +2,7 @@
 ## Teknik Vaka Dokümanı ve Mimari Rapor
 
 ### 1. Problem ve Çözüm Özeti
-Günlük 85 adet kritik elektro-optik muayene hacmi, 1.200 adet etiketsiz parça görseli ve ayda 3 kaçan kusurun (özellikle geri çağırma riski yüksek termal modüllerde) yarattığı kalite riski temel operasyonel darboğazdır. Çözüm; gözetimsiz anomali tespiti (PatchCore / EfficientAD-S), nesne dedektörü (YOLO11n) ve görsel dil modelini (Gemini 2.5 Flash) conformal kalibrasyonla birleştiren insan-döngüde (human-in-the-loop) hibrit bir karar destek sistemidir. Sistem uzmanı hızlandırır, kaçan kusurları engeller ve AS9100 uyumlu tam izlenebilirlik sunar.
+Günlük 85 adet kritik elektro-optik muayene hacmi, 1.200 adet etiketsiz parça görseli ve ayda 3 kaçan kusurun (özellikle geri çağırma riski yüksek termal modüllerde) yarattığı kalite riski temel operasyonel darboğazdır. Çözüm; gözetimsiz anomali tespiti (PatchCore / EfficientAD-S), nesne dedektörü (YOLO11n) ve görsel dil modelini (Gemini 3.8 Flash) conformal kalibrasyonla birleştiren insan-döngüde (human-in-the-loop) hibrit bir karar destek sistemidir. Sistem uzmanı hızlandırır, kaçan kusurları engeller ve AS9100 uyumlu tam izlenebilirlik sunar.
 
 ### 2. Kullanılan AI Modelleri ve Teknolojileri
 Sistem **"iki aşamalı sistem"** mimarisidir: Aşama 1 (anomali) etiketsiz bölge önerisi (RPN rolü) üretir; Aşama 2 (YOLO/VLM) bu bölgeleri sınıflandırıp gerekçelendirir.
@@ -11,7 +11,7 @@ Sistem **"iki aşamalı sistem"** mimarisidir: Aşama 1 (anomali) etiketsiz böl
 | :--- | :--- | :--- | :--- |
 | **Anomali** *(Öneri)* | **PatchCore** (`wide_resnet50_2`) + **EfficientAD-S** (ONNX) | PatchCore sıfır eğitimle yalnız sağlam görsel bankasıyla çalışır (soğuk başlangıç). EfficientAD-S (Colab, ONNX) varsa otomatik kullanılır; CPU ~100–300 ms, GPU 2–3 ms ile F/P lideridir. | Dinomaly (~%99,6 AUROC, ViT-B omurgası CPU için ağır); Zero-shot CLIP (~%90–92 AUROC, ince kusurda zayıf). |
 | **Dedektör** *(Sınıflandırma)* | **YOLO11n** (Colab, MVTec maskelerinden etiket) | Hızlı CPU çıkarımı (~90 ms), tek komutla ONNX uyumu ve düşük bellek tüketimi. Bilinen kusurları kutularla sınırlar. | Faster/Cascade/Mask R-CNN (küçük kusurda iyi, CPU 1–3 sn ağır, ONNX ihracı riskli). |
-| **VLM** *(Muhakeme)* | **Gemini 2.5 Flash** (Pydantic JSON şema, 3 örnek tutarlılık) | Yapılandırılmış JSON garantisi. Isı haritası ve YOLO kutularını birlikte işler; Myriad (arXiv:2310.19070) uzman ipucu fikrinin eğitimsiz (in-context) görsel uyarlamasıdır. 3 paralel çağrıyla çoğunluk ve tutarlılık ($c/3$) hesaplar. | GPT-4o / Pro (pahalı/yavaş); On-prem Qwen-VL (GPU gerektirir; açık kaynak üretim hedefi). |
+| **VLM** *(Muhakeme)* | **Gemini 3.8 Flash** (Pydantic JSON şema, 3 örnek tutarlılık) | Yapılandırılmış JSON garantisi. Isı haritası ve YOLO kutularını birlikte işler; Myriad (arXiv:2310.19070) uzman ipucu fikrinin eğitimsiz (in-context) görsel uyarlamasıdır. 3 paralel çağrıyla çoğunluk ve tutarlılık ($c/3$) hesaplar. | GPT-4o / Pro (pahalı/yavaş); On-prem Qwen-VL (GPU gerektirir; açık kaynak üretim hedefi). |
 | **Füzyon** *(Karar)* | **Conformal $p$-değeri** + Ağırlıklı Skor + 3 Bölge + Risk Kuralı | Skor yerine istatistiksel belirsizlik. Ağırlıklar: Anomali 0.45, Dedektör 0.25, VLM 0.30. Yüksek riskli grupta (*Termal modül*) kusur oyunda otomatik kabul verilmez; doğrudan incelemeye gider. | Saf lojistik regresyon veya kural dışı LLM kararı (halüsinasyon, açıklanamazlık). |
 
 ### 3. Veri Yaklaşımı ve Kalibrasyon
@@ -32,7 +32,7 @@ Sistem **"iki aşamalı sistem"** mimarisidir: Aşama 1 (anomali) etiketsiz böl
        │ (Şüpheli / p ≤ 0.50)               [KABUL Önerisi]               │
        └─────────────────────────┬────────────────────────────────────────┘
                                  ▼
-                     [Gemini 2.5 Flash VLM ×3] (Isı haritası + YOLO kutuları ipucu)
+                     [Gemini 3.8 Flash VLM ×3] (Isı haritası + YOLO kutuları ipucu)
                                  │ (Tutarlılık + Kusur Tipi + Gerekçe)
                                  ▼
                    [Conformal & Risk Tabanlı Füzyon]
@@ -72,7 +72,7 @@ Sistem **"iki aşamalı sistem"** mimarisidir: Aşama 1 (anomali) etiketsiz böl
 | **PatchCore** (`wide_resnet50_2`) | Image AUROC / Gecikme | [METRİK: PatchCore AUROC] / ~1.2 sn (CPU) | > %99,2 / < 80 ms (GPU) |
 | **EfficientAD-S** (ONNX) | Image AUROC / Gecikme | [METRİK: EfficientAD AUROC] / [METRİK: CPU ms] | > %98,8 / < 25 ms (GPU) |
 | **YOLO11n Dedektör** | mAP50 / Gecikme | [METRİK: YOLO mAP50] / ~90 ms (CPU) | > %85,0 / < 15 ms (GPU) |
-| **Gemini 2.5 Flash VLM** | JSON Şema Uyumu / Tutarlılık | %100 Şema Uyumu / [METRİK: VLM Tutarlılık] | > %95 Tutarlılık (On-prem) |
+| **Gemini 3.8 Flash VLM** | JSON Şema Uyumu / Tutarlılık | %100 Şema Uyumu / [METRİK: VLM Tutarlılık] | > %95 Tutarlılık (On-prem) |
 | **Füzyon Karar Kapısı** | İnsan İnceleme (Review) Oranı | [METRİK: Review Oranı] | < %15 (85 muayene/gün) |
 | **Canlı Prototip** | Dağıtım Durumu | [LİNK: HF Space] | On-Prem Air-gapped Küme |
 
