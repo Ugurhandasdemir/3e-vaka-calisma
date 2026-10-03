@@ -74,7 +74,8 @@ class VLMEngine:
 
     def _one(self, parts):
         from google.genai import types
-        r = self._client().models.generate_content(
+        client = self._client()  # keep a reference: a temporary Client is closed when garbage-collected
+        r = client.models.generate_content(
             model=config.GEMINI_MODEL, contents=parts,
             config=types.GenerateContentConfig(response_mime_type="application/json",
                                                response_schema=VLMResult, temperature=0.4))
