@@ -183,7 +183,7 @@ def fake_run(image: Image.Image, product_group: str) -> dict[str, Any]:
         },
         "model_versions": {
             "anomaly": "efficientad-v1.0",
-            "detector": "yolo11s-seg-v1.0",
+            "detector": "yolo11n-v1.0",
             "vlm": config.GEMINI_MODEL,
             "app": config.APP_VERSION,
         },
@@ -482,7 +482,7 @@ def build_engines_dataframe(engines: dict[str, Any]) -> pd.DataFrame:
             "Durum": det_status,
             "Olasılık / Metrik": det_prob,
             "Gecikme (ms)": det_lat,
-            "Model / Backend": "YOLO11s-seg (ONNX)",
+            "Model / Backend": "YOLO11n (ONNX)",
         }
     )
 
