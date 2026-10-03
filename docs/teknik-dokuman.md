@@ -1,71 +1,68 @@
-# 3E Elektro Optik — AI Kalite Kontrol PoC Raporu
-Canlı: [HF Spaces](https://huggingface.co/spaces/ugurhandasdemir/3e-vaka-calisma) (ZeroGPU, CPU) | Kod: [GitHub](https://github.com/Ugurhandasdemir/3e-vaka-calisma)
+# 3E Elektro Optik — AI Destekli Kalite Kontrol PoC: Teknik Doküman
 
-### 1. Problem ve Çözüm Özeti
-Günlük 85 kritik muayene, 1.200 etiketsiz görsel ve 6 ayda müşteriye ulaşan 3 kusur (biri termal modül geri çağırması) mevcut manuel sürecin sınırlarını gösteriyor. Çözüm; anomali tespiti (PatchCore / EfficientAD-S), dedektör (YOLO11n) ve VLM'i (Gemini 3.5 Flash-Lite) conformal kalibrasyonla birleştiren insan-döngüde hibrit karar desteğidir. Sistem uzmanı hızlandırır, AS9100 uyumlu izlenebilirlik sunar. Canlı gecikme VLM ile ~4–6 sn, erken çıkışta ~2–3 sn'dir. Hibrit kazanımı: VLM'in tek başına kaçırdığı `misplaced` transistör montaj kusuru, anomali skoru ve risk kuralıyla yakalanıp insan incelemesine (`REVIEW`) yönlendirilmiştir.
+**Uygulama:** https://qc.ugurhandasdemir.com (yedek: https://huggingface.co/spaces/ugurhandasdemir/3e-vaka-calisma) · **Kod:** https://github.com/Ugurhandasdemir/3e-vaka-calisma
 
-### 2. Kullanılan AI Modelleri ve Teknolojileri
-Aşama 1 (anomali) bölge önerir; Aşama 2 (YOLO/VLM) sınıflandırıp gerekçelendirir.
+### 1. Problem ve çözüm
+Günde 85 ürün elle muayene ediliyor, kayıtlar kâğıt / Excel / ERP arasında tekrar giriliyor, 1.200 kusur görseli etiketsiz ve son 6 ayda 3 kusur müşteriye ulaştı. PoC, muayeneyi **iki aşamalı** bir akışa çeviriyor: **Üretim İçi Muayene** (görsel kusurlar, yapay zekâ) ve **Üretim Sonrası Test** (optik eksen, keskinlik, gevşeme, ölçüm). İki aşama aynı seri numarası ve denetim kaydını paylaşır; ürün ancak ikisi de geçerse **SEVKE HAZIR** olur. Yapay zekâ karar **önerir**, son karar her zaman muayene uzmanındadır.
 
-| Katman | Seçilen Model ve Gerekçe | Alternatifler |
-| :--- | :--- | :--- |
-| **Anomali** *(Öneri)* | **PatchCore** (`wide_resnet50_2`, 60 ref, %10 coreset, CPU ~120–150 ms) + **EfficientAD-S** (ONNX, Colab T4 metal_nut AUROC 0.9868, 80 dk). Eğitimsiz hızlı başlangıç; ONNX varsa otomatik devrededir. | Dinomaly (ViT-B CPU'da ağır); CLIP (lokalde zayıf). |
-| **Dedektör** *(Sınıflandırma)* | **YOLO11n** (ONNX CPU ~50 ms). 10 MVTec sınıfı gerçek kusurlarından 3 sınıfa Colab'da eğitildi (~1.000 artırılmış veri). Kusurları kutular. | Faster R-CNN (CPU 1–3 sn, ONNX hantal). |
-| **VLM** *(Muhakeme)* | **Gemini 3.5 Flash-Lite** (yedek: 3.8-Flash, 3.1-Flash-Lite; ~2 sn). JSON şemalı; görsel, ısı haritası ve YOLO kutularını Myriad tarzı ipucu alır; 3 paralel örnekle çoğunluk/tutarlılık üretir. | GPT-4o (maliyet); On-prem Qwen-VL (PoC'de API esnekliği). |
-| **Füzyon** *(Karar)* | **Conformal $p$ + Ağırlıklı Skor + Risk Kuralı**. Ağırlık: Anomali 0.45, Dedektör 0.25, VLM 0.30. Termal modülde kusur oyunda otomatik kabul engellenir. | Bağımsız LLM kararı; Lojistik regresyon. |
+### 2. Kullanılan yapay zekâ modelleri ve teknolojiler
+| Katman | Yöntem | Neden |
+|---|---|---|
+| Anomali (ana motor) | **PatchCore-WRN50 + AnomalyDINO (DINOv2 ViT-S/14)** ensemble; skorlar "önce birleştir, sonra kalibre et" ile tek bir conformal p-değerine çevrilir | Etiket gerektirmez, yalnız sağlam görsellerle çalışır. İki model farklı hataları yakalar; bu birleştirme bağımlı modellerde de yanlış alarm garantisini korur |
+| Kusur tipi | **YOLO11n** (Colab'da, 10 MVTec kategorisinin gerçek kusurları + augmentation, ~1.000 eğitim görseli) | Çizik / kaplama / konektör-montaj sınıfı ve konumu |
+| Gerekçe | **Gemini 3.5 Flash-Lite** (yedek 3.8 Flash, 3.1 Flash-Lite); ısı haritası ve kutular ipucu olarak verilir, 3 bağımsız cevabın tutarlılığı ölçülür | İnsanın okuyacağı açıklama; tek başına karar vermez |
+| Karar füzyonu | Ağırlıklı skor + oylama → **KABUL / İNSAN İNCELEMESİ / RET**; motorlar çelişirse ya da skor sınırdaysa insana gider; termal modülde otomatik kabul yok | Kaçan kusuru önlemek için belirsizliği insana devreder |
+| Etiketleme | Operatör kutu çizer, **MobileSAM** maskeyi çıkarır; YOLO detect/segment formatında dışa aktarılır | 1.200 etiketsiz görselin etiketlenmesi ve aktif öğrenme |
+| Son test | **Boresight** (alt-piksel retikül merkezi, görünür/termal kanal arası, titreşim sonrası kayma), **MTF** (ISO 12233 eğik kenar), **tork işareti** (boya çizgisi açı farkı); klasik görüntü işleme | Ölçüm gerektiren kusurlar; açıklanabilir ve izlenebilir |
 
-### 3. Veri Yaklaşımı ve Kalibrasyon
-- **Temsili Veri (MVTec AD - CC BY-NC-SA 4.0):** Optik lens $\rightarrow$ `metal_nut`, Termal kamera $\rightarrow$ `transistor` (Yüksek Risk), Gözetleme ünitesi $\rightarrow$ `cable`.
-- **Dedektör:** YOLO11n; 10 MVTec sınıfından gerçek kusur maskelerinden kutu üretilip çevrimdışı artırımla ~1.000 eğitim görseliyle Colab'da eğitildi (3 uygulama + vida, kapsül, hap, şişe, fındık, ahşap, fayans; val yalnızca gerçek kusurlar).
-- **Conformal Kalibrasyon:** 40 sağlam görselle $p = (1 + \sum [s_{cal} \ge s]) / (n_{cal} + 1)$ hesaplanır. Anomali olasılığı $a = \text{clip}(\log p / \log 0.02, 0, 1)$; $a \ge 0.75$ ($p \le \sim 0.05$) kusur oyudur.
-- **Erken Çıkış (Early Exit):** $p > 0.50$ ve tespit yoksa VLM atlanıp gecikme ~2–3 sn'ye iner; termal kamera erken çıkış almaz, tüm motorlar çalışır.
-- **Geri Bildirim:** Kararlar SQLite'a yazılır; indirilen YOLO formatlı ZIP aktif öğrenmeyi besler.
+### 3. Veri yaklaşımı
+- Şirket verisi olmadığından **MVTec AD** (CC BY-NC-SA 4.0) temsili veri olarak kullanıldı: metal_nut → optik lens grubu, transistor → termal kamera modülü, cable → gözetleme ünitesi.
+- Anomali motoru yalnız **sağlam** görsellerle kurulur (kategori başına 60 referans + 40 kalibrasyon görseli). Bu, etiketsiz başlangıç sorununu çözer.
+- Operatörün her kararı ve çizdiği kutu/maske etiketli veriye dönüşür; dışa aktarılan set YOLO'nun yeniden eğitimini besler.
+- Ölçüm modülleri, sonucu önceden bilinen **sentetik hedeflerle** doğrulandı.
 
-### 4. Temel Sistem Mimarisi
-```text
-[Görsel] ──► [Anomali: PatchCore/EffAD] ──(Isı haritası + p)──┐
-         ──► [Dedektör: YOLO11n] ────────(Kutular)─────────────┼─► [Erken Çıkış? (p>0.5, yok)]
-                                                               │    ├── Evet: [KABUL]
-                                                               └──► └── Hayır: [Gemini 3.5 ×3]
-                                                                                   │
-[Karar Füzyonu] ◄──────────────────────────────────────────────────────────────────┘
- ├── KABUL Önerisi   : skor < 0.30 & tüm motorlar sağlam
- ├── RET Önerisi     : skor ≥ 0.70 & ≥2 kusur oyu
- └── İNSAN İNCELEMESİ: çelişki / sınır skor / termal risk / tek motor
+### 4. Mimari
 ```
-*Güven = $\text{tutarlılık} \times \max(\text{skor}, 1 - \text{skor})$. Tek motor asla otomatik karar veremez.*
+[Görsel + seri no] → Anomali ensemble (WRN50 + DINOv2) → ısı haritası + conformal p
+                   → YOLO11n (kusur tipi, kutu) → Gemini (gerekçe, 3 cevap)
+                   → Füzyon: KABUL | İNSAN İNCELEMESİ | RET → Uzman kararı (+ kutu / SAM etiketi)
+[Son test]         → Boresight (mrad, GEÇTİ/KALDI) · MTF50 · Tork işareti
+Kalite kapısı: görsel KABUL + boresight GEÇTİ → SEVKE HAZIR; eksik → BEKLEMEDE; başarısız → RET
+Kayıt: SQLite (görsel, model sürümleri, AI önerisi, insan kararı, kullanıcı, zaman) → CSV / YOLO etiket
+Altyapı: Gradio + Docker; ev sunucusu (Cloudflare Tunnel, kalıcı disk, 2 GB bellek sınırı) + Hugging Face yedeği
+```
 
-### 5. Güvenlik, Denetim ve Savunma Sanayii Uyumluluğu
-- **API ve Hijyen:** `GEMINI_API_KEY` ortam değişkenindedir. Yüklemeler 10 MB ile sınırlı; görsel RGB'ye çevrilip en fazla 1024 px'e küçültülür (VLM'e 768 px gider), meta veri taşınmaz. Gradio kuyruğu eşzamanlı işi 2 ile sınırlar.
-- **Savunma Sanayii:** PoC'de veri Google API'ye çıkar; üretimde savunma gizliliği gereği veri dışarı çıkamaz, sistem hava boşluklu (air-gapped) yerel GPU'da çalışır.
-- **AS9100 İzlenebilirlik:** Görsel, model sürümleri (`anomaly`, `detector`, `vlm`, `app`), $p$-değeri, AI önerisi, nihai karar, muayeneci adı ve zaman damgası SQLite denetim izinde (audit trail) saklanır.
-- **Karar Otoritesi:** AI karar vermez, önerir. İnceleme (`REVIEW`) sonucunda "AI önerisini onayla" seçeneği kapanır; uzman Kabul veya Ret seçmek zorundadır.
+### 5. Ölçülen sonuçlar (365 gerçek MVTec test görseli, ayar / test ayrımı)
+| Ölçüm | Sonuç |
+|---|---|
+| Anomali AUROC (test) | WRN50 0,988 → **ensemble 0,995** |
+| p ≤ 0,05'te yakalama / yanlış alarm | WRN50 %91,2 / %4,3 → **ensemble %92,9 / %0** |
+| Uçtan uca (anomali + YOLO, test) | **0 kaçan kusur, 0 yanlış ret**, %20,2 insan incelemesi |
+| YOLO11n mAP50 | 0,814 (uygulama kategorilerinde 0,779) |
+| Boresight / MTF50 / tork açısı (sentetik) | maks 0,06 px · maks %1,9 · maks 1,34° (19/19 doğru) |
+| Gecikme | ~4–8 sn (VLM dahil, CPU) |
 
-### 6. Sistemin Sınırlılıkları
-1. **Veri Örtüşmesi:** MVTec test kümesi YOLO eğitim/artırımında kullanıldığından demo örneklerinde örtüşme (overlap) olabilir; laboratuvar koşulları fabrika parlamalarını tam içermez.
-2. **Fiziksel Ölçüm:** Optik eksen kaçıklığı ve konektör gevşekliği tek 2D fotoğraftan ölçülemez; kolimatör ve tork/çekme aparatıyla fiziksel ölçüm şarttır (arayüzde uyarılır).
-3. **VLM Kalibrasyonu:** VLM öz-güveni (`self_confidence`) kalibre değildir; çoğunluk oranıyla ($p_{vlm} = \text{oran} \times \bar{c}$) dengelenmiştir.
-4. **Altyapı:** HF Spaces geçici disk (ephemeral) kullanır; veriler sıfırlanabilir. PoC'de veri Google API'ye çıkar; kalibrasyon 40 görselle sınırlıdır.
+Ayrıntılar: `eval_results/RAPOR.md`, `eval_results/BIRLESTIRME.md`.
 
-### 7. Üretime Geçiş Yol Haritası
-- **On-Premise Modeller:** Dinomaly veya INP-Former ile anomali; fabrika verisiyle ince ayarlı (fine-tuned) YOLO segmentasyon.
-- **Yerel VLM:** Veri gizliliği için yerel GPU'da AD-Copilot veya IAD-R1 mimarisinde kompakt VLM (ör. Qwen2.5-VL).
-- **Referans Kıyaslama:** Sabit fikstür, telecentric lens ve difüz aydınlatma; şüpheli parçayı referans numuneyle doğrudan kıyaslama.
-- **SAM Ön Etiketleme:** 1.200 görselin SAM ile otomatik etiketlenip uzman kontrolüne sunulması.
-- **Metroloji ve Pilot:** MSA / Gage R&R ile operatör varyansı analizi; mevcut manuel süreçle paralel gölge pilot (öneri).
-- **ERP / MES Entegrasyonu:** İş emri ve seri no eşleşmesi; muayene kararının ERP/MES'e kalite kapısı olarak aktarımı.
+### 6. Güvenlik
+- API anahtarı yalnız ortam değişkeninde / secret'ta tutulur; kodda ve repoda yoktur. Yüklemeler 10 MB ile sınırlı, RGB'ye çevrilip küçültülür; eşzamanlı iş sınırı vardır.
+- Her karar izlenebilir: görsel, model sürümleri, AI önerisi, insan kararı, kullanıcı ve zaman (AS9100 izlenebilirlik mantığı).
+- Yapay zekâ karar vermez, önerir; belirsiz durumda "AI önerisini onayla" seçeneği kapanır, uzman seçmek zorundadır.
+- PoC'de görseller Google API'ye gider; üretimde veri kurum dışına çıkmamalıdır (bkz. bölüm 8).
 
-### 8. Doğrulama ve Metrik Tablosu
+### 7. Sınırlılıklar
+- Veri temsilidir: MVTec lens değildir; şeffaf / yansıtıcı yüzeylerde başarı düşebilir (MVTec AD 2'de en iyi yöntemler ~%59 AU-PRO).
+- YOLO, MVTec test görsellerinin bir kısmıyla eğitildi; uçtan uca sonuçlar dedektör açısından iyimserdir.
+- Kalibrasyon seti 40 görsel: p-değeri çözünürlüğü 1/41; %1 yanlış alarm iddiası için sınıf başına ~300 görsel gerekir. İnceleme oranının %20 olmasının ana nedeni budur.
+- Ölçüm modülleri sentetik hedeflerle doğrulandı; MTF ve tork sonuçları henüz kalite kapısına kaydedilmiyor. Konektör tutma kuvveti, NETD gibi testler donanım gerektirir.
+- VLM'in kendi güven değeri kalibre değildir; tutarlılık ölçülür ama doğru cevabı garanti etmez.
 
-| Bileşen / Model | Ölçülen Metrik (PoC) | Ortam / Detay |
-| :--- | :--- | :--- |
-| **PatchCore** (`wide_resnet50_2`) | Gecikme: ~120–150 ms/görsel | CPU, 60 sağlam ref, %10 coreset |
-| **EfficientAD-S** (ONNX) | Image AUROC: 0.9868 (metal_nut) | Colab T4 (80 dk), varsa otomatik devrede |
-| **YOLO11n Dedektör** | mAP50: 0.814, mAP50-95: 0.518 | ONNX CPU ~50 ms (10 MVTec sınıfı, ~1.000 veri) |
-| **YOLO11n Hedef Sınıflar** | mAP50: 0.779 (3 hedef kategori) | scratch: 0.813, coating: 0.839, conn: 0.790 |
-| **Gemini 3.5 Flash-Lite** | Çıkarım: ~2.0 sn, 3 paralel örnek | Pydantic JSON, Myriad görsel yönlendirme |
-| **Uçtan Uca Boru Hattı** | ~4–6 sn (Erken çıkış: ~2–3 sn) | Canlı HF Spaces (ZeroGPU, CPU çıkarımı) |
-| **Füzyon Kuralı** | Ağırlık: 0.45 Anom, 0.25 Ded, 0.30 VLM | Kabul: <0.30, Ret: ≥0.70 & ≥2 kusur oyu |
+### 8. Üretime geçiş
+1. **Veri:** Kontrollü aydınlatma ve fikstürle gerçek görüntü toplama; 1.200 görselin SAM ile ön etiketlenip uzman onayından geçmesi; sınıf başına ≥300 sağlam kalibrasyon görseli.
+2. **On-prem:** VLM'in kurum içi küçük bir modelle (ör. Qwen-VL, AD-Copilot / IAD-R1 yaklaşımı) değiştirilmesi; GPU sunucu, rol tabanlı yetkilendirme, değiştirilemez denetim kaydı.
+3. **Modeller:** Gerçek veriyle YOLO segmentasyon eğitimi; Dinomaly2 gibi çok sınıflı tek anomali modelinin denenmesi; füzyon ağırlıklarının operatör kararlarından öğrenilmesi.
+4. **Son test:** Kolimatör, ısıtılmış hedef ve kenar hedefinin istasyona entegrasyonu; ölçüm belirsizliği ve tolerans tampon bölgesi; akıllı sıkma aletlerinden tork–açı eğrisi verisi.
+5. **Doğrulama ve entegrasyon:** Mevcut süreçle paralel gölge pilot, MSA / Gage R&R; ERP/MES'e seri no ve iş emri entegrasyonu; model izleme ve periyodik yeniden eğitim.
 
 ---
-*AI destekli geliştirme: kod Claude/Gemini kodlama ajanlarıyla yazıldı, mimari ve kararlar aday tarafından.*
+*Geliştirmede AI kodlama asistanları (Claude, Gemini) kullanıldı; mimari, yöntem seçimleri ve deney tasarımı aday tarafından yapıldı.*

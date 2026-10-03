@@ -20,7 +20,9 @@ Bu proje, **3E Elektro Optik** elektro-optik ve elektro-mekanik ürün grupları
 
 Sistem; muayene uzmanının yerini almak yerine operatörü hızlandırmak, insan yorgunluğundan kaynaklanan gözden kaçırmaları engellemek ve AS9100 standartlarında denetlenebilir bir kalite kontrol kaydı oluşturmak üzere **insan-döngüde (human-in-the-loop)** hibrit karar destek mekanizması sunar.
 
-Canlı demo Hugging Face Spaces üzerinde **ZeroGPU donanımında CPU çıkarımı (CPU inference)** ile çalışmaktadır.
+**Canlı bağlantılar:** [qc.ugurhandasdemir.com](https://qc.ugurhandasdemir.com) (ana) · [Hugging Face Space](https://huggingface.co/spaces/ugurhandasdemir/3e-vaka-calisma) (yedek) · [GitHub](https://github.com/Ugurhandasdemir/3e-vaka-calisma)
+
+Çıkarım CPU üzerinde çalışır. Ana adres Dockerfile ile kendi sunucusunda yayınlanır (`Dockerfile`, port 7860); Hugging Face Space aynı kodun yedeğidir.
 
 ---
 
@@ -28,12 +30,16 @@ Canlı demo Hugging Face Spaces üzerinde **ZeroGPU donanımında CPU çıkarım
 
 Sistem, parça seri numaralarını ve denetim kayıtlarını ortak paylaşan iki temel üretim aşaması ve birleşik kalite kapısından oluşur:
 
-1. **🏭 1. Aşama — Üretim İçi Görsel Muayene (Visual AI):**
-   - **Görsel AI Mimarisi:** visual AI: anomaly PatchCore-WRN50 (+DINOv2 ensemble planned), YOLO11n, Gemini
-   - Montaj öncesi ve montaj esnasında lens, sensör ve gövde yüzey kusurları denetlenir; uzman operatör MobileSAM etkileşimli segmentasyonu ile etiketleme yaparak aktif öğrenme döngüsünü besler.
-2. **🧪 2. Aşama — Üretim Sonrası Test (Post-Production Optical Measurement):**
-   - **Optik Ölçüm:** post-production: OpenCV sub-pixel reticle measurement, max error 0.06 px on synthetic targets
-   - Montajı tamamlanan elektro-optik sistemlerin kolimatör retikülü üzerinde Huber M-tahmincisiyle alt-piksel optik eksen (boresight) kaçıklığı (mrad), görünür-termal kanal hizalaması ve titreşim öncesi/sonrası mekanik eksen kayması (drift) ölçülür.
+1. **🏭 1. Aşama — Üretim İçi Muayene:**
+   - **Anomali (topluluk):** PatchCore-WRN50 + AnomalyDINO (DINOv2 ViT-S/14). "Önce birleştir, sonra kalibre et": birleşik skor, kategori başına 40 sağlam kalibrasyon görseliyle conformal $p$-değerine çevrilir.
+   - **Kusur dedektörü:** YOLO11n (mAP50 0,814; uygulama kategorilerinde 0,779).
+   - **VLM:** Gemini 3.5 Flash-Lite (yedek 3.8 Flash / 3.1 Flash-Lite); ısı haritası ve kutu ipuçlarıyla, 3 örnekleme ve tutarlılık kontrolüyle.
+   - **Füzyon:** KABUL / İNSAN İNCELEMESİ / RET; termal modül için ek risk kuralı.
+   - **Operatör etiketleme:** kutu çizimi + MobileSAM maskeleri, YOLO detect/segment dışa aktarımı.
+2. **🧪 2. Aşama — Üretim Sonrası Test:**
+   - **Boresight:** OpenCV alt-piksel retikül (sentetik hedeflerde en fazla 0,06 px hata), kanal arası hizalama, titreşim öncesi/sonrası kayma.
+   - **MTF:** ISO 12233 eğik kenar; MTF50 hatası görünür kanalda %1,5, termalde %1,9.
+   - **Tork işareti:** boya çizgisi açı farkı; 19/19 doğru karar, en büyük açı hatası 1,34°.
 3. **🚦 Kalite Kapısı (Quality Gate):**
    - Parça seri numarası bazında izlenir: Yalnızca görsel muayene insan kararı **KABUL** (ACCEPT) ve son test **GEÇTİ** (PASS) olduğunda (ve titreşim kayması tolerans içindeyse) **SEVKE HAZIR** (🟢) statüsü verilir; aşamalardan biri eksikse **BEKLEMEDE** (🟡), herhangi bir aşama başarısızsa **RET** (🔴) verilir.
 
@@ -73,83 +79,42 @@ Sistemi 1 dakikada canlı olarak test etmek için:
 
 ---
 
-## 🏗️ Sistem Mimarisi
+## 📏 Ölçülen Başarım
+
+365 gerçek MVTec test görseli üzerinde:
+- Topluluk anomali motoru: test AUROC **0,995**; $p \le 0{,}05$ eşiğinde kusur yakalama **%92,9**, yanlış alarm **%0**.
+- Uçtan uca (anomali + YOLO), test bölümü: **0 kaçan kusur, 0 yanlış ret, %20,2 insan incelemesi**.
+
+Ayrıntılar: `eval_results/RAPOR.md` ve `eval_results/BIRLESTIRME.md`. Değerlendirme kodu: `eval/`.
+
+---
+
+## 🏗️ Akış Özeti
 
 ```text
-[ Muayene Görseli (JPG/PNG) ]
-           │
-           ├─────────────────────────────────────────┐
-           ▼                                         ▼
-┌─────────────────────────┐               ┌─────────────────────────┐
-│     Anomali Motoru      │               │     Kusur Dedektörü     │
-│ EfficientAD-S (ONNX)    │               │     YOLO11n (ONNX)      │
-│  (Yedek: PatchCore)     │               │   (ultralytics inference)│
-└──────────┬──────────────┘               └──────────┬──────────────┘
-           │ [Isı haritası + p-değeri]               │ [Kutular + Sınıf + Güven]
-           └────────────────┬────────────────────────┘
-                            │
-                   ┌────────┴────────┐
-                   │   Erken Çıkış   │──(p > 0.50 & Dedektör boş & Termal Değil)──► [ KABUL ÖNERİSİ ]
-                   │   Kontrolü      │
-                   └────────┬────────┘
-                            │ (Şüphe / kusur var veya Yüksek Riskli Termal Grup)
-                            ▼
-                 ┌─────────────────────────┐
-                 │    VLM Akıl Yürütme     │
-                 │  gemini-3.5-flash-lite  │ (Orijinal + Isı Haritası + Kutular)
-                 │ (Yedek: 3.8-fl, 3.1-fl) │
-                 └──────────┬──────────────┘
-                            │ [Kusur Tipi + Muhakeme + Şiddet]
-                            ▼
-                 ┌─────────────────────────┐
-                 │     Hibrit Füzyon       │ Conformal p + Ağırlıklı Oylama
-                 │  & Belirsizlik Kapısı   │ Anomali Olasılığı = clip(log p / log 0.02)
-                 └──────────┬──────────────┘
-                            │
-       ┌────────────────────┼────────────────────┐
-       ▼                    ▼                    ▼
-[ KABUL ÖNERİSİ ]   [ İNSAN İNCELEMESİ ]   [ RET ÖNERİSİ ]
-       │                    │                    │
-       └────────────────────┼────────────────────┘
-                            ▼
-                 ┌─────────────────────────┐
-                 │ Operatör Nihai Kararı   │ (Kabul / Ret / İnceleme)
-                 └──────────┬──────────────┘
-                            │
-                            ▼
-                 ┌─────────────────────────┐
-                 │     SQLite Veritabanı   │ (Kayıt, Metrikler, AS9100 İzlenebilirlik)
-                 └──────────┬──────────────┘
-                            │
-                            ├──────────────────────────┐
-                            ▼                          ▼
-                 [ ERP/MES CSV Dışa Aktarım ]   [ YOLO ZIP Aktif Öğrenme ]
+Görsel ─► Anomali (PatchCore + AnomalyDINO, conformal p) ─┐
+      └─► Dedektör (YOLO11n) ───────────────────────────┤
+                                                         ├─► Erken çıkış (sağlam & termal değil) ─► KABUL
+                                                         ▼
+                                              VLM (Gemini, 3 örnekleme)
+                                                         ▼
+                                   Füzyon: KABUL / İNSAN İNCELEMESİ / RET
+                                                         ▼
+                                     Operatör kararı ─► SQLite ─► CSV, YOLO ZIP
 ```
 
 ---
 
-## 💻 Teknoloji Yığını ve Model Detayları
+## 💻 Teknoloji Yığını
 
-- **Arayüz:** Gradio 6 (Blocks API, Soft Theme, mobil uyumlu)
-- **Anomali Tespiti (Öneri Katmanı):**
-  - **PatchCore:** `wide_resnet50_2` omurgası ile referans hafıza bankası yedeği (CPU ~120–150 ms).
-  - **EfficientAD-S:** `notebooks/01_efficientad.ipynb` ile eğitilmiş ONNX modelleri (`metal_nut` Image AUROC 0.9868). `models/anomaly_<kategori>.onnx` mevcut olduğunda **otomatik devreye girer**.
-- **Kusur Dedektörü (Tespit Katmanı):**
-  - **YOLO11n DETECTION:** `notebooks/02_yolo11n.ipynb` ile 10 MVTec AD sınıfından gerçek kusurlarla ve çevrimdışı veri artırımıyla (~1.000 eğitim görseli) eğitilmiş ONNX nesne tespit modeli.
-  - **Metrikler:** Genel test kümesinde **mAP50: 0.814** (mAP50-95: 0.518), uygulamada kullanılan 3 hedef kategoride **mAP50: 0.779** (`scratch`: 0.813, `coating`: 0.839, `connector_assembly`: 0.790).
-- **Görsel Muhakeme (VLM Katmanı):**
-  - **Google Gemini 3.5 Flash-Lite** (Birincil model). Kota veya hata durumunda otomatik devreye giren yedek modeller: **gemini-3.8-flash**, **gemini-3.1-flash-lite**.
-  - Pydantic yapılandırılmış JSON çıktısı, sıcaklık 0.4, 3 paralel sorgu ile çoğunluk oylaması.
-- **Karar Füzyonu:**
-  - Conformal prediction kalibrasyonu: Anomali olasılığı $a = \text{clip}(\log p / \log 0.02, 0, 1)$ olarak logaritmik ölçeklenir.
-  - Ağırlıklar: Anomali: 0.45, Dedektör: 0.25, VLM: 0.30.
-  - **Yüksek Risk Kuralı:** Geri çağırma geçmişi olan yüksek riskli ürün grubu (*Termal kamera modülü*) **asla erken çıkış almaz**, tüm modeller çalıştırılır ve herhangi bir kusur oyunda otomatik kabul engellenir.
-- **Temsili Ürün Grupları (MVTec AD Eşleşmesi):**
-  - Optik lens grubu $\rightarrow$ `metal_nut`
-  - Termal kamera modülü $\rightarrow$ `transistor` (Yüksek Risk)
-  - Gözetleme ünitesi $\rightarrow$ `cable`
-- **Operatör Etiketleme ve SAM Desteği:** Operatör arayüzünde etkileşimli segmentasyon ve kutu etiketleme için Segment Anything (SAM / MobileSAM) entegrasyonu **geliştiriliyor** (aktif geliştirme aşamasındadır).
-- **Veri Tabanı ve Dışa Aktarma:** SQLite (`data/qc.db`), CSV denetim izi ve YOLO formatında aktif öğrenme ZIP paketi.
+- **Arayüz:** Gradio 6.
+- **Anomali:** PatchCore (`wide_resnet50_2`) + AnomalyDINO (DINOv2 ViT-S/14), conformal kalibrasyon (`calib.py`). EfficientAD ONNX yalnızca `models/anomaly_<kategori>.onnx` dosyası varsa kullanılır; depoda böyle bir model gönderilmez.
+- **Dedektör:** YOLO11n (`notebooks/02_yolo11n.ipynb`), mAP50 0,814 (uygulama kategorilerinde 0,779).
+- **VLM:** Gemini 3.5 Flash-Lite, yedek 3.8 Flash ve 3.1 Flash-Lite; yapılandırılmış JSON çıktısı.
+- **Etiketleme:** MobileSAM (`engines/sam.py`).
+- **Ölçüm:** `engines/boresight.py`, `engines/mtf.py`, `engines/torque_mark.py`.
+- **Depolama:** SQLite (`data/qc.db`), CSV denetim izi, YOLO ZIP.
+- **Ürün grupları (MVTec eşleşmesi):** Optik lens grubu → `metal_nut`; Termal kamera modülü → `transistor` (yüksek risk); Gözetleme ünitesi → `cable`.
 
 ---
 
@@ -157,29 +122,32 @@ Sistemi 1 dakikada canlı olarak test etmek için:
 
 ```text
 3e-vaka-calisma/
-├── app.py                     # Gradio kullanıcı arayüzü ve olay yönetimi
-├── config.py                  # Model eşikleri, kategoriler ve sistem sabitleri
-├── pipeline.py                # Muayene iş akışı (Anomali -> Dedektör -> Erken Çıkış / VLM -> Füzyon)
-├── fusion.py                  # Karar füzyon kuralları ve conformal anomali olasılık hesabı
-├── calib.py                   # Conformal p-değeri kalibrasyon modülü
-├── storage.py                 # SQLite veritabanı kayıt ve aktif öğrenme ZIP dışa aktarımı
+├── app.py                 # Gradio arayüzü
+├── config.py              # Eşikler, kategoriler, sabitler
+├── pipeline.py            # Muayene akışı
+├── fusion.py              # Karar füzyonu
+├── calib.py               # Conformal kalibrasyon
+├── storage.py             # SQLite ve dışa aktarım
 ├── engines/
-│   ├── anomaly.py             # EfficientAD-S (ONNX) ve PatchCore (wide_resnet50_2) motoru
-│   ├── detector.py            # YOLO11n nesne tespit motoru (ultralytics / ONNX)
-│   └── vlm.py                 # Gemini VLM istemcisi (3.5 Flash-Lite + yedekler)
-├── models/
-│   ├── yolo.onnx              # Eğitilmiş YOLO11n tespit modeli (ONNX)
-│   ├── yolo_metrics.json      # YOLO11n doğrulama ve test metrikleri (mAP50: 0.814)
-│   └── calib_*.npy            # Kategori bazlı kalibrasyon skorları
-├── notebooks/
-│   ├── 01_efficientad.ipynb   # EfficientAD-S eğitim ve ONNX dışa aktarım not defteri
-│   └── 02_yolo11n.ipynb       # YOLO11n tespit eğitimi ve çevrimdışı artırım not defteri
-├── docs/
-│   ├── teknik-dokuman.md      # Ayrıntılı teknik mimari ve doğrulama raporu
-│   ├── teknik-dokuman.pdf     # Yazdırılabilir ve dağıtılabilir teknik doküman
-│   └── CONTRACT.md            # Modüller arası veri yapıları ve sözleşmeler
-└── samples/                   # Kategori bazlı sağlam ve kusurlu muayene test görselleri
+│   ├── anomaly.py         # PatchCore + AnomalyDINO
+│   ├── detector.py        # YOLO11n
+│   ├── vlm.py             # Gemini istemcisi
+│   ├── sam.py             # MobileSAM
+│   ├── boresight.py       # Alt-piksel retikül, kanal hizası, drift
+│   ├── mtf.py             # ISO 12233 eğik kenar MTF
+│   └── torque_mark.py     # Tork işareti denetimi
+├── eval/                  # Değerlendirme betikleri
+├── eval_results/          # RAPOR.md, BIRLESTIRME.md, split.json
+├── models/                # YOLO ve kalibrasyon dosyaları
+├── notebooks/             # Eğitim not defterleri
+├── docs/                  # teknik-dokuman, CONTRACT.md
+├── samples/               # Örnek görseller
+├── test_gorselleri/       # Değerlendirme için hazır test görselleri (+ BENIOKU.md)
+├── Dockerfile             # Ana adresin dağıtımı
+└── tests/
 ```
+
+`test_gorselleri/` içinde 3 ürün grubu için sağlam/kusurlu muayene görselleri ve boresight, MTF, tork işareti örnekleri vardır. Beklenen sonuçlar `test_gorselleri/BENIOKU.md` dosyasındadır. Uygulamanın Hakkında sekmesinden ZIP olarak da indirilebilir.
 
 ---
 
@@ -212,13 +180,11 @@ Uygulama yerel ağınızda `http://0.0.0.0:7860` adresinde sunulacaktır.
 
 ---
 
-## 📂 `models/` Klasörü ve Model Eğitimi
+## 📂 `models/` Klasörü
 
-Sistem açılışta `models/` klasöründeki modelleri arar. Modeller mevcut olmadığında sistem **zarif bir şekilde (graceful fallback)** alternatiflere geçer:
-
-- `models/anomaly_<kategori>.onnx`: `notebooks/01_efficientad.ipynb` ile eğitilen EfficientAD-S modelleri. Varsa otomatik olarak kullanılır, aksi takdirde PatchCore (`wide_resnet50_2`) hafıza bankası yedeği devrededir.
-- `models/calib_<kategori>.npy`: Conformal prediction kalibrasyon skor dizileri.
-- `models/yolo.onnx`: `notebooks/02_yolo11n.ipynb` ile eğitilen YOLO11n ONNX tespit modeli. (Yoksa dedektör devre dışı kalır ve ağırlık diğer motorlara paylaştırılır).
+- `models/calib_<kategori>.npy`: Kalibrasyon skorları.
+- `models/yolo.onnx`: Eğitilmiş YOLO11n modeli. Yoksa dedektör devre dışı kalır, ağırlık diğer motorlara dağılır.
+- `models/anomaly_<kategori>.onnx` (isteğe bağlı): EfficientAD ONNX modeli; yalnızca dosya varsa kullanılır.
 
 ---
 
@@ -244,9 +210,11 @@ Kalite kontrol sistemlerinin üretim hattında zamanla olgunlaşması için akti
 
 ## ⚠️ Sınırlılıklar
 
-- **Temsili Veri Seti:** Bu çalışma bir kavram kanıtlama (PoC) olup gerçek elektro-optik parça verileri yerine MVTec Anomaly Detection veri kümesi (`metal_nut`, `transistor`, `cable`) kullanılmıştır.
-- **Fiziksel Ölçüm Sınırı:** Optik eksen kaçıklığı ve konektör tork gevşekliği gibi kusurlar salt 2D görüntüden %100 doğrulanamaz; optik kolimatör ve tork ölçer sensör verisi entegrasyonu gerektirir.
-- **Geçici Disk:** Hugging Face Spaces ücretsiz katmanında disk kalıcı değildir; konteyner yeniden başladığında SQLite veritabanı sıfırlanır. Demo tutarlılığı için açılışta temsili geçmiş veriler (`seed_demo`) yüklenir.
+- **Temsili veri:** MVTec AD (`metal_nut`, `transistor`, `cable`); gerçek 3E parça verisi kullanılmamıştır.
+- **İyimser sonuç riski:** YOLO, MVTec test görsellerinin bir kısmıyla eğitilmiştir; uçtan uca sonuçlar bu nedenle iyimser olabilir.
+- **Kayıt eksiği:** MTF ve tork işareti sonuçları henüz veritabanına kaydedilmiyor.
+- **Bulut çağrısı:** PoC'de görseller Google API'ye gider; üretimde kapalı devre (on-prem) çalışılmalıdır.
+- **Geçici disk:** Hugging Face Space'te disk kalıcı değildir; açılışta temsili geçmiş veriler yüklenir.
 
 ---
 

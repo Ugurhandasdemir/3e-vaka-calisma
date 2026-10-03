@@ -451,7 +451,7 @@ def build_engines_dataframe(engines: dict[str, Any]) -> pd.DataFrame:
     an_status = "Aktif" if an_avail else f"Devre dışı ({an_err or 'model yok'})"
     an_prob = f"{an.get('prob', 0.0):.2f} (p={an.get('p_value', 1.0):.3f})" if an_avail else "—"
     an_lat = an.get("latency_ms", 0)
-    an_backend = an.get("backend") or "EfficientAD / PatchCore"
+    an_backend = an.get("backend") or "PatchCore + DINOv2"
     rows.append(
         {
             "Motor": "Anomali Tespiti",
@@ -1703,6 +1703,7 @@ with gr.Blocks(
         # TAB 1: ÜRETİM İÇİ MUAYENE
         # ===================================================================
         with gr.Tab("🏭 Üretim İçi Muayene", id="tab_muayene"):
+            gr.Markdown("Denemek için örnek görseller: **Hakkında** sekmesindeki *Test görsellerini indir (ZIP)* düğmesi.")
             gr.Markdown(
                 """
                 **Aşama Amacı:** Üretim ve montaj hattındaki elektro-optik bileşenlerin (lens, sensör, gövde, kablo) yüzey çizikleri, kaplama deformasyonları ve montaj kusurları denetlenir.  
@@ -1773,7 +1774,7 @@ with gr.Blocks(
                     # Heatmap and Detector side-by-side
                     with gr.Row():
                         heatmap_view = gr.Image(
-                            label="Anomali Isı Haritası (EfficientAD / PatchCore)",
+                            label="Anomali Isı Haritası (PatchCore + DINOv2)",
                             interactive=False,
                         )
                         detector_view = gr.Image(
@@ -2269,6 +2270,7 @@ with gr.Blocks(
         # TAB 4: HAKKINDA
         # ===================================================================
         with gr.Tab("ℹ️ Hakkında", id="tab_hakkinda"):
+            gr.DownloadButton("Test görsellerini indir (ZIP)", value=str(Path(__file__).parent / "test_gorselleri.zip"), variant="primary")
             gr.Markdown(
                 f"""
                 ## 3E Elektro Optik — AI Destekli Görsel Kalite Kontrol ve Boresight PoC
@@ -2278,24 +2280,36 @@ with gr.Blocks(
 
                 ---
 
-                ### 🏭 1. Aşama: Üretim İçi Görsel Muayene (Visual AI)
+                ### 🏭 1. Aşama: Üretim İçi Muayene
                 Montaj öncesi ve montaj esnasında parça yüzey kusurları, kaplama hataları ve montaj anomalileri denetlenir:
-                - **Görsel AI Mimarisi:** visual AI: anomaly PatchCore-WRN50 (+DINOv2 ensemble planned), YOLO11n, Gemini
-                - **Anomali Motoru:** PatchCore-WRN50 (wide_resnet50_2) referans bellek bankası ve EfficientAD-S (ONNX) ile piksel düzeyinde anomali haritası ve kalibre edilmiş conformal $p$-değeri ($a = \\text{{clip}}(\\log p / \\log 0.02, 0, 1)$). Gelecek aşamada DINOv2 topluluk (ensemble) mimarisi planlanmaktadır.
-                - **Kusur Dedektörü:** YOLO11n ONNX nesne tespiti ile sınır kutusu koordinatları, kusur sınıfı ve güven skoru hesabı.
-                - **Görsel Muhakeme (VLM):** Google Gemini multimodal modeli ile çoklu örnekleme (×3), kusur tipi çoğunluk oylaması ve Türkçe gerekçelendirme.
-                - **Operatör Doğrulama & SAM:** MobileSAM etkileşimli segmentasyon ile uzman operatörün işaretlediği kusurların maskelenmesi ve YOLO aktif öğrenme veri paketine (ZIP) aktarılması.
+                - **Anomali Motoru (topluluk):** PatchCore (WideResNet50) ile AnomalyDINO (DINOv2 ViT-S/14) birlikte çalışır. Skorlar önce birleştirilir, sonra kalibre edilir ("önce birleştir, sonra kalibre et"). Kalibrasyon, kategori başına 40 sağlam görsel üzerinden conformal $p$-değeri ile yapılır. Anomali olasılığı $a = \\text{{clip}}(\\log p / \\log 0.02, 0, 1)$ olarak hesaplanır.
+                - **Kusur Dedektörü:** YOLO11n ile sınır kutusu, kusur sınıfı ve güven skoru üretilir (mAP50: 0,814; uygulamadaki kategorilerde 0,779).
+                - **Görsel Muhakeme (VLM):** Gemini 3.5 Flash-Lite (yedekler: 3.8 Flash ve 3.1 Flash-Lite) modeline ısı haritası ve kutu ipuçlarıyla birlikte görsel verilir. Üç örnekleme ve tutarlılık kontrolüyle Türkçe gerekçe üretilir.
+                - **Füzyon:** Motor çıktıları birleştirilerek **KABUL**, **İNSAN İNCELEMESİ** veya **RET** önerisi verilir. Termal modül grubunda ek risk kuralı vardır: bu grup erken çıkış almaz ve şüpheli durumda otomatik kabul edilmez.
+                - **Operatör Etiketleme:** Operatör kusur çevresine kutu çizer, MobileSAM kusur maskesini çıkarır. Etiketler YOLO detect ve segment formatında dışa aktarılır.
 
                 ---
 
-                ### 🧪 2. Aşama: Üretim Sonrası Test (Post-Production Optical Measurement)
-                Montaj hattından çıkan elektro-optik sistemlerin nihai fonksiyonel kabulünde doğrudan hassas optik ölçüm yapılır:
-                - **Optik Ölçüm Yöntemi:** post-production: OpenCV sub-pixel reticle measurement, max error 0.06 px on synthetic targets
-                - **Alt-Piksel Retikül Tespiti:** Kolimatör hedef görsellerinde kutup analizi, top-hat morfolojik arka plan düzeltme ve Huber M-tahmincisi ile retikül eksen kesişimi tespit edilir. Sentetik kolimatör hedeflerinde azami merkez hatası 0.06 piksel altındadır.
-                - **Açısal Hata Bağıntısı (mrad):** Alt-piksel merkez kaçıklığı ($\\Delta x, \\Delta y$), sensör piksel boyutu ($p$, $\\mu\\text{{m}}$) ve odak uzaklığı ($f$, $\\text{{mm}}$) parametreleriyle fiziksel açısal uzaya (mrad) dönüştürülür:
+                ### 🧪 2. Aşama: Üretim Sonrası Test
+                Montaj hattından çıkan elektro-optik sistemlerin nihai kabulünde doğrudan ölçüm yapılır:
+                - **Boresight:** OpenCV ile alt-piksel retikül tespiti yapılır. Sentetik hedeflerde en fazla 0,06 piksel hata ölçülmüştür. Açısal hata piksel boyutu ve odak uzaklığı ile mrad'a çevrilir:
                   $$\\theta_{{\\text{{mrad}}}} = 1000 \\times \\arctan\\left(\\frac{{\\Delta r \\times p \\times 10^{{-3}}}}{{f}}\\right), \\quad \\Delta r = \\sqrt{{\\Delta x^2 + \\Delta y^2}}$$
-                - **Kanal Arası Hizalama:** Görünür (visible) ve termal (thermal) optik kanallarının bağımsız eksen ölçümleri mrad uzayında kıyaslanarak eşmerkezlilik ($\\Delta\\text{{Az}}, \\Delta\\text{{El}}$) doğrulanır.
-                - **Titreşim Kayma (Drift) Analizi:** Çevresel titreşim/şok testleri öncesinde ve sonrasında eksen ölçümleri kıyaslanarak sahadaki gevşeme ve mekanik stabilite sapmaları elenir.
+                  Görünür ve termal kanalın birbirine göre hizalaması ile titreşim öncesi ve sonrası eksen kayması da ölçülür.
+                - **MTF (keskinlik):** ISO 12233 eğik kenar yöntemiyle MTF50 hesaplanır. Sentetik hedeflerde MTF50 hatası görünür kanalda %1,5, termal kanalda %1,9 düzeyindedir.
+                - **Tork işareti:** Vida kafasındaki ve gövdedeki boya çizgisinin açı farkı ölçülür. Sentetik örneklerde 19 örneğin 19'unda doğru karar verilmiş, en büyük açı hatası 1,34° olmuştur.
+
+                ---
+
+                ### 📏 Ölçülen Başarım
+                365 gerçek MVTec test görseli üzerinde ölçülmüştür:
+                - Topluluk anomali motoru: test AUROC **0,995**. $p \\le 0{{,}}05$ eşiğinde kusur yakalama oranı **%92,9**, yanlış alarm **%0**.
+                - Uçtan uca (anomali + YOLO) test bölümünde: **0 kaçan kusur**, **0 yanlış ret**, örneklerin **%20,2**'si insan incelemesine gider.
+
+                **Sınırlılıklar:**
+                - Veri temsilidir (MVTec AD); gerçek 3E parça verisi kullanılmamıştır.
+                - YOLO, MVTec test görsellerinin bir kısmıyla eğitildi. Bu nedenle uçtan uca sonuçlar iyimser olabilir.
+                - MTF ve tork işareti sonuçları henüz veritabanına kaydedilmiyor.
+                - Bu PoC'de görseller Google API'ye gönderilir. Üretimde kapalı devre (on-prem) çalışılmalıdır.
 
                 ---
 
@@ -2315,7 +2329,7 @@ with gr.Blocks(
                          ▼                                        ▼
                 ┌────────────────────────┐               ┌────────────────────────┐
                 │    Anomali Motoru      │               │    Kusur Dedektörü     │
-                │ PatchCore-WRN50 / EffAD│               │      YOLO11n (ONNX)    │
+                │ PatchCore + DINOv2     │               │      YOLO11n (ONNX)    │
                 └──────────┬─────────────┘               └──────────┬─────────────┘
                            │                                        │
                            └───────────────┬────────────────────────┘

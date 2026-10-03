@@ -20,7 +20,7 @@ missing engine has `available=False` and an `error` string.
   "heatmap_overlay": PIL.Image | None,
   "detection_image": PIL.Image | None,
   "engines": {
-    "anomaly":  {"available": bool, "backend": "efficientad-onnx" | "patchcore" | None,
+    "anomaly":  {"available": bool, "backend": "efficientad-onnx" | "patchcore" | "patchcore+dinov2" | None,
                  "score": float, "p_value": float, "prob": float, "latency_ms": int, "error": str | None},
     "detector": {"available": bool, "detections": [{"label": str, "label_tr": str, "conf": float,
                  "box": [x1, y1, x2, y2]}], "prob": float, "latency_ms": int, "error": str | None},
