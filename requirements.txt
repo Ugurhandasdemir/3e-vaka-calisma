@@ -11,3 +11,4 @@ pydantic
 huggingface_hub
 spaces
 onnx
+gradio_image_annotation

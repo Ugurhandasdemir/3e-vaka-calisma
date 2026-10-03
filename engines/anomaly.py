@@ -70,11 +70,37 @@ def _nn_dist(q, bank, chunk=1024):
     return torch.cat(out)
 
 
+def bank_file(category: str):
+    return config.MODELS_DIR / f"bank_{category}_{BACKBONE}.npy"
+
+
+def bank_meta_file(category: str):
+    return config.MODELS_DIR / f"bank_{category}_{BACKBONE}.json"
+
+
 def _build_bank(category):
     import torch
     with _lock:
         if category in _banks:
             return _banks[category]
+
+    bf = bank_file(category)
+    mf = bank_meta_file(category)
+    if bf.exists():
+        bank_arr = np.load(bf)
+        bank = torch.from_numpy(bank_arr).float()
+        ref = 1.0
+        if mf.exists():
+            try:
+                meta = json.loads(mf.read_text())
+                ref = float(meta.get("ref", 1.0))
+            except Exception:
+                ref = 1.0
+        res = {"bank": bank, "ref": max(ref, 1e-6)}
+        with _lock:
+            _banks[category] = res
+        return res
+
     files = sorted((config.SAMPLES_DIR / category / "good").glob("*.png"))
     if not files:
         raise RuntimeError(f"samples/{category}/good bos")
@@ -96,6 +122,12 @@ def _build_bank(category):
         maxes.extend(d.max(dim=1).values.tolist())
     ref = float(np.mean(maxes)) if maxes else 1.0
     res = {"bank": bank, "ref": max(ref, 1e-6)}
+    try:
+        config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
+        np.save(bf, bank.cpu().numpy().astype(np.float16))
+        mf.write_text(json.dumps({"ref": float(ref), "category": category, "backbone": BACKBONE}, indent=2))
+    except Exception:
+        pass
     with _lock:
         _banks[category] = res
     return res

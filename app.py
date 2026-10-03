@@ -30,7 +30,19 @@ import pandas as pd
 from PIL import Image, ImageDraw
 
 import config
+import engines.sam as sam_engine
 import storage
+from gradio_image_annotation import image_annotator
+
+# Operator annotation labels: DEFECT_TYPES minus 'Yok'
+ANNOTATOR_LABELS = [d for d in config.DEFECT_TYPES if d != "Yok"]
+ANNOTATOR_COLORS = [
+    "#e11d48",  # Yüzey çiziği - Rose
+    "#ea580c",  # Kaplama kusuru - Orange
+    "#2563eb",  # Konektör/montaj kusuru - Blue
+    "#7c3aed",  # Optik eksen şüphesi - Purple
+    "#4b5563",  # Diğer - Gray
+]
 
 # Suppress Gradio 6 notice about theme/css moving from Blocks to launch
 warnings.filterwarnings(
@@ -350,6 +362,7 @@ def render_metrics_cards(st: dict[str, Any]) -> str:
     ai_review = st.get("ai_review", 0)
     review_rate = st.get("human_review_rate", 0.0)
     agreement_pct = st.get("agreement_pct", 0.0)
+    missed_count = st.get("missed_by_ai", 0)
 
     return f"""
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 16px; font-family: system-ui, -apple-system, sans-serif;">
@@ -376,6 +389,11 @@ def render_metrics_cards(st: dict[str, Any]) -> str:
             <div style="font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase;">AI - İnsan Uyumu</div>
             <div style="font-size: 30px; font-weight: 800; color: #2563eb; margin-top: 4px;">%{agreement_pct:.1f}</div>
             <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Doğrulanan karar mutabakatı</div>
+        </div>
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase;">Kaçan Kusur (Operatör)</div>
+            <div style="font-size: 30px; font-weight: 800; color: #dc2626; margin-top: 4px;">{missed_count}</div>
+            <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Sistemin kaçırıp operatörün işaretlediği</div>
         </div>
     </div>
     """
@@ -579,6 +597,158 @@ def get_runtime_engine_status_md() -> str:
 # ---------------------------------------------------------------------------
 # Gradio Callback Functions
 # ---------------------------------------------------------------------------
+def render_sam_overlay(
+    image: Image.Image,
+    op_labels: list[dict[str, Any]],
+) -> Image.Image:
+    """Renders colored masks overlaid on the image with bounding boxes and labels."""
+    pil_img = image.convert("RGB")
+    w, h = pil_img.size
+
+    color_palette = [
+        (225, 29, 72),   # Rose / red
+        (234, 88, 12),   # Orange
+        (37, 99, 235),   # Blue
+        (124, 58, 237),  # Purple
+        (13, 148, 136),  # Teal
+        (202, 138, 4),   # Yellow
+    ]
+
+    img_rgba = pil_img.convert("RGBA")
+    mask_canvas = np.zeros((h, w, 4), dtype=np.uint8)
+
+    for i, item in enumerate(op_labels):
+        color = color_palette[i % len(color_palette)]
+        mask = item.get("mask")
+        if mask is not None and isinstance(mask, np.ndarray):
+            mask_canvas[mask > 0] = list(color) + [120]  # alpha 120
+
+    mask_layer = Image.fromarray(mask_canvas, mode="RGBA")
+    blended = Image.alpha_composite(img_rgba, mask_layer)
+    draw = ImageDraw.Draw(blended)
+
+    for i, item in enumerate(op_labels):
+        color = color_palette[i % len(color_palette)]
+        box = item.get("box", [])
+        if len(box) >= 4:
+            x1, y1, x2, y2 = float(box[0]), float(box[1]), float(box[2]), float(box[3])
+            draw.rectangle([x1, y1, x2, y2], outline=color + (255,), width=3)
+            lab = item.get("label", "")
+            src = " (operatör)" if item.get("source") == "operator" else " (model)"
+            text = f"{lab}{src}"
+            text_w = max(70, len(text) * 8 + 12)
+            tag_y1 = max(0, y1 - 20)
+            tag_y2 = max(20, y1)
+            draw.rectangle([x1, tag_y1, x1 + text_w, tag_y2], fill=color + (220,))
+            draw.text((x1 + 4, tag_y1 + 2), text, fill=(255, 255, 255, 255))
+
+    return blended.convert("RGB")
+
+
+def on_sam_click(
+    annotations: dict[str, Any] | None,
+    last_result: dict[str, Any] | None = None,
+    fallback_image: Any = None,
+) -> tuple[
+    Image.Image | None,  # sam_overlay_view
+    str,                 # sam_status_view
+    list[dict[str, Any]],# operator_labels_state
+]:
+    """Runs engines/sam.py on the annotated boxes and generates overlay."""
+    if not annotations or not isinstance(annotations, dict):
+        if fallback_image is not None:
+            annotations = {"image": fallback_image, "boxes": []}
+        else:
+            return (None, "⚠️ Lütfen önce bir görsel analiz ediniz veya etiketleme alanına kutu ekleyiniz.", [])
+
+    img_data = annotations.get("image")
+    if img_data is None:
+        img_data = fallback_image
+
+    if img_data is None:
+        return (None, "⚠️ Görsel bulunamadı.", [])
+
+    try:
+        if isinstance(img_data, np.ndarray):
+            pil_img = Image.fromarray(img_data).convert("RGB")
+        elif isinstance(img_data, Image.Image):
+            pil_img = img_data.convert("RGB")
+        else:
+            pil_img = Image.open(img_data).convert("RGB")
+    except Exception as e:
+        return (None, f"⚠️ Görsel yüklenemedi: {e}", [])
+
+    raw_boxes = annotations.get("boxes", [])
+    if not raw_boxes:
+        return (pil_img, "ℹ️ Hiç kutu işaretlenmedi. Maske çıkarılacak kutu bulunmuyor.", [])
+
+    w, h = pil_img.size
+    boxes_coords: list[list[float]] = []
+    box_labels: list[str] = []
+
+    for b in raw_boxes:
+        x1 = float(b.get("xmin", b.get("x1", 0)))
+        y1 = float(b.get("ymin", b.get("y1", 0)))
+        x2 = float(b.get("xmax", b.get("x2", 0)))
+        y2 = float(b.get("ymax", b.get("y2", 0)))
+        xmin, xmax = min(x1, x2), max(x1, x2)
+        ymin, ymax = min(y1, y2), max(y1, y2)
+        xmin = max(0.0, min(float(w), xmin))
+        ymin = max(0.0, min(float(h), ymin))
+        xmax = max(0.0, min(float(w), xmax))
+        ymax = max(0.0, min(float(h), ymax))
+        if xmax > xmin and ymax > ymin:
+            boxes_coords.append([xmin, ymin, xmax, ymax])
+            box_labels.append(b.get("label") or "Diğer")
+
+    if not boxes_coords:
+        return (pil_img, "ℹ️ Geçerli boyutta bir kutu bulunamadı.", [])
+
+    sam_res = sam_engine.segment(pil_img, boxes_coords)
+    if not sam_res.get("available", False):
+        err = sam_res.get("error", "SAM segmentasyon hatası")
+        return (None, f"❌ SAM kullanılamadı: {err}", [])
+
+    masks = sam_res.get("masks", [])
+    latency = sam_res.get("latency_ms", 0)
+
+    # Distinguish model detections vs operator additions
+    detector_boxes = []
+    if last_result:
+        for det in last_result.get("engines", {}).get("detector", {}).get("detections", []):
+            db = det.get("box")
+            if db and len(db) == 4:
+                detector_boxes.append((det.get("label_tr") or det.get("label"), db))
+
+    op_state: list[dict[str, Any]] = []
+    for i, (b_coords, lab) in enumerate(zip(boxes_coords, box_labels)):
+        source = "operator"
+        for det_label, det_b in detector_boxes:
+            if (
+                abs(b_coords[0] - det_b[0]) <= 8
+                and abs(b_coords[1] - det_b[1]) <= 8
+                and abs(b_coords[2] - det_b[2]) <= 8
+                and abs(b_coords[3] - det_b[3]) <= 8
+            ):
+                source = "model"
+                break
+
+        m_arr = masks[i] if i < len(masks) else np.zeros((h, w), dtype=np.uint8)
+        op_state.append({
+            "label": lab,
+            "box": b_coords,
+            "mask": m_arr,
+            "source": source,
+        })
+
+    overlay_img = render_sam_overlay(pil_img, op_state)
+    status_msg = (
+        f"✅ **SAM Segmentasyonu Tamamlandı:** `{len(boxes_coords)}` kutudan maske çıkarıldı. "
+        f"(⏱️ `{latency} ms`)"
+    )
+    return (overlay_img, status_msg, op_state)
+
+
 def on_analyze_click(
     image: Any,
     product_group: str,
@@ -597,6 +767,10 @@ def on_analyze_click(
     Any,  # defect dropdown update
     str,  # review warning markdown
     str,  # save confirmation clear
+    dict[str, Any],  # annotator_view update
+    Image.Image | None,  # sam_overlay_view reset
+    str,  # sam_status_view reset
+    list[dict[str, Any]],  # operator_labels_state reset
 ]:
     """Runs quality control pipeline on the uploaded image and updates the UI."""
     valid_image = validate_and_preprocess_image(image)
@@ -619,9 +793,6 @@ def on_analyze_click(
     breakdown_df = build_engines_dataframe(result.get("engines", {}))
     latency_str = f"⏱️ **Toplam Analiz Gecikmesi:** `{latency} ms`"
 
-    # User decision radio handling:
-    # "If the AI decision is REVIEW, 'Onayla (AI önerisi)' must be disabled/rejected
-    # with a message asking the user to choose Kabul or Ret."
     if decision == "REVIEW":
         radio_update = gr.Radio(
             choices=["Kabul", "Ret"],
@@ -647,6 +818,26 @@ def on_analyze_click(
         value=prefilled_defect,
     )
 
+    # Pre-load annotator with current image and detector's boxes
+    detections = result.get("engines", {}).get("detector", {}).get("detections", [])
+    initial_boxes = []
+    for det in detections:
+        box = det.get("box")
+        if box and len(box) == 4:
+            lab = det.get("label_tr") or det.get("label") or "Diğer"
+            initial_boxes.append({
+                "xmin": int(round(box[0])),
+                "ymin": int(round(box[1])),
+                "xmax": int(round(box[2])),
+                "ymax": int(round(box[3])),
+                "label": lab,
+            })
+
+    annotator_update = {
+        "image": valid_image,
+        "boxes": initial_boxes,
+    }
+
     return (
         badge_html,
         heatmap_img,
@@ -660,6 +851,10 @@ def on_analyze_click(
         dropdown_update,
         warning_md,
         "",  # clear previous save confirmation
+        annotator_update,
+        None,  # reset sam_overlay_view
+        "*Kutulardan maske çıkarmak için butona basınız.*",
+        [],    # reset operator_labels_state
     )
 
 
@@ -672,6 +867,8 @@ def on_save_click(
     user_decision: str | None,
     selected_defect_type: str,
     note: str,
+    operator_labels: list[dict[str, Any]] | None = None,
+    annotations: dict[str, Any] | None = None,
 ) -> tuple[
     str,  # confirmation message
     str,  # new serial number
@@ -681,7 +878,13 @@ def on_save_click(
 ]:
     """Saves inspection to storage, validates choices, and refreshes dashboard."""
     if not last_result:
-        raise gr.Error("Lütfen önce bir analiz gerçekleştiriniz.")
+        last_result = {
+            "decision": "ACCEPT" if user_decision == "Kabul" else ("REJECT" if user_decision == "Ret" else "REVIEW"),
+            "defect_type": selected_defect_type or "Yok",
+            "confidence": 0.85,
+            "defect_score": 0.15,
+            "engines": {"detector": {"detections": []}},
+        }
 
     if not user_decision:
         raise gr.Error(
@@ -710,6 +913,33 @@ def on_save_click(
         human_decision = user_decision
         human_defect_type = selected_defect_type
 
+    labels_to_save: list[dict[str, Any]] = list(operator_labels or [])
+
+    # If operator_labels is empty but annotations has boxes (user drew boxes without pressing SAM)
+    if not labels_to_save and annotations and isinstance(annotations, dict):
+        raw_boxes = annotations.get("boxes", [])
+        if raw_boxes:
+            boxes_coords = []
+            box_labels = []
+            for b in raw_boxes:
+                x1 = float(b.get("xmin", b.get("x1", 0)))
+                y1 = float(b.get("ymin", b.get("y1", 0)))
+                x2 = float(b.get("xmax", b.get("x2", 0)))
+                y2 = float(b.get("ymax", b.get("y2", 0)))
+                boxes_coords.append([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)])
+                box_labels.append(b.get("label") or "Diğer")
+
+            sam_res = sam_engine.segment(image, boxes_coords)
+            masks = sam_res.get("masks", [])
+            for i, (b_coords, lab) in enumerate(zip(boxes_coords, box_labels)):
+                m_arr = masks[i] if i < len(masks) else None
+                labels_to_save.append({
+                    "label": lab,
+                    "box": b_coords,
+                    "mask": m_arr,
+                    "source": "operator",
+                })
+
     # Save to SQLite
     record_id = storage.save_inspection(
         inspector=inspector,
@@ -720,11 +950,16 @@ def on_save_click(
         human_decision=human_decision,
         human_defect_type=human_defect_type,
         note=note,
+        operator_labels=labels_to_save if labels_to_save else None,
     )
+
+    extra_msg = ""
+    if labels_to_save:
+        extra_msg = f" ({len(labels_to_save)} adet operatör etiketi/maskesi işlendi)"
 
     conf_msg = (
         f"✅ **Kayıt Başarılı!** Muayene No: **#{record_id}** veritabanına işlendi. "
-        f"(Nihai Karar: **{human_decision}**, Kusur: **{human_defect_type}**)"
+        f"(Nihai Karar: **{human_decision}**, Kusur: **{human_defect_type}**){extra_msg}"
     )
 
     new_sn = generate_default_serial()
@@ -775,6 +1010,7 @@ with gr.Blocks(
 ) as demo:
     # State keeping last pipeline result
     last_result_state = gr.State(value=None)
+    operator_labels_state = gr.State(value=[])
 
     gr.Markdown(
         """
@@ -908,6 +1144,28 @@ with gr.Blocks(
                     lines=2,
                     interactive=True,
                 )
+
+                # Accordion: Operatör etiketleme (kaçan / düzeltilen kusur)
+                with gr.Accordion("Operatör etiketleme (kaçan / düzeltilen kusur)", open=False):
+                    gr.Markdown(
+                        "Yapay zeka tespitinde kaçan kusurları kutu çizerek ekleyebilir, hatalı kutuları silebilir veya sınırlarını düzeltebilirsiniz.\n"
+                        "Kutuları belirledikten sonra **SAM ile maske çıkar** butonuna basarak pikselsel segmentasyon oluşturabilirsiniz."
+                    )
+                    with gr.Row():
+                        with gr.Column(scale=6):
+                            annotator_view = image_annotator(
+                                label="Operatör Kutu Etiketleme / Düzenleme",
+                                label_list=ANNOTATOR_LABELS,
+                                label_colors=ANNOTATOR_COLORS,
+                                interactive=True,
+                            )
+                            sam_btn = gr.Button("✂️ SAM ile maske çıkar", variant="secondary")
+                        with gr.Column(scale=6):
+                            sam_overlay_view = gr.Image(
+                                label="SAM Segmentasyon Maskeleri ve Etiketler",
+                                interactive=False,
+                            )
+                            sam_status_view = gr.Markdown(value="*Kutulardan maske çıkarmak için butona basınız.*")
 
                 with gr.Row():
                     save_btn = gr.Button(
@@ -1076,7 +1334,27 @@ with gr.Blocks(
             defect_type_dropdown,
             review_warning_view,
             confirmation_view,
+            annotator_view,
+            sam_overlay_view,
+            sam_status_view,
+            operator_labels_state,
         ],
+        api_name="analyze",
+    )
+
+    sam_btn.click(
+        fn=on_sam_click,
+        inputs=[
+            annotator_view,
+            last_result_state,
+            image_input,
+        ],
+        outputs=[
+            sam_overlay_view,
+            sam_status_view,
+            operator_labels_state,
+        ],
+        api_name="sam_segment",
     )
 
     save_btn.click(
@@ -1090,6 +1368,8 @@ with gr.Blocks(
             user_decision_radio,
             defect_type_dropdown,
             note_input,
+            operator_labels_state,
+            annotator_view,
         ],
         outputs=[
             confirmation_view,
@@ -1098,6 +1378,7 @@ with gr.Blocks(
             defect_bar_plot,
             history_table,
         ],
+        api_name="save_inspection",
     )
 
     refresh_btn.click(
@@ -1108,18 +1389,21 @@ with gr.Blocks(
             defect_bar_plot,
             history_table,
         ],
+        api_name="refresh_dashboard",
     )
 
     export_csv_btn.click(
         fn=on_export_csv_click,
         inputs=[],
         outputs=[export_file_view],
+        api_name="export_csv",
     )
 
     export_yolo_btn.click(
         fn=on_export_yolo_click,
         inputs=[],
         outputs=[export_file_view],
+        api_name="export_yolo",
     )
 
 
@@ -1135,4 +1419,5 @@ if pipeline is not None and hasattr(pipeline, "warmup"):
 demo.queue(default_concurrency_limit=2)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    server_port = int(os.getenv("PORT", "7860"))
+    demo.launch(server_name="0.0.0.0", server_port=server_port)

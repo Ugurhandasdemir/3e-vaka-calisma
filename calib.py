@@ -9,6 +9,10 @@ import config
 _cache = {}
 
 
+def calib_patchcore_file(category: str):
+    return config.MODELS_DIR / f"calib_{category}_patchcore_{BACKBONE}.npy"
+
+
 class Calibrator:
     def __init__(self, category, engine):
         self.category = category
@@ -23,7 +27,7 @@ class Calibrator:
         if self.engine.backend == "efficientad-onnx" and config.calib_file(self.category).exists():
             scores = np.load(config.calib_file(self.category)).astype(np.float64).ravel()
         else:
-            f = config.MODELS_DIR / f"calib_{self.category}_patchcore_{BACKBONE}.npy"
+            f = calib_patchcore_file(self.category)
             if f.exists():
                 scores = np.load(f).astype(np.float64).ravel()
             else:

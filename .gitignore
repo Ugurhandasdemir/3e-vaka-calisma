@@ -15,3 +15,5 @@ docs/.*.log
 
 # Environment variables
 .env
+docs/.*.jsonl
+docs/teknik-dokuman.html
