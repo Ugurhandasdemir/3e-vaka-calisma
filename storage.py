@@ -1168,6 +1168,7 @@ def seed_demo() -> None:
         b_count = cursor.fetchone()[0]
 
     if count > 0 or b_count > 0:
+        _seed_post_production()
         return
 
     demo_records = [
@@ -1468,6 +1469,93 @@ def seed_demo() -> None:
             drift_mrad=b_rec["drift_mrad"],
             params=b_rec["params"],
         )
+    _seed_post_production()
+
+
+def _seed_post_production() -> None:
+    """Seeds demo boresight/MTF/torque rows, each table only when it is empty."""
+    init_db()
+    with get_db() as conn:
+        counts = {
+            t: conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+            for t in ("boresight_tests", "mtf_tests", "torque_tests")
+        }
+    note = {"note": "demo kaydı"}
+    if counts["boresight_tests"] == 0:
+        save_boresight("Ahmet Yılmaz", "LN-DEMO-001", "son test", "Görünür", 0.9, -0.5, 0.12, 0.5, "PASS", params=dict(note))
+        save_boresight("Caner Demir", "TC-DEMO-002", "son test", "Termal", 2.1, -1.7, 1.2, 0.5, "FAIL", params=dict(note))
+    if counts["mtf_tests"] == 0:
+        save_mtf("Ahmet Yılmaz", "LN-DEMO-001", "Görünür", 0.31, 45.0, 0.08, 5.0, 0.25, "PASS", params=dict(note))
+        save_mtf("Caner Demir", "TC-DEMO-002", "Termal", 0.17, 20.0, 0.03, 5.0, 0.25, "FAIL", params=dict(note))
+        save_mtf("Ahmet Yılmaz", "LN-DEMO-003", "Görünür", 0.26, 40.0, 0.06, 12.0, 0.25, "UNCERTAIN", params=dict(note))
+    if counts["torque_tests"] == 0:
+        save_torque("Ahmet Yılmaz", "LN-DEMO-001", "son test", "kırmızı", 1.8, 0.6, 5.0, "PASS", params=dict(note))
+        save_torque("Caner Demir", "TC-DEMO-002", "son test", "sarı", 30.0, 9.5, 5.0, "FAIL", params=dict(note))
+        save_torque("Caner Demir", "TC-DEMO-004", "titreşim sonrası", "kırmızı", None, None, 5.0, "UNCERTAIN", params=dict(note))
+
+
+_PP_LABEL = {"PASS": "🟢 GEÇTİ", "FAIL": "🔴 KALDI", "UNCERTAIN": "🟡 BELİRSİZ"}
+
+
+def post_production_stats() -> dict[str, dict[str, Any]]:
+    """Per post-production test: total / pass / fail / uncertain counts and pass rate (%)."""
+    init_db()
+    tables = {"Optik Eksen": "boresight_tests", "MTF": "mtf_tests", "Tork İşareti": "torque_tests"}
+    out: dict[str, dict[str, Any]] = {}
+    with get_db() as conn:
+        for name, table in tables.items():
+            c = {"PASS": 0, "FAIL": 0, "UNCERTAIN": 0}
+            for res, n in conn.execute(f"SELECT result, COUNT(*) FROM {table} GROUP BY result"):
+                c[_normalize_result(res)] += n
+            total = sum(c.values())
+            out[name] = {
+                "total": total, "pass": c["PASS"], "fail": c["FAIL"], "uncertain": c["UNCERTAIN"],
+                "pass_rate": round(100.0 * c["PASS"] / total, 1) if total else 0.0,
+            }
+    return out
+
+
+def list_post_production(limit: int = 100) -> list[dict[str, Any]]:
+    """Unified boresight/MTF/torque rows, newest first."""
+    def fmt(v: Any, spec: str, unit: str) -> str:
+        return f"{format(v, spec)} {unit}" if isinstance(v, (int, float)) else "-"
+
+    def tol(prefix: str, v: Any, spec: str, unit: str) -> str:
+        return f"{prefix} {fmt(v, spec, unit)}" if v is not None else "-"
+
+    rows: list[dict[str, Any]] = []
+    for r in list_boresight(limit=limit):
+        rows.append({"_ts": r.get("ts") or "", "Seri No": r.get("serial_no"), "Muayeneci": r.get("inspector"),
+                     "Test": "Optik Eksen", "Aşama": r.get("stage") or "-",
+                     "Ölçüm": fmt(r.get("err_mrad"), ".2f", "mrad"),
+                     "Tolerans/Spec": tol("≤", r.get("tolerance_mrad"), ".2f", "mrad"),
+                     "_res": r.get("result")})
+    for r in list_mtf(limit=limit):
+        rows.append({"_ts": r.get("ts") or "", "Seri No": r.get("serial_no"), "Muayeneci": r.get("inspector"),
+                     "Test": "MTF", "Aşama": "-",
+                     "Ölçüm": "MTF50 " + fmt(r.get("mtf50_cyc_px"), ".2f", "cy/px"),
+                     "Tolerans/Spec": tol("≥", r.get("spec_mtf50"), ".2f", "cy/px"),
+                     "_res": r.get("result")})
+    for r in list_torque(limit=limit):
+        a = r.get("angle_deg")
+        rows.append({"_ts": r.get("ts") or "", "Seri No": r.get("serial_no"), "Muayeneci": r.get("inspector"),
+                     "Test": "Tork İşareti", "Aşama": r.get("stage") or "-",
+                     "Ölçüm": fmt(abs(a) if isinstance(a, (int, float)) else None, ".1f", "°"),
+                     "Tolerans/Spec": tol("≤", r.get("tolerance_deg"), ".1f", "°"),
+                     "_res": r.get("result")})
+    rows.sort(key=lambda x: x["_ts"], reverse=True)
+    out = []
+    for r in rows[:limit]:
+        ts = r["_ts"]
+        try:
+            ts = datetime.fromisoformat(ts).astimezone().strftime("%Y-%m-%d %H:%M:%S")
+        except Exception:
+            pass
+        d = {"Zaman": ts}
+        d.update({k: v for k, v in r.items() if not k.startswith("_")})
+        d["Sonuç"] = _PP_LABEL[_normalize_result(r["_res"])]
+        out.append(d)
+    return out
 
 
 class SerialStatus(dict):

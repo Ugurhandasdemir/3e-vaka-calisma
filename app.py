@@ -985,6 +985,40 @@ def on_refresh_dashboard() -> tuple[str, pd.DataFrame, pd.DataFrame]:
     )
 
 
+_PP_COLS = ["Zaman", "Seri No", "Muayeneci", "Test", "Aşama", "Ölçüm", "Tolerans/Spec", "Sonuç"]
+
+
+def render_post_production_cards(pp: dict[str, dict[str, Any]]) -> str:
+    """HTML metric cards, one per post-production test type."""
+    cards = ""
+    for name, s in pp.items():
+        cards += f"""
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase;">{name}</div>
+            <div style="font-size: 30px; font-weight: 800; color: #111827; margin-top: 4px;">{s['total']}</div>
+            <div style="font-size: 16px; font-weight: 700; margin-top: 6px;">
+                <span style="color: #059669;" title="Geçti">{s['pass']}</span> /
+                <span style="color: #dc2626;" title="Kaldı">{s['fail']}</span> /
+                <span style="color: #d97706;" title="Belirsiz">{s['uncertain']}</span>
+            </div>
+            <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Geçti / Kaldı / Belirsiz · Geçme oranı %{s['pass_rate']:.1f}</div>
+        </div>"""
+    return f'<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 16px; font-family: system-ui, -apple-system, sans-serif;">{cards}</div>'
+
+
+def on_refresh_post_production() -> tuple[str, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Post-production dashboard: cards, result-count chart, non-pass table, full table."""
+    pp = storage.post_production_stats()
+    chart = pd.DataFrame(
+        [{"Test": t, "Sonuç": lbl, "Adet": s[k]} for t, s in pp.items()
+         for lbl, k in (("GEÇTİ", "pass"), ("KALDI", "fail"), ("BELİRSİZ", "uncertain"))]
+    )
+    rows = storage.list_post_production(100)
+    full = pd.DataFrame(rows, columns=_PP_COLS)
+    bad = pd.DataFrame([r for r in rows if not r["Sonuç"].startswith("🟢")][:30], columns=_PP_COLS)
+    return render_post_production_cards(pp), chart, bad, full
+
+
 def on_export_csv_click() -> str:
     """Exports CSV and returns its path."""
     csv_path = storage.export_csv()
@@ -2316,6 +2350,21 @@ with gr.Blocks(
                 interactive=False,
             )
 
+            gr.Markdown("---")
+            gr.Markdown("### 🧪 Üretim Sonrası Test Panosu")
+            gr.Markdown("*Optik eksen (boresight), MTF ve tork işareti testlerinin sonuç özeti.*")
+            _pp0 = on_refresh_post_production()
+            pp_cards_view = gr.HTML(value=_pp0[0])
+            pp_bar_plot = gr.BarPlot(
+                value=_pp0[1], x="Test", y="Adet", color="Sonuç",
+                title="Test Tipine Göre Sonuç Dağılımı",
+                tooltip=["Test", "Sonuç", "Adet"], y_lim=[0, None], height=280,
+            )
+            gr.Markdown("#### 🚨 Son Kaldı / Belirsiz Testler")
+            pp_bad_table = gr.Dataframe(value=_pp0[2], interactive=False)
+            gr.Markdown("#### 📋 Son üretim sonrası testleri")
+            pp_table = gr.Dataframe(value=_pp0[3], interactive=False)
+
         # ===================================================================
         # TAB 4: HAKKINDA
         # ===================================================================
@@ -2671,6 +2720,12 @@ with gr.Blocks(
     for _box in _serial_boxes:
         _wire_serial_fanout(_box, "input")
 
+    # --- Ortak muayeneci: iki kutu (aşama 1 ve son test sekmeleri) senkron ---
+    _inspector_boxes = [inspector_input, inspector_input_boresight]
+    for _ib in _inspector_boxes:
+        _io = [b for b in _inspector_boxes if b is not _ib]
+        _ib.input(fn=_make_fanout(len(_io)), inputs=[_ib], outputs=_io, api_name=False, show_progress="hidden")
+
     serial_lookup_btn.click(
         fn=on_lookup_serial,
         inputs=[serial_lookup_input],
@@ -2698,11 +2753,19 @@ with gr.Blocks(
         api_name=False,
     )
 
-    _dash_outputs = [metrics_cards_view, defect_bar_plot, history_table, quality_gate_table]
+    _dash_outputs = [metrics_cards_view, defect_bar_plot, history_table, quality_gate_table,
+                     pp_cards_view, pp_bar_plot, pp_bad_table, pp_table]
 
     def _refresh_all_dashboard():
         m, d, h = on_refresh_dashboard()
-        return m, d, h, get_quality_gate_dataframe()
+        return (m, d, h, get_quality_gate_dataframe(), *on_refresh_post_production())
+
+    refresh_btn.click(
+        fn=on_refresh_post_production,
+        inputs=[],
+        outputs=[pp_cards_view, pp_bar_plot, pp_bad_table, pp_table],
+        api_name="refresh_post_production",
+    )
 
     _others_s1 = [b for b in _serial_boxes if b is not serial_no_input]
     _others_s2 = [b for b in _serial_boxes if b is not serial_input_boresight]
