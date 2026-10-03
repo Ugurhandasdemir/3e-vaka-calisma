@@ -21,14 +21,7 @@ Hatalı durumlarda operatör kusuru görsel üzerinde bir kutu çizerek işaretl
 Şirket verisine erişimim olmadığı için MVTec AD veri setini temsili veri olarak kullandım. Metal somun görselleri optik lens grubunu, transistor görselleri termal kamera modülünü, kablo görselleri de gözetleme ünitesini temsil ediyor. Anomali modeli her ürün grubu için yalnızca 60 sağlam referans görselle kuruluyor ve 40 sağlam görselle kalibre ediliyor, yani başlangıçta etiketli veriye ihtiyaç duymuyor. Bu, şirketteki etiketsiz 1.200 görsel sorununa doğrudan bir cevap. Sistem kullanıldıkça operatörün kararları ve çizdiği etiketler birikiyor ve bunlar dışa aktarılarak YOLO modelinin yeniden eğitilmesinde kullanılabiliyor. Ölçüm modüllerini, sonucu önceden bilinen sentetik test görüntüleriyle doğruladım.
 
 ### 4. Temel teknik mimari
-```
-[Görsel + seri no] → Anomali tespiti (PatchCore + DINOv2) → ısı haritası ve güven değeri
-                   → YOLO11n (kusur türü ve konumu) → Gemini (gerekçe)
-                   → Karar katmanı: KABUL / İNSAN İNCELEMESİ / RET → Uzmanın kararı ve etiketi (SAM)
-[Son test]         → Optik eksen (boresight) · Keskinlik (MTF) · Tork işareti
-Kalite kapısı      → görsel muayene KABUL + son test GEÇTİ ise SEVKE HAZIR
-Kayıt              → görsel, model sürümü, AI önerisi, uzman kararı, kullanıcı, zaman → CSV ve etiket dışa aktarma
-```
+![Mimari şeması](img/mimari.png)
 Uygulama Python ve Gradio ile yazıldı, Docker ile paketlendi. Ana adres kendi sunucumda Cloudflare Tunnel üzerinden yayında ve kayıtlar kalıcı olarak saklanıyor. Hugging Face üzerinde de yedek bir kopyası çalışıyor. Mimarinin ayrıntılı şeması ekteki "3E-Mimari-Semasi.png" dosyasındadır.
 
 ### 5. Ölçülen sonuçlar
@@ -44,7 +37,7 @@ Sistemi MVTec'in 365 gerçek test görseli üzerinde ölçtüm. Görselleri ayar
 | Analiz süresi | Görsel başına yaklaşık 4–8 saniye |
 
 ### 6. Güvenlik yaklaşımı
-API anahtarı kodda ya da repoda değil, sunucunun gizli ayarlarında tutuluyor. Yüklenen görsellerin boyutu sınırlandırılıyor ve aynı anda işlenen istek sayısı kısıtlanıyor. Her karar izlenebilir şekilde kaydediliyor. Hangi görselin, hangi model sürümüyle, ne önerildiği ve uzmanın ne karar verdiği, kim tarafından ve ne zaman verildiği tutuluyor. Bu yapı savunma sanayindeki izlenebilirlik beklentisiyle uyumlu. Sistem emin olmadığında "AI önerisini onayla" seçeneği kapanıyor ve uzmanın kendisi karar vermek zorunda kalıyor. Teknik yetersizliklerden dolayı vaka görseller Gemini API'sine gönderiliyor. Gerçek üretimde savunma verisinin kurum dışına çıkmaması gerektiği için bu kısmın yerel bir modelle değiştirilmesi gerekiyor.
+API anahtarı kodda ya da repoda değil, sunucunun gizli ayarlarında tutuluyor. Yüklenen görsellerin boyutu sınırlandırılıyor ve aynı anda işlenen istek sayısı kısıtlanıyor. Her karar izlenebilir şekilde kaydediliyor. Hangi görselin, hangi model sürümüyle, ne önerildiği ve uzmanın ne karar verdiği, kim tarafından ve ne zaman verildiği tutuluyor. Bu yapı savunma sanayindeki izlenebilirlik beklentisiyle uyumlu. Sistem emin olmadığında "AI önerisini onayla" seçeneği kapanıyor ve uzmanın kendisi karar vermek zorunda kalıyor. Teknik yetersizliklerden dolayı vaka'da görseller Gemini API'sine gönderiliyor. Gerçek üretimde savunma verisinin kurum dışına çıkmaması gerektiği için bu kısmın yerel bir modelle değiştirilmesi gerekiyor.
 
 ### 7. Uygulamanın sınırlılıkları
 Kullanılan veri temsili. MVTec görselleri gerçek lens ya da termal modül değil ve şeffaf, yansıtıcı yüzeylerde başarının düşmesi beklenir. YOLO modeli MVTec test görsellerinin bir kısmıyla eğitildiği için uçtan uca sonuçlar dedektör açısından olduğundan iyi görünüyor olabilir. Kalibrasyon için ürün grubu başına yalnızca 40 sağlam görsel kullanıldı. Bu sayı arttıkça insan incelemesine giden parça oranı düşecektir, güvenilir bir %1 yanlış alarm oranı için grup başına yaklaşık 300 görsel gerekiyor. Ölçüm modülleri yalnızca sentetik görüntülerle doğrulandı ve keskinlik ile tork sonuçları henüz kalite kapısına bağlanmadı. Konektör tutma kuvveti ve termal gürültü (NETD) gibi ölçümler ise özel test donanımı gerektiriyor. Son olarak VLM'in verdiği güven değeri kalibre değil, bu yüzden karar katmanında yardımcı rol üstleniyor.
