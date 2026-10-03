@@ -32,6 +32,7 @@ from PIL import Image, ImageDraw
 import config
 import engines.boresight as boresight_engine
 import engines.sam as sam_engine
+import engines.torque_mark as torque_mark_engine
 import storage
 from gradio_image_annotation import image_annotator
 
@@ -1248,11 +1249,205 @@ def build_boresight_metrics_dataframe(res: dict[str, Any] | None) -> pd.DataFram
     return pd.DataFrame(rows)
 
 
+def load_mtf_examples() -> list[list[Any]]:
+    """Loads synthetic slanted-edge examples from samples/mtf/."""
+    d = config.SAMPLES_DIR / "mtf"
+    rows: list[list[Any]] = []
+    for fn, ch, pitch, spec in (
+        ("vis_sigma_0.6.png", "Görünür", 3.45, 0.25),
+        ("vis_sigma_1.5.png", "Görünür", 3.45, 0.25),
+        ("thm_sigma_1.0.png", "Termal", 12.0, 0.18),
+        ("thm_sigma_2.5.png", "Termal", 12.0, 0.18),
+    ):
+        if (d / fn).exists():
+            rows.append([str(d / fn), ch, pitch, spec])
+    return rows
+
+
+def render_mtf_badge(res: dict[str, Any] | None) -> str:
+    """HTML decision badge for the MTF test (same visual style as boresight)."""
+    if not res:
+        return """
+        <div style="border: 2px dashed #d1d5db; background: #f9fafb; border-radius: 12px; padding: 24px; text-align: center; color: #6b7280; font-family: system-ui, -apple-system, sans-serif;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔬</div>
+            <div style="font-weight: 700; font-size: 16px; color: #374151;">MTF Ölçümü Bekleniyor</div>
+            <div style="font-size: 13px; margin-top: 4px;">Eğimli kenar görseli yükleyip <strong>MTF Ölç</strong> butonuna basınız.</div>
+        </div>
+        """
+    passed = res.get("passed")
+    m50 = float(res["mtf50_cy_px"])
+    spec = res.get("spec_mtf50")
+    if passed is None:
+        bg, border, badge_bg, tc, icon, title = "#eff6ff", "#3b82f6", "#2563eb", "#1e3a8a", "ℹ️", "ÖLÇÜLDÜ — SPEC TANIMLI DEĞİL"
+    elif passed:
+        bg, border, badge_bg, tc, icon, title = "#ecfdf5", "#10b981", "#059669", "#065f46", "✅", "GEÇTİ — MTF50 SPEC İÇİNDE (PASS)"
+    else:
+        bg, border, badge_bg, tc, icon, title = "#fef2f2", "#ef4444", "#dc2626", "#991b1b", "❌", "KALDI — MTF50 SPEC ALTINDA (FAIL)"
+    spec_txt = f"(Spec: <strong>≥ {spec:.2f} cy/px</strong>)" if spec is not None else ""
+    warn = "".join(f"<div style='font-size:12px;color:#92400e;margin-top:4px;'>⚠️ {w}</div>" for w in res.get("warnings", []))
+    return f"""
+    <div style="border: 2px solid {border}; background: {bg}; border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; font-family: system-ui, -apple-system, sans-serif;">
+        <span style="display: inline-block; background: {badge_bg}; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">{icon} {title}</span>
+        <div style="margin-top: 10px; font-size: 15px; color: #1f2937;">
+            <strong>MTF50:</strong> <span style="font-weight: 800; font-size: 20px; color: {tc};">{m50:.3f} cy/px</span>
+            <span style="color: #6b7280; margin-left: 8px;">{res['mtf50_lp_mm']:.1f} lp/mm {spec_txt}</span>
+        </div>
+        {warn}
+    </div>
+    """
+
+
+def build_mtf_metrics_dataframe(res: dict[str, Any]) -> pd.DataFrame:
+    rows = [
+        ("MTF50", f"{res['mtf50_cy_px']:.4f}", "cycles/pixel", "Kontrastın %50'ye düştüğü frekans"),
+        ("MTF50", f"{res['mtf50_lp_mm']:.1f}", "lp/mm", "Piksel boyutuna göre"),
+        ("MTF @ Nyquist (0.5 cy/px)", f"{res['mtf_nyquist']:.3f}", "—", "Örnekleme sınırında kontrast"),
+        ("MTF10", f"{res['mtf10_cy_px']:.4f} ({res['mtf10_lp_mm']:.1f} lp/mm)", "cy/px", "Kontrastın %10 olduğu frekans (çözünürlük sınırı)"),
+        ("Kenar Açısı", f"{res['edge_angle_deg']:.2f}", "derece", f"{res['edge_orientation']} eksenden; ISO için 2–10°"),
+        ("Kenar Polaritesi", res["polarity"], "—", "Otomatik ele alındı"),
+        ("SNR", f"{res['snr']:.0f}", "—", "Kenar kontrastı / düz bölge gürültüsü"),
+        ("ROI (x0,y0,x1,y1)", str(res["roi"]), "piksel", "Otomatik tespit edilen bölge"),
+        ("Uyarılar", "; ".join(res["warnings"]) or "Yok", "—", ""),
+        ("Ölçüm Gecikmesi", str(res["latency_ms"]), "ms", "CPU"),
+    ]
+    return pd.DataFrame(rows, columns=["Parametre / Metrik", "Ölçülen Değer", "Birim", "Açıklama"])
+
+
+def on_measure_mtf(image: Any, pixel_pitch_um: float, spec_mtf50: float, channel: str):
+    """Runs slanted-edge MTF measurement."""
+    from engines import mtf as mtf_engine
+    if image is None:
+        raise gr.Error("Lütfen eğimli kenar içeren bir görsel yükleyiniz veya örneklerden seçiniz.")
+    if not isinstance(image, Image.Image):
+        image = Image.open(image)
+    pitch = float(pixel_pitch_um) if pixel_pitch_um and pixel_pitch_um > 0 else (12.0 if channel == "Termal" else 3.45)
+    spec = float(spec_mtf50) if spec_mtf50 and spec_mtf50 > 0 else None
+    try:
+        res = mtf_engine.measure_mtf(image, pitch, channel, spec_mtf50=spec)
+    except ValueError as e:
+        raise gr.Error(f"MTF ölçülemedi: {e}")
+    return render_mtf_badge(res), res["plot_image"], res["roi_image"], build_mtf_metrics_dataframe(res)
+
+
 def on_boresight_channel_change(channel: str) -> tuple[float, float]:
     """Updates sensible defaults for pixel pitch and focal length when channel toggles."""
     if channel == "Termal":
         return 12.0, 25.0
     return 3.45, 50.0
+
+
+# ---------------------------------------------------------------------------
+# Torque Mark (Witness Mark) Helpers & Callbacks
+# ---------------------------------------------------------------------------
+def load_torque_mark_examples() -> list[list[Any]]:
+    """Loads sample torque mark images from samples/torque_mark/."""
+    d = config.SAMPLES_DIR / "torque_mark"
+    if not d.exists():
+        return []
+    examples: list[list[Any]] = []
+    for fn in ["kırmızı_rot00.png", "kırmızı_rot15.png",
+                "turuncu_rot04.png", "turuncu_rot30.png",
+                "sarı_rot02.png", "kırmızı_missing_head.png"]:
+        p = d / fn
+        if p.exists():
+            color = fn.split("_")[0]
+            examples.append([str(p), color, 5.0])
+    return examples
+
+
+def render_torque_mark_badge(result: dict[str, Any] | None) -> str:
+    """HTML decision badge for torque stripe inspection."""
+    if not result:
+        return """
+        <div style="border: 2px dashed #d1d5db; background: #f9fafb; border-radius: 12px; padding: 24px; text-align: center; color: #6b7280; font-family: system-ui, -apple-system, sans-serif;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔩</div>
+            <div style="font-weight: 700; font-size: 16px; color: #374151;">Tork İşareti Kontrolü Bekleniyor</div>
+            <div style="font-size: 13px; margin-top: 4px;">Vida üst görünüm görseli yükleyip <strong>Kontrol Et</strong> butonuna basınız.</div>
+        </div>
+        """
+    dec = result.get("decision", "BELİRSİZ")
+    angle = result.get("angle_deg")
+    tol = result.get("tolerance_deg", 5.0)
+
+    if dec == "GEÇTİ":
+        bg, border, badge_bg, tc, icon, title = "#ecfdf5", "#10b981", "#059669", "#065f46", "✅", "GEÇTİ — TORK İŞARETİ SAĞLAM"
+    elif dec == "KALDI":
+        bg, border, badge_bg, tc, icon, title = "#fef2f2", "#ef4444", "#dc2626", "#991b1b", "❌", "KALDI — GEVŞEME ŞÜPHESİ"
+    else:
+        bg, border, badge_bg, tc, icon, title = "#eff6ff", "#3b82f6", "#2563eb", "#1e3a8a", "⚠️", "BELİRSİZ — ÖLÇÜM YAPILAMADI"
+
+    angle_txt = f"{angle:.1f}°" if angle is not None else "Ölçülemedi"
+    offset = result.get("offset_px")
+    offset_txt = f"{offset:.1f} px" if offset is not None else "—"
+    lat = result.get("latency_ms", 0)
+    explanation = result.get("explanation", "")
+
+    return f"""
+    <div style="border: 2px solid {border}; background: {bg}; border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; font-family: system-ui, -apple-system, sans-serif;">
+        <span style="display: inline-block; background: {badge_bg}; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">{icon} {title}</span>
+        <div style="margin-top: 10px; font-size: 15px; color: #1f2937;">
+            <strong>Açısal Fark:</strong> <span style="font-weight: 800; font-size: 20px; color: {tc};">{angle_txt}</span>
+            <span style="color: #6b7280; margin-left: 8px;">(Tolerans: <strong>≤ {tol:.1f}°</strong>)</span>
+            <span style="color: #6b7280; margin-left: 12px;">Ofset: <strong>{offset_txt}</strong></span>
+        </div>
+        <div style="font-size: 12px; color: #4b5563; margin-top: 4px;">{explanation}</div>
+        <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">⏱️ {lat} ms</div>
+    </div>
+    """
+
+
+def build_torque_mark_metrics_dataframe(res: dict[str, Any] | None) -> pd.DataFrame:
+    """Metrics table for torque mark inspection."""
+    if not res:
+        return pd.DataFrame(columns=["Parametre / Metrik", "Ölçülen Değer", "Birim", "Açıklama"])
+    rows = [
+        ("Açısal Fark", f"{res['angle_deg']:.2f}" if res['angle_deg'] is not None else "—", "derece", "Kafa ve gövde boya çizgileri arasındaki açı farkı"),
+        ("Dik Ofset", f"{res['offset_px']:.1f}" if res['offset_px'] is not None else "—", "piksel", "İki çizgi arasındaki dik mesafe"),
+        ("Kafa Boya Pikseli", str(res["head_pixels"]), "adet", "Vida kafası üzerindeki boya pikseli sayısı"),
+        ("Gövde Boya Pikseli", str(res["housing_pixels"]), "adet", "Gövde (housing) tarafındaki boya pikseli sayısı"),
+        ("Toplam Boya Pikseli", str(res["total_paint_pixels"]), "adet", "Tüm tespit edilen boya pikselleri"),
+        ("Vida Dairesi", f"({res['circle'][0]}, {res['circle'][1]}) r={res['circle'][2]}" if res["circle"] else "Tespit edilemedi", "piksel", "Tespit edilen vida kafası dairesi"),
+        ("Tolerans (Açı)", f"{res['tolerance_deg']:.1f}", "derece", "Azami izin verilen açısal fark"),
+        ("Tolerans (Ofset)", f"{res['tolerance_px']:.1f}" if res['tolerance_px'] else "—", "piksel", "Azami izin verilen dik ofset"),
+        ("Karar", res["decision"], "—", res["explanation"]),
+        ("Gecikme", str(res["latency_ms"]), "ms", "İşlem süresi"),
+    ]
+    return pd.DataFrame(rows, columns=["Parametre / Metrik", "Ölçülen Değer", "Birim", "Açıklama"])
+
+
+def on_inspect_torque_mark(
+    image: Any,
+    paint_color: str,
+    tolerance_deg: float,
+) -> tuple[str, Image.Image | None, pd.DataFrame, str]:
+    """Runs torque stripe inspection and returns UI outputs."""
+    if image is None:
+        raise gr.Error("Lütfen vida üst-görünüm görseli yükleyiniz veya örneklerden seçiniz.")
+    if not isinstance(image, Image.Image):
+        image = Image.open(image)
+    image = image.convert("RGB")
+
+    color = paint_color if paint_color in ("kırmızı", "turuncu", "sarı") else "auto"
+    tol = float(tolerance_deg) if tolerance_deg and tolerance_deg > 0 else 5.0
+
+    res = torque_mark_engine.inspect(image, paint_color=color, tolerance_deg=tol)
+
+    badge = render_torque_mark_badge(res)
+    anno = res.get("annotated_image")
+    df = build_torque_mark_metrics_dataframe(res)
+
+    explanation_md = """### 🔩 Tork İşareti (Witness Mark / Torque Stripe) Hakkında
+
+**Nedir?** Savunma ve havacılık montajlarında, kritik bağlantı vidaları tork anahtarıyla sıkıldıktan sonra vida kafası ve bitişik gövde yüzeyi üzerine kesintisiz bir boya çizgisi çekilir. Bu çizgi *tork işareti* (witness mark / torque stripe) olarak adlandırılır.
+
+**Nasıl Çalışır?** Vida gevşerse, kafası gövdeye göre döner ve boya çizgisi kırılır/kayar. Bu açısal kayma görsel muayene ile tespit edilebilir.
+
+**Sınırlılık:** Tork işareti yalnızca *dönerek gevşemeyi* tespit eder; dönme olmadan tork kaybını (örn. termal gevşeme, basınç kaybı) saptayamaz. Tork-açı eğrisi verisi ile birleştirilmesi (akıllı tork aletleri entegrasyonu) yol haritasındadır.
+
+**Kayıt:** yol haritası (bu sürümde sonuçlar veritabanına yazılmaz).
+"""
+
+    return badge, anno, df, explanation_md
 
 
 def validate_boresight_image(image: Any) -> Image.Image:
@@ -1687,106 +1882,108 @@ with gr.Blocks(
                 """
             )
 
-            with gr.Row():
-                # LEFT COLUMN: Inputs & Controls
-                with gr.Column(scale=5):
-                    gr.Markdown("### 📥 Test Parametreleri ve Hedef Görseli")
+            with gr.Tabs():
+                with gr.Tab("🎯 Boresight ve Drift", id="sub_boresight"):
                     with gr.Row():
-                        serial_input_boresight = gr.Textbox(
-                            label="Seri No",
-                            value=generate_default_serial,
-                            interactive=True,
-                            scale=3,
-                        )
-                        inspector_input_boresight = gr.Textbox(
-                            label="Muayeneci",
-                            value="Muayene Uzmanı",
-                            placeholder="Ad Soyad",
-                            interactive=True,
-                            scale=2,
-                        )
+                        # LEFT COLUMN: Inputs & Controls
+                        with gr.Column(scale=5):
+                            gr.Markdown("### 📥 Test Parametreleri ve Hedef Görseli")
+                            with gr.Row():
+                                serial_input_boresight = gr.Textbox(
+                                    label="Seri No",
+                                    value=generate_default_serial,
+                                    interactive=True,
+                                    scale=3,
+                                )
+                                inspector_input_boresight = gr.Textbox(
+                                    label="Muayeneci",
+                                    value="Muayene Uzmanı",
+                                    placeholder="Ad Soyad",
+                                    interactive=True,
+                                    scale=2,
+                                )
 
-                    with gr.Row():
-                        stage_dropdown_boresight = gr.Dropdown(
-                            label="Aşama",
-                            choices=["son test", "titreşim öncesi", "titreşim sonrası"],
-                            value="son test",
-                            interactive=True,
-                            scale=3,
-                        )
-                        channel_dropdown_boresight = gr.Dropdown(
-                            label="Kanal",
-                            choices=["Görünür", "Termal"],
-                            value="Görünür",
-                            interactive=True,
-                            scale=3,
-                        )
+                            with gr.Row():
+                                stage_dropdown_boresight = gr.Dropdown(
+                                    label="Aşama",
+                                    choices=["son test", "titreşim öncesi", "titreşim sonrası"],
+                                    value="son test",
+                                    interactive=True,
+                                    scale=3,
+                                )
+                                channel_dropdown_boresight = gr.Dropdown(
+                                    label="Kanal",
+                                    choices=["Görünür", "Termal"],
+                                    value="Görünür",
+                                    interactive=True,
+                                    scale=3,
+                                )
 
-                    with gr.Row():
-                        pitch_input_boresight = gr.Number(
-                            label="Piksel Boyutu (µm)",
-                            value=3.45,
-                            interactive=True,
-                            scale=2,
-                        )
-                        focal_input_boresight = gr.Number(
-                            label="Odak Uzaklığı (mm)",
-                            value=50.0,
-                            interactive=True,
-                            scale=2,
-                        )
-                        tolerance_input_boresight = gr.Number(
-                            label="Tolerans (mrad)",
-                            value=0.5,
-                            interactive=True,
-                            scale=2,
-                        )
+                            with gr.Row():
+                                pitch_input_boresight = gr.Number(
+                                    label="Piksel Boyutu (µm)",
+                                    value=3.45,
+                                    interactive=True,
+                                    scale=2,
+                                )
+                                focal_input_boresight = gr.Number(
+                                    label="Odak Uzaklığı (mm)",
+                                    value=50.0,
+                                    interactive=True,
+                                    scale=2,
+                                )
+                                tolerance_input_boresight = gr.Number(
+                                    label="Tolerans (mrad)",
+                                    value=0.5,
+                                    interactive=True,
+                                    scale=2,
+                                )
 
-                    image_input_boresight = gr.Image(
-                        label="Kolimatör Hedef Görseli (JPG/PNG)",
-                        type="pil",
-                        sources=["upload", "clipboard"],
-                    )
+                            image_input_boresight = gr.Image(
+                                label="Kolimatör Hedef Görseli (JPG/PNG)",
+                                type="pil",
+                                sources=["upload", "clipboard"],
+                            )
 
-                    measure_boresight_btn = gr.Button(
-                        "🎯 Optik Ekseni Ölç",
-                        variant="primary",
-                        size="lg",
-                    )
+                            measure_boresight_btn = gr.Button(
+                                "🎯 Optik Ekseni Ölç",
+                                variant="primary",
+                                size="lg",
+                            )
 
-                    boresight_sample_examples = load_boresight_examples()
-                    if boresight_sample_examples:
-                        gr.Markdown("#### 📁 Referans Kolimatör Hedefleri")
-                        gr.Examples(
-                            examples=boresight_sample_examples,
-                            inputs=[
-                                image_input_boresight,
-                                channel_dropdown_boresight,
-                                pitch_input_boresight,
-                                focal_input_boresight,
-                                tolerance_input_boresight,
-                            ],
-                            label="Sentetik Kolimatör Numuneleri",
-                        )
+                            boresight_sample_examples = load_boresight_examples()
+                            if boresight_sample_examples:
+                                gr.Markdown("#### 📁 Referans Kolimatör Hedefleri")
+                                gr.Examples(
+                                    examples=boresight_sample_examples,
+                                    inputs=[
+                                        image_input_boresight,
+                                        channel_dropdown_boresight,
+                                        pitch_input_boresight,
+                                        focal_input_boresight,
+                                        tolerance_input_boresight,
+                                    ],
+                                    label="Sentetik Kolimatör Numuneleri",
+                                )
 
-                # RIGHT COLUMN: Results & Overlays
-                with gr.Column(scale=7):
-                    gr.Markdown("### 📊 Optik Eksen Ölçüm Sonuçları")
-                    badge_boresight_view = gr.HTML(value=render_boresight_badge(None))
+                        # RIGHT COLUMN: Results & Overlays
+                        with gr.Column(scale=7):
+                            gr.Markdown("### 📊 Optik Eksen Ölçüm Sonuçları")
+                            badge_boresight_view = gr.HTML(value=render_boresight_badge(None))
 
-                    image_boresight_view = gr.Image(
-                        label="İşaretlenmiş Eksen ve Hata Vektörü Görseli",
-                        interactive=False,
-                    )
+                            image_boresight_view = gr.Image(
+                                label="İşaretlenmiş Eksen ve Hata Vektörü Görseli",
+                                interactive=False,
+                            )
 
-                    gr.Markdown("#### 📐 Ölçüm Metrikleri Tablosu")
-                    table_boresight_view = gr.Dataframe(
-                        value=build_boresight_metrics_dataframe(None),
-                        interactive=False,
-                    )
+                            gr.Markdown("#### 📐 Ölçüm Metrikleri Tablosu")
+                            table_boresight_view = gr.Dataframe(
+                                value=build_boresight_metrics_dataframe(None),
+                                interactive=False,
+                            )
 
-                    gr.Markdown(
-                        """
+                            gr.Markdown(
+                                """
                         ---
                         #### ℹ️ Ölçüm Metodolojisi ve Kabul Standartları
                         - **Alt-Piksel Retikül Tespiti:** Görsel gri seviyeye çevrilir; kutup tespiti ile aydınlık/karanlık fon ayrıştırılır.
@@ -1799,66 +1996,186 @@ with gr.Blocks(
                           Mekanik montaj gevşemelerini tespit etmek için elektro-optik birimler **titreşim (vibration/shock) testi öncesinde ve sonrasında** test edilir;
                           iki test arasındaki eksen kayması (**drift**), sahadaki en yaygın hata kök nedenidir.
                         """
-                    )
+                            )
 
-            # Kaydetme Butonu
-            gr.Markdown("---")
-            with gr.Row():
-                save_boresight_btn = gr.Button(
-                    "💾 Boresight Testini Kaydet ve Veritabanına İşle",
-                    variant="primary",
-                    scale=2,
-                )
-                save_boresight_confirmation = gr.Markdown(value="", scale=3)
+                    # Kaydetme Butonu
+                    gr.Markdown("---")
+                    with gr.Row():
+                        save_boresight_btn = gr.Button(
+                            "💾 Boresight Testini Kaydet ve Veritabanına İşle",
+                            variant="primary",
+                            scale=2,
+                        )
+                        save_boresight_confirmation = gr.Markdown(value="", scale=3)
 
-            # ACCORDION 1: KANAL ARASI HİZALAMA
-            with gr.Accordion("Kanal arası hizalama (görünür + termal)", open=False):
-                gr.Markdown(
-                    "Görünür (visible) ve termal (thermal) optik kanallarının optik eksen eşmerkezliliğini hesaplar.\n"
-                    "Her iki kanalın retikül merkezi kendi piksel boyutu ve odak uzaklığıyla açısal uzaya (mrad) dönüştürülüp aralarındaki fark alınır."
-                )
-                with gr.Row():
-                    with gr.Column(scale=6):
-                        vis_image_input = gr.Image(label="Görünür Kanal Görseli (1280x1024)", type="pil")
+                    # ACCORDION 1: KANAL ARASI HİZALAMA
+                    with gr.Accordion("Kanal arası hizalama (görünür + termal)", open=False):
+                        gr.Markdown(
+                            "Görünür (visible) ve termal (thermal) optik kanallarının optik eksen eşmerkezliliğini hesaplar.\n"
+                            "Her iki kanalın retikül merkezi kendi piksel boyutu ve odak uzaklığıyla açısal uzaya (mrad) dönüştürülüp aralarındaki fark alınır."
+                        )
                         with gr.Row():
-                            vis_pitch_input = gr.Number(label="Görünür Piksel (µm)", value=3.45)
-                            vis_focal_input = gr.Number(label="Görünür Odak (mm)", value=50.0)
-                    with gr.Column(scale=6):
-                        thm_image_input = gr.Image(label="Termal Kanal Görseli (640x512)", type="pil")
+                            with gr.Column(scale=6):
+                                vis_image_input = gr.Image(label="Görünür Kanal Görseli (1280x1024)", type="pil")
+                                with gr.Row():
+                                    vis_pitch_input = gr.Number(label="Görünür Piksel (µm)", value=3.45)
+                                    vis_focal_input = gr.Number(label="Görünür Odak (mm)", value=50.0)
+                            with gr.Column(scale=6):
+                                thm_image_input = gr.Image(label="Termal Kanal Görseli (640x512)", type="pil")
+                                with gr.Row():
+                                    thm_pitch_input = gr.Number(label="Termal Piksel (µm)", value=12.0)
+                                    thm_focal_input = gr.Number(label="Termal Odak (mm)", value=25.0)
+
                         with gr.Row():
-                            thm_pitch_input = gr.Number(label="Termal Piksel (µm)", value=12.0)
-                            thm_focal_input = gr.Number(label="Termal Odak (mm)", value=25.0)
+                            inter_tol_input = gr.Number(label="İzin Verilen Eksenler Arası Tolerans (mrad)", value=0.5, scale=2)
+                            compare_channels_btn = gr.Button("⚖️ Kanal Arası Eksen Farkını Hesapla", variant="secondary", scale=2)
 
-                with gr.Row():
-                    inter_tol_input = gr.Number(label="İzin Verilen Eksenler Arası Tolerans (mrad)", value=0.5, scale=2)
-                    compare_channels_btn = gr.Button("⚖️ Kanal Arası Eksen Farkını Hesapla", variant="secondary", scale=2)
+                        inter_badge_view = gr.HTML(value="")
+                        inter_image_view = gr.Image(label="Yan Yana Kanal Karşılaştırma Görseli", interactive=False)
+                        inter_table_view = gr.Dataframe(interactive=False)
 
-                inter_badge_view = gr.HTML(value="")
-                inter_image_view = gr.Image(label="Yan Yana Kanal Karşılaştırma Görseli", interactive=False)
-                inter_table_view = gr.Dataframe(interactive=False)
+                    # ACCORDION 2: TİTREŞİM KAYMA (DRIFT) ANALİZİ
+                    with gr.Accordion("Titreşim öncesi/sonrası kayma (Drift Analizi)", open=False):
+                        gr.Markdown(
+                            "Aynı seri numarasına ait 'titreşim öncesi' ve 'titreşim sonrası' test kayıtlarını veritabanından çekerek açısal kayma miktarını hesaplar."
+                        )
+                        with gr.Row():
+                            drift_serial_input = gr.Textbox(
+                                label="Seri No",
+                                placeholder="Örn: TC-20261003-002",
+                                value="TC-20261003-002",
+                                scale=3,
+                            )
+                            drift_tol_input = gr.Number(
+                                label="İzin Verilen Azami Kayma (mrad)",
+                                value=0.5,
+                                scale=2,
+                            )
+                            calc_drift_btn = gr.Button("📈 Kayma (Drift) Miktarını Hesapla", variant="secondary", scale=2)
 
-            # ACCORDION 2: TİTREŞİM KAYMA (DRIFT) ANALİZİ
-            with gr.Accordion("Titreşim öncesi/sonrası kayma (Drift Analizi)", open=False):
-                gr.Markdown(
-                    "Aynı seri numarasına ait 'titreşim öncesi' ve 'titreşim sonrası' test kayıtlarını veritabanından çekerek açısal kayma miktarını hesaplar."
-                )
-                with gr.Row():
-                    drift_serial_input = gr.Textbox(
-                        label="Seri No",
-                        placeholder="Örn: TC-20261003-002",
-                        value="TC-20261003-002",
-                        scale=3,
+                        drift_badge_view = gr.HTML(value="")
+                        drift_table_view = gr.Dataframe(interactive=False)
+                        drift_explanation_view = gr.Markdown(value="")
+
+                with gr.Tab("🔬 MTF (Keskinlik)", id="sub_mtf"):
+                    gr.Markdown(
+                        "**Eğimli kenar (ISO 12233) MTF testi.** Kayıt: yol haritası (bu sürümde sonuçlar veritabanına yazılmaz)."
                     )
-                    drift_tol_input = gr.Number(
-                        label="İzin Verilen Azami Kayma (mrad)",
-                        value=0.5,
-                        scale=2,
-                    )
-                    calc_drift_btn = gr.Button("📈 Kayma (Drift) Miktarını Hesapla", variant="secondary", scale=2)
+                    with gr.Row():
+                        with gr.Column(scale=5):
+                            serial_input_mtf = gr.Textbox(label="Seri No", value=generate_default_serial, interactive=True)
+                            channel_dropdown_mtf = gr.Dropdown(
+                                choices=["Görünür", "Termal"], value="Görünür", label="Kanal"
+                            )
+                            with gr.Row():
+                                pitch_input_mtf = gr.Number(label="Piksel Boyutu (µm)", value=3.45, minimum=0.1)
+                                spec_input_mtf = gr.Number(label="Spec MTF50 (cycles/pixel)", value=0.25, minimum=0.0)
+                            image_input_mtf = gr.Image(label="Eğimli Kenar Görseli", type="pil", image_mode="RGB")
+                            measure_mtf_btn = gr.Button("🔬 MTF Ölç", variant="primary", size="lg")
+                            mtf_examples = load_mtf_examples()
+                            if mtf_examples:
+                                gr.Examples(
+                                    examples=mtf_examples,
+                                    inputs=[image_input_mtf, channel_dropdown_mtf, pitch_input_mtf, spec_input_mtf],
+                                    label="Sentetik Eğimli Kenar Numuneleri",
+                                )
+                        with gr.Column(scale=7):
+                            badge_mtf_view = gr.HTML(value=render_mtf_badge(None))
+                            plot_mtf_view = gr.Image(label="MTF Eğrisi", interactive=False)
+                            roi_mtf_view = gr.Image(label="Kenar ve ROI", interactive=False)
+                            table_mtf_view = gr.Dataframe(interactive=False, label="Ölçüm Tablosu")
+                    gr.Markdown(
+                        """
+**MTF nedir?** Modülasyon Transfer Fonksiyonu (MTF), bir optik sistemin farklı uzamsal frekanslardaki kontrastı ne kadar koruyabildiğini gösterir. MTF50, kontrastın yarıya düştüğü frekanstır ve algılanan keskinliğin en yaygın tek sayı özetidir. Nyquist'te (0.5 cy/px) MTF ise örnekleme sınırındaki detayı ve aliasing riskini anlatır.
 
-                drift_badge_view = gr.HTML(value="")
-                drift_table_view = gr.Dataframe(interactive=False)
-                drift_explanation_view = gr.Markdown(value="")
+**Eğimli kenar yöntemi (ISO 12233):** Hedefteki kenar dikeyden/yataydan yaklaşık 5° eğiktir. Her satırda kenarın alt-piksel konumu bulunur, doğru uydurulur, pikseller kenar normaline izdüşürülüp 4 kat aşırı örneklenmiş kenar yayılım fonksiyonu (ESF) elde edilir. Türevi çizgi yayılım fonksiyonunu (LSF), Hamming pencereli FFT ise MTF eğrisini verir.
+
+**Optik modüller için önemi:** Odak kayması, lens eğikliği, yapıştırma veya montaj hataları ile ısıl gerilmeler keskinliği düşürür. Boresight yalnızca eksen hizasını ölçer; MTF ise görüntü kalitesini sayısallaştırarak üretim sonrası kabul kriteri (spec) koymayı mümkün kılar. Termal kanalda gürültü yüksek olduğundan SNR uyarılarına dikkat edin.
+                        """
+                    )
+
+                    measure_mtf_btn.click(
+                        fn=on_measure_mtf,
+                        inputs=[image_input_mtf, pitch_input_mtf, spec_input_mtf, channel_dropdown_mtf],
+                        outputs=[badge_mtf_view, plot_mtf_view, roi_mtf_view, table_mtf_view],
+                        api_name="measure_mtf",
+                    )
+                    channel_dropdown_mtf.change(
+                        fn=lambda c: (12.0, 0.18) if c == "Termal" else (3.45, 0.25),
+                        inputs=[channel_dropdown_mtf],
+                        outputs=[pitch_input_mtf, spec_input_mtf],
+                        api_name=False,
+                    )
+                    serial_input_boresight.change(
+                        fn=lambda s: s, inputs=[serial_input_boresight], outputs=[serial_input_mtf], api_name=False
+                    )
+                    serial_input_mtf.change(
+                        fn=lambda s: s, inputs=[serial_input_mtf], outputs=[serial_input_boresight], api_name=False
+                    )
+
+                with gr.Tab("🔩 Tork İşareti", id="sub_torque_mark"):
+                    gr.Markdown(
+                        "**Tork işareti (witness mark / torque stripe) kontrolü.** "
+                        "Titreşim testi sonrasında vida bağlantılarının gevşeyip gevşemediğini, "
+                        "boya çizgisinin açısal kaymasıyla tespit eder. Kayıt: yol haritası."
+                    )
+                    with gr.Row():
+                        with gr.Column(scale=5):
+                            serial_input_torque = gr.Textbox(
+                                label="Seri No", value=generate_default_serial, interactive=True
+                            )
+                            stage_dropdown_torque = gr.Dropdown(
+                                choices=["titreşim sonrası", "son test", "titreşim öncesi"],
+                                value="titreşim sonrası",
+                                label="Aşama",
+                                interactive=True,
+                            )
+                            with gr.Row():
+                                color_dropdown_torque = gr.Dropdown(
+                                    choices=["auto", "kırmızı", "turuncu", "sarı"],
+                                    value="auto",
+                                    label="Boya Rengi",
+                                    interactive=True,
+                                )
+                                tolerance_input_torque = gr.Number(
+                                    label="Tolerans (derece)", value=5.0, minimum=0.1, interactive=True
+                                )
+                            image_input_torque = gr.Image(
+                                label="Vida Üst Görünüm Görseli", type="pil", image_mode="RGB"
+                            )
+                            inspect_torque_btn = gr.Button(
+                                "🔩 Kontrol Et", variant="primary", size="lg"
+                            )
+                            torque_examples = load_torque_mark_examples()
+                            if torque_examples:
+                                gr.Examples(
+                                    examples=torque_examples,
+                                    inputs=[image_input_torque, color_dropdown_torque, tolerance_input_torque],
+                                    label="Sentetik Tork İşareti Numuneleri",
+                                )
+                        with gr.Column(scale=7):
+                            badge_torque_view = gr.HTML(value=render_torque_mark_badge(None))
+                            image_torque_view = gr.Image(
+                                label="İşaretlenmiş Muayene Görseli", interactive=False
+                            )
+                            table_torque_view = gr.Dataframe(
+                                interactive=False, label="Ölçüm Tablosu"
+                            )
+                            explanation_torque_view = gr.Markdown(value="")
+
+                    inspect_torque_btn.click(
+                        fn=on_inspect_torque_mark,
+                        inputs=[image_input_torque, color_dropdown_torque, tolerance_input_torque],
+                        outputs=[badge_torque_view, image_torque_view, table_torque_view, explanation_torque_view],
+                        api_name="inspect_torque_mark",
+                    )
+                    # Serial number sync with boresight and MTF
+                    serial_input_boresight.change(
+                        fn=lambda s: s, inputs=[serial_input_boresight], outputs=[serial_input_torque], api_name=False
+                    )
+                    serial_input_torque.change(
+                        fn=lambda s: s, inputs=[serial_input_torque], outputs=[serial_input_boresight], api_name=False
+                    )
 
         # ===================================================================
         # TAB 3: GEÇMİŞ VE PANO

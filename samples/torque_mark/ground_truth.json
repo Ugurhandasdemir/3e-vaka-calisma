@@ -1,0 +1,155 @@
+{
+  "kırmızı_rot00.png": {
+    "rotation_deg": 0,
+    "paint_color": "kırmızı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_rot02.png": {
+    "rotation_deg": 2,
+    "paint_color": "kırmızı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_rot04.png": {
+    "rotation_deg": 4,
+    "paint_color": "kırmızı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_rot08.png": {
+    "rotation_deg": 8,
+    "paint_color": "kırmızı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_rot15.png": {
+    "rotation_deg": 15,
+    "paint_color": "kırmızı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_rot30.png": {
+    "rotation_deg": 30,
+    "paint_color": "kırmızı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot00.png": {
+    "rotation_deg": 0,
+    "paint_color": "turuncu",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot02.png": {
+    "rotation_deg": 2,
+    "paint_color": "turuncu",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot04.png": {
+    "rotation_deg": 4,
+    "paint_color": "turuncu",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot08.png": {
+    "rotation_deg": 8,
+    "paint_color": "turuncu",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot15.png": {
+    "rotation_deg": 15,
+    "paint_color": "turuncu",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "turuncu_rot30.png": {
+    "rotation_deg": 30,
+    "paint_color": "turuncu",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot00.png": {
+    "rotation_deg": 0,
+    "paint_color": "sarı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot02.png": {
+    "rotation_deg": 2,
+    "paint_color": "sarı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot04.png": {
+    "rotation_deg": 4,
+    "paint_color": "sarı",
+    "expected_decision": "GEÇTİ",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot08.png": {
+    "rotation_deg": 8,
+    "paint_color": "sarı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot15.png": {
+    "rotation_deg": 15,
+    "paint_color": "sarı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "sarı_rot30.png": {
+    "rotation_deg": 30,
+    "paint_color": "sarı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80
+  },
+  "kırmızı_missing_head.png": {
+    "rotation_deg": 0,
+    "paint_color": "kırmızı",
+    "expected_decision": "KALDI",
+    "screw_cx": 320,
+    "screw_cy": 240,
+    "screw_radius": 80,
+    "note": "paint missing on head"
+  }
+}
