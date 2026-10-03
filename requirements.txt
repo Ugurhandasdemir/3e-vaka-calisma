@@ -1,0 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+gradio>=5.0
+numpy
+pillow
+opencv-python-headless
+onnxruntime
+torch
+torchvision
+ultralytics
+google-genai
+pydantic
+huggingface_hub

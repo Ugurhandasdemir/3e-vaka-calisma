@@ -1,0 +1,9 @@
+attribution: MVTec AD, Bergmann et al., CVPR 2019, CC BY-NC-SA 4.0, used as representative data.
+
+Dataset Citation:
+Paul Bergmann, Michael Fauser, David Sattlegger, Carsten Steger.
+MVTec AD — A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection.
+CVPR 2019.
+
+License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+https://creativecommons.org/licenses/by-nc-sa/4.0/

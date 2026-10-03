@@ -1,0 +1,17 @@
+# Virtual environment
+.venv/
+
+# Application and SQLite data
+data/
+*.db
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Logs
+docs/.*.log
+*.log
+
+# Environment variables
+.env
