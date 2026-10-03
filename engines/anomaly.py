@@ -1,4 +1,4 @@
-"""Anomaly engine: EfficientAD (ONNX) if available, otherwise PatchCore (resnet18) fallback."""
+"""Anomaly engine: EfficientAD (ONNX) if available, otherwise PatchCore-WRN50 (+ AnomalyDINO ensemble)."""
 import json
 import os
 import threading
@@ -35,6 +35,57 @@ def _get_backbone():
                 p.requires_grad_(False)
             _backbone = m
     return _backbone
+
+
+# ---------------- AnomalyDINO (DINOv2 ViT-S/14) ----------------
+_DINO_SIZE = 448
+_dino_model = None
+_dino_banks = {}          # category -> float32 tensor (N, 384), L2-normalised
+
+
+def _get_dino():
+    global _dino_model
+    with _lock:
+        if _dino_model is None:
+            import torch
+            m = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
+            m.eval()
+            for p in m.parameters():
+                p.requires_grad_(False)
+            _dino_model = m
+    return _dino_model
+
+
+def dino_tokens(img: Image.Image):
+    """PIL -> L2-normalised patch tokens (1024, 384)."""
+    import torch
+    import torch.nn.functional as F
+    m = _get_dino()
+    a = np.asarray(img.convert("RGB").resize((_DINO_SIZE, _DINO_SIZE), Image.BILINEAR), dtype=np.float32) / 255.0
+    x = torch.from_numpy(np.ascontiguousarray(((a - _MEAN) / _STD).transpose(2, 0, 1)[None]))
+    with torch.no_grad():
+        t = m.forward_features(x)["x_norm_patchtokens"][0]
+    return F.normalize(t, p=2, dim=-1)
+
+
+def dino_nn_dist(q, bank, chunk=256):
+    """Cosine NN distance (1 - max similarity) per query patch."""
+    import torch
+    out = []
+    for i in range(0, q.shape[0], chunk):
+        out.append(1.0 - torch.mm(q[i:i + chunk], bank.t()).max(dim=1).values)
+    return torch.cat(out)
+
+
+def _get_dino_bank(category):
+    import torch
+    with _lock:
+        if category in _dino_banks:
+            return _dino_banks[category]
+    b = torch.from_numpy(np.load(config.dino_bank_file(category))).float()
+    with _lock:
+        _dino_banks[category] = b
+    return b
 
 
 def _prep(img: Image.Image) -> np.ndarray:
@@ -140,6 +191,7 @@ class AnomalyEngine:
         self.version = f"patchcore-{BACKBONE}"
         self._sess = None
         self._meta = {}
+        self._ens = None  # ensemble calibration meta (mu/sigma per model) when active
         onnx_path = config.anomaly_onnx(category)
         if onnx_path.exists():
             try:
@@ -152,6 +204,17 @@ class AnomalyEngine:
                 self.version = "efficientad-onnx"
             except Exception:
                 self._sess = None
+        if self._sess is None and config.ANOMALY_ENSEMBLE and BACKBONE == "wide_resnet50_2":
+            try:
+                meta = json.loads(config.ensemble_meta_file(category).read_text())
+                if config.dino_bank_file(category).exists() and config.ensemble_calib_file(category).exists():
+                    _get_dino()
+                    _get_dino_bank(category)
+                    self._ens = meta
+                    self.backend = "patchcore+dinov2"
+                    self.version = f"patchcore-{BACKBONE}+dinov2-vits14"
+            except Exception:
+                self._ens = None
 
     # ---------------- ONNX ----------------
     def _predict_onnx(self, img):
@@ -199,6 +262,24 @@ class AnomalyEngine:
         d = _nn_dist(f[0], b["bank"]).reshape(h, w).numpy().astype(np.float32)
         return float(d.max()), d
 
+    def _predict_ens(self, img, W, H, t0):
+        e = self._ens
+        sw, aw = self._predict_pc(img)
+        refw = _banks[self.category]["ref"]
+        q = dino_tokens(img)
+        d = dino_nn_dist(q, _get_dino_bank(self.category))
+        sd = float(d.max())
+        ad = d.reshape(32, 32).numpy().astype(np.float32)
+        S = 0.5 * ((sw - e["mu_wrn"]) / e["sigma_wrn"] + (sd - e["mu_dino"]) / e["sigma_dino"])
+        hms = []
+        for amap, ref in ((aw, refw), (ad, e["dino_ref"])):
+            hm = cv2.resize(amap, (W, H), interpolation=cv2.INTER_CUBIC)
+            hm = cv2.GaussianBlur(hm, (0, 0), 4)
+            hms.append(np.clip((hm - 0.5 * ref) / (1.5 * ref), 0, 1))
+        hm = (0.5 * (hms[0] + hms[1])).astype(np.float32)
+        return {"score": float(S), "heatmap": hm, "backend": self.backend,
+                "latency_ms": int((time.time() - t0) * 1000), "error": None}
+
     def predict(self, img: Image.Image) -> dict:
         t0 = time.time()
         img = img.convert("RGB")
@@ -206,6 +287,12 @@ class AnomalyEngine:
         err = None
         score = amap = None
         backend = self.backend
+        if self._ens is not None:
+            try:
+                return self._predict_ens(img, W, H, t0)
+            except Exception as e:
+                return {"score": 0.0, "heatmap": np.zeros((H, W), np.float32), "backend": None,
+                        "latency_ms": int((time.time() - t0) * 1000), "error": f"ensemble hata: {e}"}
         if self._sess is not None:
             try:
                 score, amap = self._predict_onnx(img)

@@ -68,6 +68,23 @@ def calib_file(category: str) -> Path:
     return MODELS_DIR / f"calib_{category}.npy"
 
 
+# Anomaly ensemble: PatchCore-WRN50 + AnomalyDINO (DINOv2 ViT-S/14), combine-then-calibrate
+# (eval_results/BIRLESTIRME.md section 4). Set ANOMALY_ENSEMBLE=false for WRN50-only.
+ANOMALY_ENSEMBLE = os.getenv("ANOMALY_ENSEMBLE", "true").strip().lower() not in ("0", "false", "no", "off")
+
+
+def dino_bank_file(category: str) -> Path:
+    return MODELS_DIR / f"bank_{category}_dinov2_vits14.npy"
+
+
+def ensemble_calib_file(category: str) -> Path:
+    return MODELS_DIR / f"calib_{category}_ensemble.npy"
+
+
+def ensemble_meta_file(category: str) -> Path:
+    return MODELS_DIR / f"calib_{category}_ensemble.json"
+
+
 YOLO_MODEL = MODELS_DIR / os.getenv("YOLO_MODEL_FILE", "yolo.onnx")  # .onnx or .pt, det or seg
 
 # VLM
@@ -78,11 +95,12 @@ VLM_SAMPLES = int(os.getenv("VLM_SAMPLES", "3"))
 VLM_TIMEOUT_S = 25
 
 # Fusion (see fusion.py docstring for semantics)
+# Tuned on the TUNE split with the ensemble anomaly engine (eval_results/e3b_best_params.json).
 WEIGHTS = {"anomaly": 0.45, "detector": 0.25, "vlm": 0.30}
-VOTE_THRESHOLDS = {"anomaly": 0.75,  # a >= 0.75  <=>  p_value <= ~0.053
-                   "detector": 0.40, "vlm": 0.50}
-ACCEPT_BELOW = 0.30
-REJECT_ABOVE = 0.70
+VOTE_THRESHOLDS = {"anomaly": 0.485,  # a-scale; a >= 0.485  <=>  p_value <= 0.15 (ensemble p, n=40)
+                   "detector": 0.30, "vlm": 0.50}
+ACCEPT_BELOW = 0.20
+REJECT_ABOVE = 0.55
 EARLY_EXIT_P = 0.50  # p_value above this and no detections -> skip VLM, suggest accept
 DETECTOR_CONF = 0.25
 

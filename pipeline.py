@@ -44,7 +44,7 @@ def warmup():
     for cat in set(config.PRODUCT_GROUPS.values()):
         try:
             eng, cal = _get_anom(cat)
-            if eng.backend == "patchcore":
+            if eng.backend in ("patchcore", "patchcore+dinov2"):
                 warm_bank(cat)
             _ = cal.scores
         except Exception:

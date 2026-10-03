@@ -1,0 +1,74 @@
+{
+  "vis_sigma_0.6.png": {
+    "sigma_px": 0.6,
+    "angle_deg": 5.0,
+    "channel": "Görünür",
+    "pixel_pitch_um": 3.45,
+    "mtf50_true_cy_px": 0.312317708548796,
+    "mtf_nyquist_true": 0.16922454248244997,
+    "inverted": false
+  },
+  "thm_sigma_0.6.png": {
+    "sigma_px": 0.6,
+    "angle_deg": 5.0,
+    "channel": "Termal",
+    "pixel_pitch_um": 12.0,
+    "mtf50_true_cy_px": 0.312317708548796,
+    "mtf_nyquist_true": 0.16922454248244997,
+    "inverted": true
+  },
+  "vis_sigma_1.0.png": {
+    "sigma_px": 1.0,
+    "angle_deg": 5.0,
+    "channel": "Görünür",
+    "pixel_pitch_um": 3.45,
+    "mtf50_true_cy_px": 0.1873906251292776,
+    "mtf_nyquist_true": 0.007191883355826368,
+    "inverted": false
+  },
+  "thm_sigma_1.0.png": {
+    "sigma_px": 1.0,
+    "angle_deg": 5.0,
+    "channel": "Termal",
+    "pixel_pitch_um": 12.0,
+    "mtf50_true_cy_px": 0.1873906251292776,
+    "mtf_nyquist_true": 0.007191883355826368,
+    "inverted": true
+  },
+  "vis_sigma_1.5.png": {
+    "sigma_px": 1.5,
+    "angle_deg": 5.0,
+    "channel": "Görünür",
+    "pixel_pitch_um": 3.45,
+    "mtf50_true_cy_px": 0.1249270834195184,
+    "mtf_nyquist_true": 1.5062460769587162e-05,
+    "inverted": false
+  },
+  "thm_sigma_1.5.png": {
+    "sigma_px": 1.5,
+    "angle_deg": 5.0,
+    "channel": "Termal",
+    "pixel_pitch_um": 12.0,
+    "mtf50_true_cy_px": 0.1249270834195184,
+    "mtf_nyquist_true": 1.5062460769587162e-05,
+    "inverted": true
+  },
+  "vis_sigma_2.5.png": {
+    "sigma_px": 2.5,
+    "angle_deg": 5.0,
+    "channel": "Görünür",
+    "pixel_pitch_um": 3.45,
+    "mtf50_true_cy_px": 0.07495625005171104,
+    "mtf_nyquist_true": 4.0296420412903294e-14,
+    "inverted": false
+  },
+  "thm_sigma_2.5.png": {
+    "sigma_px": 2.5,
+    "angle_deg": 5.0,
+    "channel": "Termal",
+    "pixel_pitch_um": 12.0,
+    "mtf50_true_cy_px": 0.07495625005171104,
+    "mtf_nyquist_true": 4.0296420412903294e-14,
+    "inverted": true
+  }
+}

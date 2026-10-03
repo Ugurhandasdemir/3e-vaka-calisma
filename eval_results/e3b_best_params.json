@@ -1,0 +1,49 @@
+{
+  "params": {
+    "w_anomaly": 0.45,
+    "w_detector": 0.25,
+    "accept_below": 0.2,
+    "reject_above": 0.55,
+    "anomaly_vote_p": 0.15,
+    "detector_vote_conf": 0.3
+  },
+  "tune_metrics": {
+    "escape_rate": 0.0,
+    "false_reject_rate": 0.0,
+    "review_rate": 0.1923,
+    "auto_accuracy": 1.0,
+    "defect_type_acc_on_reject": 0.9717,
+    "num_escapes": 0,
+    "num_false_rejects": 0,
+    "num_reviews": 35,
+    "num_auto": 147,
+    "num_rejects": 106,
+    "num_total": 182
+  },
+  "test_metrics": {
+    "escape_rate": 0.0,
+    "false_reject_rate": 0.0,
+    "review_rate": 0.2022,
+    "auto_accuracy": 1.0,
+    "defect_type_acc_on_reject": 0.9252,
+    "num_escapes": 0,
+    "num_false_rejects": 0,
+    "num_reviews": 37,
+    "num_auto": 146,
+    "num_rejects": 107,
+    "num_total": 183
+  },
+  "previous_test_metrics": {
+    "escape_rate": 0.0,
+    "false_reject_rate": 0.0,
+    "review_rate": 0.1639,
+    "auto_accuracy": 1.0,
+    "defect_type_acc_on_reject": 0.9192,
+    "num_escapes": 0,
+    "num_false_rejects": 0,
+    "num_reviews": 30,
+    "num_auto": 153,
+    "num_rejects": 99,
+    "num_total": 183
+  }
+}

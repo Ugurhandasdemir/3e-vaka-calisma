@@ -24,7 +24,9 @@ class Calibrator:
         if key in _cache:
             return _cache[key]
         scores = None
-        if self.engine.backend == "efficientad-onnx" and config.calib_file(self.category).exists():
+        if self.engine.backend == "patchcore+dinov2" and config.ensemble_calib_file(self.category).exists():
+            scores = np.load(config.ensemble_calib_file(self.category)).astype(np.float64).ravel()
+        elif self.engine.backend == "efficientad-onnx" and config.calib_file(self.category).exists():
             scores = np.load(config.calib_file(self.category)).astype(np.float64).ravel()
         else:
             f = calib_patchcore_file(self.category)

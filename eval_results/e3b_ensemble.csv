@@ -1,0 +1,366 @@
+path,category,label,split,ens_score,ens_p,wrn_p,detector_conf,detector_label
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/000.png,cable,1,test,6.122323622132743,0.024390243902439025,0.024390243902439025,0.8856610655784607,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/001.png,cable,1,tune,6.025943228258765,0.024390243902439025,0.024390243902439025,0.8890701532363892,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/002.png,cable,1,test,6.910914659310574,0.024390243902439025,0.024390243902439025,0.904603898525238,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/003.png,cable,1,test,6.85907481623914,0.024390243902439025,0.024390243902439025,0.8836476802825928,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/004.png,cable,1,tune,11.153970526500085,0.024390243902439025,0.024390243902439025,0.8894255757331848,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/005.png,cable,1,tune,8.606816366281974,0.024390243902439025,0.024390243902439025,0.905875563621521,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/006.png,cable,1,tune,8.09429855293683,0.024390243902439025,0.024390243902439025,0.7236597537994385,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/007.png,cable,1,tune,7.567990980693718,0.024390243902439025,0.024390243902439025,0.8833070993423462,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/008.png,cable,1,tune,3.6089089319642706,0.024390243902439025,0.024390243902439025,0.871902346611023,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/009.png,cable,1,test,9.09698855876508,0.024390243902439025,0.024390243902439025,0.9082493185997009,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/010.png,cable,1,tune,8.360099413314542,0.024390243902439025,0.024390243902439025,0.8714413642883301,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/011.png,cable,1,tune,10.463829439388126,0.024390243902439025,0.024390243902439025,0.9261928796768188,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/bent_wire/012.png,cable,1,test,7.680442450358483,0.024390243902439025,0.024390243902439025,0.9273197650909424,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/000.png,cable,1,tune,0.08971571460275804,0.3902439024390244,0.4146341463414634,0.33642590045928955,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/001.png,cable,1,tune,1.3143254826735822,0.07317073170731707,0.04878048780487805,0.6271224021911621,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/002.png,cable,1,tune,0.9179253054670643,0.14634146341463414,0.0975609756097561,0.670682966709137,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/003.png,cable,1,test,0.6548118786702646,0.21951219512195122,0.34146341463414637,0.6960390210151672,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/004.png,cable,1,test,0.9585484634237189,0.14634146341463414,0.04878048780487805,0.6855635643005371,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/005.png,cable,1,test,0.8515285260038292,0.14634146341463414,0.04878048780487805,0.6846404075622559,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/006.png,cable,1,tune,-0.27448166470848767,0.6829268292682927,0.43902439024390244,0.6220957040786743,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/007.png,cable,1,tune,0.3302983527920136,0.2926829268292683,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/008.png,cable,1,test,0.987410857853988,0.12195121951219512,0.0975609756097561,0.6819738745689392,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/009.png,cable,1,test,1.1009724605653672,0.0975609756097561,0.0975609756097561,0.5615454316139221,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/010.png,cable,1,tune,0.37619153529597216,0.2926829268292683,0.04878048780487805,0.47897958755493164,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cable_swap/011.png,cable,1,test,0.33365053491249863,0.2926829268292683,0.34146341463414637,0.6009793281555176,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/000.png,cable,1,test,8.24357824854954,0.024390243902439025,0.024390243902439025,0.8626713156700134,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/001.png,cable,1,tune,8.62541894196995,0.024390243902439025,0.024390243902439025,0.8613150119781494,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/002.png,cable,1,test,5.3824542019166675,0.024390243902439025,0.024390243902439025,0.6434587240219116,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/003.png,cable,1,test,6.516227250209107,0.024390243902439025,0.024390243902439025,0.9453923106193542,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/004.png,cable,1,test,3.9695666907179277,0.024390243902439025,0.024390243902439025,0.6307447552680969,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/005.png,cable,1,test,6.671684624427575,0.024390243902439025,0.024390243902439025,0.9310908317565918,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/006.png,cable,1,tune,7.873371007907566,0.024390243902439025,0.024390243902439025,0.9337177276611328,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/007.png,cable,1,test,3.5618579773597445,0.024390243902439025,0.024390243902439025,0.9391162395477295,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/008.png,cable,1,test,11.274219811666214,0.024390243902439025,0.024390243902439025,0.9223902821540833,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/009.png,cable,1,tune,5.291094346669942,0.024390243902439025,0.024390243902439025,0.8263413906097412,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/combined/010.png,cable,1,test,6.465600215399104,0.024390243902439025,0.024390243902439025,0.9373379945755005,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/000.png,cable,1,test,3.436099038053084,0.024390243902439025,0.024390243902439025,0.8428317904472351,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/001.png,cable,1,tune,3.7248637792920487,0.024390243902439025,0.024390243902439025,0.8919109106063843,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/002.png,cable,1,tune,2.2011056497173036,0.024390243902439025,0.04878048780487805,0.8517992496490479,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/003.png,cable,1,test,4.166517821540271,0.024390243902439025,0.024390243902439025,0.8779743313789368,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/004.png,cable,1,test,6.163196397255317,0.024390243902439025,0.024390243902439025,0.8504884839057922,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/005.png,cable,1,test,2.763483222561187,0.024390243902439025,0.024390243902439025,0.8051717281341553,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/006.png,cable,1,test,2.102816730450745,0.024390243902439025,0.04878048780487805,0.8625632524490356,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/007.png,cable,1,test,4.803382968561943,0.024390243902439025,0.024390243902439025,0.8529009819030762,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/008.png,cable,1,test,1.7729816823888187,0.04878048780487805,0.14634146341463414,0.8659816980361938,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/009.png,cable,1,tune,3.6003440426531967,0.024390243902439025,0.024390243902439025,0.8598684072494507,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/010.png,cable,1,test,2.7527559886684814,0.024390243902439025,0.024390243902439025,0.9140227437019348,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/011.png,cable,1,tune,5.305203887915225,0.024390243902439025,0.024390243902439025,0.7981669902801514,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/012.png,cable,1,test,4.754009330555909,0.024390243902439025,0.024390243902439025,0.8980255126953125,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_inner_insulation/013.png,cable,1,test,6.030574805687775,0.024390243902439025,0.024390243902439025,0.9175846576690674,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/000.png,cable,1,test,5.119522481609582,0.024390243902439025,0.024390243902439025,0.7804627418518066,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/001.png,cable,1,tune,4.88153062327226,0.024390243902439025,0.024390243902439025,0.7844991683959961,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/002.png,cable,1,tune,4.628122976283822,0.024390243902439025,0.024390243902439025,0.9187424182891846,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/003.png,cable,1,tune,2.6386382814487934,0.024390243902439025,0.04878048780487805,0.6147655844688416,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/004.png,cable,1,tune,1.570165819365548,0.07317073170731707,0.04878048780487805,0.7042139768600464,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/005.png,cable,1,tune,4.4000841092649985,0.024390243902439025,0.024390243902439025,0.7706775665283203,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/006.png,cable,1,tune,4.153706114672329,0.024390243902439025,0.024390243902439025,0.8102960586547852,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/007.png,cable,1,tune,2.280062703059832,0.024390243902439025,0.04878048780487805,0.7895685434341431,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/008.png,cable,1,tune,2.112152123127286,0.024390243902439025,0.024390243902439025,0.6973822116851807,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/cut_outer_insulation/009.png,cable,1,tune,2.7378229425465874,0.024390243902439025,0.04878048780487805,0.7265793085098267,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/000.png,cable,0,tune,-0.04672589372787761,0.4634146341463415,0.8780487804878049,0.5901502966880798,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/001.png,cable,0,tune,-1.1035121729416073,0.926829268292683,0.8780487804878049,0.48247137665748596,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/002.png,cable,0,test,0.2272117107196224,0.34146341463414637,0.4146341463414634,0.30937328934669495,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/003.png,cable,0,test,-1.7199714726615074,0.975609756097561,0.975609756097561,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/004.png,cable,0,tune,0.21133171453781474,0.34146341463414637,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/005.png,cable,0,test,-0.2573379919740503,0.6585365853658537,0.8536585365853658,0.517462432384491,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/006.png,cable,0,tune,-0.5690142896995342,0.8292682926829268,0.4878048780487805,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/007.png,cable,0,tune,0.3519043216928832,0.2926829268292683,0.1951219512195122,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/008.png,cable,0,tune,-0.14932756665469488,0.5365853658536586,0.5609756097560976,0.40957844257354736,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/009.png,cable,0,test,-0.16628495781477654,0.5365853658536586,0.8780487804878049,0.5215393304824829,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/010.png,cable,0,test,-1.5906029214269861,0.975609756097561,1.0,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/011.png,cable,0,test,0.38550828448968966,0.2926829268292683,0.2682926829268293,0.36304518580436707,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/012.png,cable,0,tune,-0.5644345815775267,0.8292682926829268,0.7073170731707317,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/013.png,cable,0,tune,1.5937510011808687,0.07317073170731707,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/014.png,cable,0,test,-0.20949164427638456,0.5853658536585366,0.3902439024390244,0.36407867074012756,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/015.png,cable,0,tune,-0.11781871580154818,0.5365853658536586,0.8292682926829268,0.5097729563713074,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/016.png,cable,0,tune,-0.8020466135987276,0.9024390243902439,0.8292682926829268,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/017.png,cable,0,tune,-1.0472468298401043,0.926829268292683,0.9512195121951219,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/018.png,cable,0,test,-1.3918223034250765,0.975609756097561,0.9024390243902439,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/019.png,cable,0,test,-0.10774960138791673,0.5365853658536586,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/020.png,cable,0,test,-1.0057669839852794,0.926829268292683,0.975609756097561,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/021.png,cable,0,tune,-0.48737270828500595,0.8048780487804879,0.8536585365853658,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/022.png,cable,0,test,-0.026428093787946694,0.4634146341463415,0.1951219512195122,0.3677098751068115,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/023.png,cable,0,test,-1.2335461018541563,0.926829268292683,0.926829268292683,0.37523865699768066,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/024.png,cable,0,tune,-0.6682863123780032,0.8536585365853658,0.6341463414634146,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/025.png,cable,0,test,-0.6292865802195384,0.8536585365853658,0.9512195121951219,0.31377583742141724,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/026.png,cable,0,test,-0.33022492063765535,0.6829268292682927,0.9512195121951219,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/027.png,cable,0,test,-0.8715912798914249,0.9024390243902439,0.7560975609756098,0.2837284803390503,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/028.png,cable,0,test,0.21529201076145188,0.34146341463414637,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/029.png,cable,0,test,0.502365638079738,0.2682926829268293,0.8780487804878049,0.5042589902877808,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/030.png,cable,0,tune,1.0891160542940692,0.12195121951219512,0.04878048780487805,0.2773537039756775,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/031.png,cable,0,tune,-0.35107866691120554,0.7073170731707317,0.7560975609756098,0.33919140696525574,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/032.png,cable,0,test,-0.897606254530962,0.9024390243902439,0.8536585365853658,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/033.png,cable,0,tune,-0.012183841883573437,0.43902439024390244,0.7560975609756098,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/034.png,cable,0,tune,-0.09508213086075384,0.5365853658536586,0.6097560975609756,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/035.png,cable,0,test,-1.3123875849895055,0.926829268292683,0.975609756097561,0.6833614110946655,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/036.png,cable,0,test,-0.07549671009126915,0.5121951219512195,0.34146341463414637,0.5838648080825806,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/037.png,cable,0,test,0.06812781933827167,0.43902439024390244,0.7560975609756098,0.29977768659591675,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/038.png,cable,0,tune,0.7536384469332095,0.17073170731707318,0.7560975609756098,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/039.png,cable,0,tune,-0.3590307760842712,0.7073170731707317,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/040.png,cable,0,test,-0.9428019572073241,0.9024390243902439,0.8780487804878049,0.4615998864173889,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/041.png,cable,0,tune,0.38359416294306087,0.2926829268292683,0.3170731707317073,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/042.png,cable,0,tune,0.05954340542360681,0.43902439024390244,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/043.png,cable,0,test,-0.8618573800565421,0.9024390243902439,0.8780487804878049,0.539710283279419,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/044.png,cable,0,tune,-0.7510750329399973,0.9024390243902439,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/045.png,cable,0,test,-0.7533783093068269,0.9024390243902439,0.8780487804878049,0.31358224153518677,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/046.png,cable,0,tune,0.15240641003364025,0.36585365853658536,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/047.png,cable,0,test,-0.42763896742357105,0.7804878048780488,0.8292682926829268,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/048.png,cable,0,tune,-0.6509206975771284,0.8536585365853658,0.8780487804878049,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/049.png,cable,0,tune,-0.11962615939174548,0.5365853658536586,0.4146341463414634,0.5453035831451416,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/050.png,cable,0,test,-0.37167183755714417,0.7073170731707317,0.7560975609756098,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/051.png,cable,0,test,0.7289187790813104,0.1951219512195122,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/052.png,cable,0,tune,-1.0847463167378013,0.926829268292683,0.8780487804878049,0.27771538496017456,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/053.png,cable,0,tune,0.11274886143588508,0.3902439024390244,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/054.png,cable,0,test,-0.8292966349416667,0.9024390243902439,0.8292682926829268,0.3642144799232483,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/055.png,cable,0,test,1.3008625512627792,0.07317073170731707,0.04878048780487805,0.2907613515853882,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/good/056.png,cable,0,tune,0.2735387838984418,0.3170731707317073,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/cable/test/good/057.png,cable,0,tune,0.854759871519909,0.14634146341463414,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/000.png,cable,1,tune,7.833075156554749,0.024390243902439025,0.024390243902439025,0.932357668876648,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/001.png,cable,1,tune,6.426857269789693,0.024390243902439025,0.024390243902439025,0.9449557065963745,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/002.png,cable,1,tune,7.907287890616811,0.024390243902439025,0.024390243902439025,0.9351504445075989,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/003.png,cable,1,test,7.475717083239818,0.024390243902439025,0.024390243902439025,0.9390828609466553,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/004.png,cable,1,tune,7.397368856622752,0.024390243902439025,0.024390243902439025,0.9394199848175049,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/005.png,cable,1,tune,6.667454297496154,0.024390243902439025,0.024390243902439025,0.9365241527557373,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/006.png,cable,1,test,10.072746984811392,0.024390243902439025,0.024390243902439025,0.9703482389450073,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/007.png,cable,1,test,8.308497919488307,0.024390243902439025,0.024390243902439025,0.9488962292671204,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/008.png,cable,1,test,7.35741690216649,0.024390243902439025,0.024390243902439025,0.9381200075149536,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/009.png,cable,1,test,7.57316167349806,0.024390243902439025,0.024390243902439025,0.95257967710495,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/010.png,cable,1,test,7.331596985815093,0.024390243902439025,0.024390243902439025,0.941496729850769,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_cable/011.png,cable,1,test,8.079910868770265,0.024390243902439025,0.024390243902439025,0.9373924136161804,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/000.png,cable,1,test,1.1551514465059984,0.0975609756097561,0.04878048780487805,0.41319605708122253,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/001.png,cable,1,tune,3.6586290169297304,0.024390243902439025,0.024390243902439025,0.9079407453536987,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/002.png,cable,1,test,3.072139050453466,0.024390243902439025,0.024390243902439025,0.9501137733459473,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/003.png,cable,1,test,4.712401012838664,0.024390243902439025,0.024390243902439025,0.9548407793045044,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/004.png,cable,1,tune,5.221606356611097,0.024390243902439025,0.024390243902439025,0.9594947099685669,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/005.png,cable,1,tune,3.88716977658655,0.024390243902439025,0.024390243902439025,0.892044186592102,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/006.png,cable,1,tune,3.380461439877467,0.024390243902439025,0.024390243902439025,0.8782497644424438,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/007.png,cable,1,tune,3.1214476963208497,0.024390243902439025,0.024390243902439025,0.9006915092468262,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/008.png,cable,1,test,3.7073924900815665,0.024390243902439025,0.024390243902439025,0.9471300840377808,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/missing_wire/009.png,cable,1,test,4.9625829610041725,0.024390243902439025,0.024390243902439025,0.9445031881332397,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/000.png,cable,1,tune,2.6721019894474636,0.024390243902439025,0.0975609756097561,0.9000012874603271,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/001.png,cable,1,tune,5.341790633506814,0.024390243902439025,0.024390243902439025,0.7097445130348206,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/002.png,cable,1,test,2.457571243829525,0.024390243902439025,0.17073170731707318,0.7056780457496643,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/003.png,cable,1,tune,3.593750200767352,0.024390243902439025,0.14634146341463414,0.7771650552749634,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/004.png,cable,1,tune,1.8815177299881036,0.024390243902439025,0.04878048780487805,0.8086214065551758,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/005.png,cable,1,test,4.189714435164138,0.024390243902439025,0.024390243902439025,0.8723337054252625,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/006.png,cable,1,tune,2.5949861646368,0.024390243902439025,0.04878048780487805,0.7792987823486328,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/007.png,cable,1,test,2.4209378128698,0.024390243902439025,0.24390243902439024,0.8620030879974365,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/008.png,cable,1,tune,3.4802271359950314,0.024390243902439025,0.024390243902439025,0.38263165950775146,Kaplama kusuru
+eval_data/mvtec/mvtec/images/cable/test/poke_insulation/009.png,cable,1,test,2.7727071167587694,0.024390243902439025,0.04878048780487805,0.8049304485321045,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/000.png,metal_nut,1,test,5.72273845690712,0.024390243902439025,0.024390243902439025,0.9018268585205078,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/001.png,metal_nut,1,test,5.177464239328749,0.024390243902439025,0.024390243902439025,0.8573052287101746,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/002.png,metal_nut,1,tune,6.622786845844798,0.024390243902439025,0.024390243902439025,0.8773311376571655,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/003.png,metal_nut,1,tune,5.763137652549057,0.024390243902439025,0.024390243902439025,0.7959319353103638,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/004.png,metal_nut,1,test,4.76482861296437,0.024390243902439025,0.024390243902439025,0.8649404048919678,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/005.png,metal_nut,1,test,7.7635102423800255,0.024390243902439025,0.024390243902439025,0.922762393951416,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/006.png,metal_nut,1,tune,2.8878415993679747,0.024390243902439025,0.04878048780487805,0.9133251905441284,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/007.png,metal_nut,1,tune,2.948597193284437,0.024390243902439025,0.17073170731707318,0.7473558187484741,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/008.png,metal_nut,1,tune,5.429564719289683,0.024390243902439025,0.024390243902439025,0.900836706161499,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/009.png,metal_nut,1,test,5.785343543627512,0.024390243902439025,0.024390243902439025,0.8355168104171753,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/010.png,metal_nut,1,tune,8.786967112959822,0.024390243902439025,0.024390243902439025,0.9019585847854614,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/011.png,metal_nut,1,tune,5.240848803522612,0.024390243902439025,0.024390243902439025,0.7958166599273682,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/012.png,metal_nut,1,tune,5.592381364965037,0.024390243902439025,0.024390243902439025,0.9292778968811035,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/013.png,metal_nut,1,tune,3.8663206213846824,0.024390243902439025,0.024390243902439025,0.8934030532836914,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/014.png,metal_nut,1,test,4.823253772435897,0.024390243902439025,0.024390243902439025,0.847079336643219,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/015.png,metal_nut,1,test,9.637281363106236,0.024390243902439025,0.024390243902439025,0.8578473925590515,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/016.png,metal_nut,1,tune,5.918135242479692,0.024390243902439025,0.024390243902439025,0.8941764831542969,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/017.png,metal_nut,1,test,8.316701282694929,0.024390243902439025,0.024390243902439025,0.8628847599029541,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/018.png,metal_nut,1,tune,4.597544665021297,0.024390243902439025,0.024390243902439025,0.9478094577789307,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/019.png,metal_nut,1,test,5.524641378307008,0.024390243902439025,0.024390243902439025,0.877159595489502,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/020.png,metal_nut,1,test,5.911812538019584,0.024390243902439025,0.024390243902439025,0.9255757927894592,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/021.png,metal_nut,1,tune,5.199453828645605,0.024390243902439025,0.024390243902439025,0.890438437461853,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/022.png,metal_nut,1,tune,3.4540367432722836,0.024390243902439025,0.024390243902439025,0.8769113421440125,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/023.png,metal_nut,1,test,6.327039370405891,0.024390243902439025,0.024390243902439025,0.78035569190979,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/bent/024.png,metal_nut,1,tune,6.540022658368615,0.024390243902439025,0.024390243902439025,0.847274899482727,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/000.png,metal_nut,1,test,5.23996255782872,0.024390243902439025,0.024390243902439025,0.7710731029510498,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/001.png,metal_nut,1,tune,7.2281465129980695,0.024390243902439025,0.024390243902439025,0.8740105628967285,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/002.png,metal_nut,1,tune,6.5631731329503324,0.024390243902439025,0.024390243902439025,0.9444707632064819,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/003.png,metal_nut,1,test,10.038152000027651,0.024390243902439025,0.024390243902439025,0.9055567979812622,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/004.png,metal_nut,1,test,3.6150068376765256,0.024390243902439025,0.07317073170731707,0.8652366399765015,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/005.png,metal_nut,1,tune,1.9350966329762567,0.024390243902439025,0.34146341463414637,0.919174313545227,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/006.png,metal_nut,1,test,6.777913756580478,0.024390243902439025,0.024390243902439025,0.8962551355361938,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/007.png,metal_nut,1,test,8.08499723198354,0.024390243902439025,0.024390243902439025,0.8237805962562561,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/008.png,metal_nut,1,tune,9.176997700145037,0.024390243902439025,0.024390243902439025,0.8920711278915405,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/009.png,metal_nut,1,test,9.24810428735561,0.024390243902439025,0.024390243902439025,0.840227484703064,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/010.png,metal_nut,1,test,4.100806230781617,0.024390243902439025,0.024390243902439025,0.8938323259353638,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/011.png,metal_nut,1,test,8.953432152942751,0.024390243902439025,0.024390243902439025,0.8706406950950623,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/012.png,metal_nut,1,test,6.067648435082708,0.024390243902439025,0.024390243902439025,0.9142088890075684,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/013.png,metal_nut,1,test,8.209876910405779,0.024390243902439025,0.024390243902439025,0.8599778413772583,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/014.png,metal_nut,1,test,8.960458500053793,0.024390243902439025,0.024390243902439025,0.8954306840896606,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/015.png,metal_nut,1,test,5.101217489773495,0.024390243902439025,0.024390243902439025,0.9129127860069275,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/016.png,metal_nut,1,test,3.2467426408494404,0.024390243902439025,0.024390243902439025,0.8552258014678955,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/017.png,metal_nut,1,test,4.622651078327104,0.024390243902439025,0.024390243902439025,0.860139012336731,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/018.png,metal_nut,1,tune,3.374009448133871,0.024390243902439025,0.024390243902439025,0.6958342790603638,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/019.png,metal_nut,1,tune,5.2188318228523976,0.024390243902439025,0.024390243902439025,0.7744139432907104,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/020.png,metal_nut,1,tune,5.66179320575166,0.024390243902439025,0.024390243902439025,0.931967556476593,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/color/021.png,metal_nut,1,tune,8.38071444210094,0.024390243902439025,0.024390243902439025,0.8020845651626587,Kaplama kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/000.png,metal_nut,1,test,6.126156177099343,0.024390243902439025,0.024390243902439025,0.9877282381057739,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/001.png,metal_nut,1,tune,6.9145049071735585,0.024390243902439025,0.024390243902439025,0.9836367964744568,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/002.png,metal_nut,1,test,6.063325977595846,0.024390243902439025,0.024390243902439025,0.9836407899856567,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/003.png,metal_nut,1,tune,5.8410475190447855,0.024390243902439025,0.024390243902439025,0.9858832359313965,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/004.png,metal_nut,1,tune,6.373001743327199,0.024390243902439025,0.024390243902439025,0.985167920589447,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/005.png,metal_nut,1,test,6.498122776900605,0.024390243902439025,0.024390243902439025,0.9867119789123535,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/006.png,metal_nut,1,test,6.514079274907941,0.024390243902439025,0.024390243902439025,0.9828461408615112,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/007.png,metal_nut,1,tune,6.5276667787249085,0.024390243902439025,0.024390243902439025,0.98478102684021,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/008.png,metal_nut,1,test,6.204205052512952,0.024390243902439025,0.024390243902439025,0.9867753386497498,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/009.png,metal_nut,1,test,6.908040588541407,0.024390243902439025,0.024390243902439025,0.9877553582191467,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/010.png,metal_nut,1,test,5.803494878729888,0.024390243902439025,0.024390243902439025,0.98751300573349,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/011.png,metal_nut,1,tune,7.365709928760267,0.024390243902439025,0.024390243902439025,0.9877884387969971,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/012.png,metal_nut,1,tune,6.120620158941617,0.024390243902439025,0.024390243902439025,0.9843144416809082,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/013.png,metal_nut,1,tune,6.101750449207689,0.024390243902439025,0.024390243902439025,0.9826226234436035,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/014.png,metal_nut,1,tune,6.207704081632892,0.024390243902439025,0.024390243902439025,0.9852240085601807,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/015.png,metal_nut,1,tune,6.023709591784412,0.024390243902439025,0.024390243902439025,0.9856237769126892,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/016.png,metal_nut,1,test,6.04397310261421,0.024390243902439025,0.024390243902439025,0.9838156700134277,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/017.png,metal_nut,1,test,6.239459022896645,0.024390243902439025,0.024390243902439025,0.987382173538208,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/018.png,metal_nut,1,test,6.516462497857305,0.024390243902439025,0.024390243902439025,0.9851767420768738,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/019.png,metal_nut,1,tune,6.0744195452819625,0.024390243902439025,0.024390243902439025,0.9850493669509888,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/020.png,metal_nut,1,tune,6.323802264806824,0.024390243902439025,0.024390243902439025,0.9866039752960205,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/021.png,metal_nut,1,tune,5.175531804741178,0.024390243902439025,0.024390243902439025,0.9838659763336182,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/flip/022.png,metal_nut,1,test,5.785943869112302,0.024390243902439025,0.024390243902439025,0.9864773154258728,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/metal_nut/test/good/000.png,metal_nut,0,test,0.4039974125692283,0.2682926829268293,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/001.png,metal_nut,0,tune,-0.8887044744750752,0.9024390243902439,0.9512195121951219,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/002.png,metal_nut,0,test,0.20047962453279006,0.4146341463414634,0.7317073170731707,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/003.png,metal_nut,0,test,-1.8681085702843268,1.0,0.975609756097561,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/004.png,metal_nut,0,test,-0.9781102610037362,0.926829268292683,0.8780487804878049,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/005.png,metal_nut,0,test,0.6047482670704573,0.21951219512195122,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/006.png,metal_nut,0,tune,-0.6960841895285755,0.8292682926829268,0.4878048780487805,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/007.png,metal_nut,0,test,0.314671779454911,0.34146341463414637,0.4146341463414634,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/008.png,metal_nut,0,tune,-0.74812921759717,0.8536585365853658,0.4878048780487805,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/009.png,metal_nut,0,test,-0.4119052672747293,0.6585365853658537,0.8048780487804879,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/010.png,metal_nut,0,tune,-0.10310914852982639,0.5365853658536586,0.7317073170731707,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/011.png,metal_nut,0,tune,0.9203433424544958,0.12195121951219512,0.4146341463414634,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/012.png,metal_nut,0,test,0.561228233713169,0.21951219512195122,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/013.png,metal_nut,0,tune,0.8726221794357283,0.14634146341463414,0.36585365853658536,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/014.png,metal_nut,0,tune,-0.041463557220784375,0.5121951219512195,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/015.png,metal_nut,0,test,-0.5409441714791206,0.7317073170731707,0.7560975609756098,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/016.png,metal_nut,0,tune,1.2978164632706792,0.0975609756097561,0.0975609756097561,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/017.png,metal_nut,0,test,-0.0742677736207552,0.5121951219512195,0.3170731707317073,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/018.png,metal_nut,0,test,-0.13753148819954922,0.5609756097560976,0.6829268292682927,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/019.png,metal_nut,0,tune,-0.4365867743255747,0.6585365853658537,0.8048780487804879,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/020.png,metal_nut,0,tune,0.39190296426219773,0.2926829268292683,0.6829268292682927,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/good/021.png,metal_nut,0,tune,-0.0009170840421108828,0.5121951219512195,0.8048780487804879,0.0,
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/000.png,metal_nut,1,tune,1.9779886424557633,0.024390243902439025,0.4878048780487805,0.7516615390777588,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/001.png,metal_nut,1,tune,4.317743284536077,0.024390243902439025,0.07317073170731707,0.879162073135376,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/002.png,metal_nut,1,test,7.172777770089037,0.024390243902439025,0.024390243902439025,0.7924724817276001,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/003.png,metal_nut,1,tune,3.191759453082354,0.024390243902439025,0.024390243902439025,0.9258611798286438,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/004.png,metal_nut,1,test,4.085208148283901,0.024390243902439025,0.024390243902439025,0.8652361035346985,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/005.png,metal_nut,1,test,5.100371131244376,0.024390243902439025,0.024390243902439025,0.8422552943229675,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/006.png,metal_nut,1,tune,5.302422132453712,0.024390243902439025,0.024390243902439025,0.835065484046936,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/007.png,metal_nut,1,test,5.811458878579095,0.024390243902439025,0.024390243902439025,0.8856227993965149,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/008.png,metal_nut,1,test,7.180380849134428,0.024390243902439025,0.024390243902439025,0.8680109977722168,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/009.png,metal_nut,1,test,3.746896864702455,0.024390243902439025,0.024390243902439025,0.8650248050689697,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/010.png,metal_nut,1,test,4.767331867078163,0.024390243902439025,0.024390243902439025,0.8651372194290161,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/011.png,metal_nut,1,test,7.302714590519898,0.024390243902439025,0.024390243902439025,0.845107913017273,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/012.png,metal_nut,1,tune,4.889799698130729,0.024390243902439025,0.024390243902439025,0.7554211616516113,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/013.png,metal_nut,1,tune,5.677696263366403,0.024390243902439025,0.024390243902439025,0.8597860932350159,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/014.png,metal_nut,1,test,5.611068802128375,0.024390243902439025,0.024390243902439025,0.8652535080909729,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/015.png,metal_nut,1,test,6.481002493748845,0.024390243902439025,0.024390243902439025,0.9475573897361755,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/016.png,metal_nut,1,tune,5.571386669932,0.024390243902439025,0.024390243902439025,0.850202202796936,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/017.png,metal_nut,1,test,6.0127973068431935,0.024390243902439025,0.024390243902439025,0.8598383665084839,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/018.png,metal_nut,1,tune,6.089260437327672,0.024390243902439025,0.024390243902439025,0.8884828090667725,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/019.png,metal_nut,1,tune,6.986046365657973,0.024390243902439025,0.024390243902439025,0.8692352771759033,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/020.png,metal_nut,1,tune,3.2805708351073033,0.024390243902439025,0.1951219512195122,0.8118962049484253,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/021.png,metal_nut,1,tune,5.627792693665298,0.024390243902439025,0.17073170731707318,0.7801421284675598,Yüzey çiziği
+eval_data/mvtec/mvtec/images/metal_nut/test/scratch/022.png,metal_nut,1,tune,3.8601120756565,0.024390243902439025,0.5853658536585366,0.8178895711898804,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/000.png,transistor,1,test,4.6930086317479836,0.024390243902439025,0.024390243902439025,0.7788896560668945,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/001.png,transistor,1,test,1.7162987226136392,0.0975609756097561,0.04878048780487805,0.2627018988132477,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/002.png,transistor,1,tune,3.4620132417132523,0.024390243902439025,0.024390243902439025,0.7492155432701111,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/003.png,transistor,1,tune,2.869622222644254,0.024390243902439025,0.024390243902439025,0.7530689239501953,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/004.png,transistor,1,test,4.729449359333421,0.024390243902439025,0.024390243902439025,0.640913724899292,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/005.png,transistor,1,tune,5.243118744303992,0.024390243902439025,0.024390243902439025,0.4714650511741638,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/006.png,transistor,1,test,5.559069554704562,0.024390243902439025,0.024390243902439025,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/007.png,transistor,1,tune,5.179314744051977,0.024390243902439025,0.024390243902439025,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/008.png,transistor,1,test,4.022980500400687,0.024390243902439025,0.024390243902439025,0.28583407402038574,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/bent_lead/009.png,transistor,1,tune,3.530399783679849,0.024390243902439025,0.024390243902439025,0.33849555253982544,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/000.png,transistor,1,tune,3.13991970021961,0.024390243902439025,0.024390243902439025,0.9592432975769043,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/001.png,transistor,1,test,4.092715445342558,0.024390243902439025,0.024390243902439025,0.965029239654541,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/002.png,transistor,1,tune,3.556348440130697,0.024390243902439025,0.04878048780487805,0.8430657386779785,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/003.png,transistor,1,test,3.2512922404071256,0.024390243902439025,0.024390243902439025,0.9475475549697876,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/004.png,transistor,1,tune,3.1148700729468373,0.024390243902439025,0.024390243902439025,0.8313156366348267,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/005.png,transistor,1,tune,4.251297024440014,0.024390243902439025,0.024390243902439025,0.8752992153167725,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/006.png,transistor,1,test,3.32879916047406,0.024390243902439025,0.024390243902439025,0.9090229868888855,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/007.png,transistor,1,tune,2.2292824345767634,0.04878048780487805,0.024390243902439025,0.9256759881973267,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/008.png,transistor,1,tune,4.495001956672654,0.024390243902439025,0.024390243902439025,0.6192862391471863,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/cut_lead/009.png,transistor,1,test,5.0117270019341795,0.024390243902439025,0.024390243902439025,0.779290497303009,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/000.png,transistor,1,tune,5.817747058065928,0.024390243902439025,0.024390243902439025,0.8108437061309814,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/001.png,transistor,1,test,8.076958679262521,0.024390243902439025,0.024390243902439025,0.9351914525032043,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/002.png,transistor,1,test,2.675954429476314,0.04878048780487805,0.04878048780487805,0.9154199361801147,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/003.png,transistor,1,tune,4.950652319311422,0.024390243902439025,0.024390243902439025,0.7068840265274048,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/004.png,transistor,1,test,6.257393204320624,0.024390243902439025,0.024390243902439025,0.8825140595436096,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/005.png,transistor,1,test,5.2006559702590485,0.024390243902439025,0.024390243902439025,0.9151204824447632,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/006.png,transistor,1,tune,4.9386350619819295,0.024390243902439025,0.024390243902439025,0.892338752746582,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/007.png,transistor,1,tune,5.930755873894169,0.024390243902439025,0.024390243902439025,0.510067880153656,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/008.png,transistor,1,test,7.65130248988273,0.024390243902439025,0.024390243902439025,0.9333279132843018,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/damaged_case/009.png,transistor,1,test,7.962242316126995,0.024390243902439025,0.024390243902439025,0.9050359725952148,Yüzey çiziği
+eval_data/mvtec/mvtec/images/transistor/test/good/000.png,transistor,0,test,-0.29764969526210006,0.6097560975609756,0.5853658536585366,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/001.png,transistor,0,test,0.5962384061489234,0.14634146341463414,0.1951219512195122,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/002.png,transistor,0,test,1.3694098938994432,0.0975609756097561,0.21951219512195122,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/003.png,transistor,0,test,-0.5145676921559107,0.8048780487804879,1.0,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/004.png,transistor,0,tune,0.5006696967099061,0.17073170731707318,0.4146341463414634,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/005.png,transistor,0,tune,0.8698229773984377,0.12195121951219512,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/006.png,transistor,0,tune,0.3644237309371981,0.17073170731707318,0.6585365853658537,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/007.png,transistor,0,tune,-0.007097836903276145,0.34146341463414637,0.7804878048780488,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/008.png,transistor,0,tune,0.761253991185436,0.12195121951219512,0.1951219512195122,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/009.png,transistor,0,test,0.3206352025588945,0.17073170731707318,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/010.png,transistor,0,test,-0.245499994072783,0.5121951219512195,0.43902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/011.png,transistor,0,test,-0.024411385077973483,0.36585365853658536,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/012.png,transistor,0,tune,-0.24631245759286258,0.5121951219512195,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/013.png,transistor,0,tune,-0.4447802861114739,0.7804878048780488,0.975609756097561,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/014.png,transistor,0,test,1.8895625281007127,0.07317073170731707,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/015.png,transistor,0,tune,-0.05459803902216985,0.36585365853658536,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/016.png,transistor,0,test,-0.09963579980000536,0.4146341463414634,0.975609756097561,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/017.png,transistor,0,test,0.12482028180540025,0.34146341463414637,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/018.png,transistor,0,test,0.4311695248463339,0.17073170731707318,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/019.png,transistor,0,tune,-0.3144540106546973,0.6341463414634146,0.43902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/020.png,transistor,0,test,-0.07760360659924426,0.36585365853658536,0.1951219512195122,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/021.png,transistor,0,test,-0.050688400286408336,0.36585365853658536,0.43902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/022.png,transistor,0,test,1.4636035090253503,0.0975609756097561,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/023.png,transistor,0,test,0.052809027901592254,0.34146341463414637,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/024.png,transistor,0,tune,0.6316538862659328,0.14634146341463414,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/025.png,transistor,0,tune,-0.13735753582977087,0.4146341463414634,0.43902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/026.png,transistor,0,tune,-0.23615761324403034,0.5121951219512195,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/027.png,transistor,0,test,-0.9455899507030039,0.975609756097561,0.8048780487804879,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/028.png,transistor,0,tune,0.1539424706080012,0.34146341463414637,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/029.png,transistor,0,tune,1.3461695967873886,0.0975609756097561,0.14634146341463414,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/030.png,transistor,0,test,-0.9860144034937248,0.975609756097561,0.6829268292682927,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/031.png,transistor,0,tune,-0.4410912285669889,0.7804878048780488,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/032.png,transistor,0,test,-0.3305122419452518,0.6341463414634146,0.5853658536585366,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/033.png,transistor,0,tune,0.031040936828790208,0.34146341463414637,0.3902439024390244,0.39634445309638977,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/good/034.png,transistor,0,test,-0.3044846878602472,0.6341463414634146,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/035.png,transistor,0,test,0.2310954955099543,0.34146341463414637,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/036.png,transistor,0,test,0.11829383004007074,0.34146341463414637,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/037.png,transistor,0,tune,0.9299658934793547,0.12195121951219512,0.07317073170731707,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/038.png,transistor,0,test,0.33054164851656764,0.17073170731707318,0.1951219512195122,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/039.png,transistor,0,test,0.48628398153571445,0.17073170731707318,0.43902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/040.png,transistor,0,tune,0.1725662918756693,0.34146341463414637,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/041.png,transistor,0,tune,0.9962538033633801,0.0975609756097561,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/042.png,transistor,0,tune,0.6713896833825286,0.14634146341463414,0.04878048780487805,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/043.png,transistor,0,test,-0.49084264960957913,0.8048780487804879,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/044.png,transistor,0,tune,0.6629831498301806,0.14634146341463414,0.12195121951219512,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/045.png,transistor,0,tune,0.4557747564281636,0.17073170731707318,0.07317073170731707,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/046.png,transistor,0,tune,-0.04177715694742559,0.36585365853658536,0.34146341463414637,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/047.png,transistor,0,tune,-0.6425110849325449,0.9024390243902439,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/048.png,transistor,0,test,-0.6470638804677089,0.9024390243902439,0.5609756097560976,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/049.png,transistor,0,tune,-0.6906360624876753,0.926829268292683,0.8048780487804879,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/050.png,transistor,0,test,-0.7008699191716585,0.926829268292683,0.6585365853658537,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/051.png,transistor,0,tune,-0.3133337207768441,0.6341463414634146,0.3902439024390244,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/052.png,transistor,0,tune,0.13476340896422562,0.34146341463414637,0.4878048780487805,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/053.png,transistor,0,test,0.3077216472038405,0.17073170731707318,0.1951219512195122,0.2800029516220093,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/good/054.png,transistor,0,test,-0.27471142735229404,0.5853658536585366,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/055.png,transistor,0,test,0.09519857102871015,0.34146341463414637,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/056.png,transistor,0,tune,-0.04363861304094924,0.36585365853658536,0.2682926829268293,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/057.png,transistor,0,tune,-0.7185893309690154,0.9512195121951219,0.5853658536585366,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/good/058.png,transistor,0,tune,0.4902549114024184,0.17073170731707318,0.17073170731707318,0.2537273168563843,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/good/059.png,transistor,0,test,0.7123517764825421,0.14634146341463414,0.17073170731707318,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/000.png,transistor,1,tune,2.5651782547285755,0.04878048780487805,0.024390243902439025,0.8936744332313538,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/001.png,transistor,1,tune,3.9409070373676323,0.024390243902439025,0.024390243902439025,0.0,
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/002.png,transistor,1,test,3.806092853818125,0.024390243902439025,0.07317073170731707,0.7602528929710388,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/003.png,transistor,1,test,3.5669201871256857,0.024390243902439025,0.17073170731707318,0.7153889536857605,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/004.png,transistor,1,tune,6.807542346644059,0.024390243902439025,0.024390243902439025,0.7296764850616455,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/005.png,transistor,1,tune,8.181805685112373,0.024390243902439025,0.024390243902439025,0.7359139919281006,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/006.png,transistor,1,test,3.442727359261138,0.024390243902439025,0.024390243902439025,0.818703293800354,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/007.png,transistor,1,tune,10.111916783749264,0.024390243902439025,0.024390243902439025,0.9636834263801575,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/008.png,transistor,1,test,10.67604234293397,0.024390243902439025,0.024390243902439025,0.9149829149246216,Konektör/montaj kusuru
+eval_data/mvtec/mvtec/images/transistor/test/misplaced/009.png,transistor,1,test,4.674214354762382,0.024390243902439025,0.024390243902439025,0.8841795921325684,Konektör/montaj kusuru
