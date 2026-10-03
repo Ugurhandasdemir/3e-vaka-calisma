@@ -24,6 +24,8 @@ DB_PATH = config.DATA_DIR / "qc.db"
 IMAGES_DIR = config.DATA_DIR / "images"
 MASKS_DIR = config.DATA_DIR / "masks"
 BORESIGHT_DIR = config.DATA_DIR / "boresight"
+MTF_DIR = config.DATA_DIR / "mtf"
+TORQUE_DIR = config.DATA_DIR / "torque"
 EXPORTS_DIR = config.DATA_DIR / "exports"
 
 
@@ -40,6 +42,8 @@ def init_db() -> None:
     IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     MASKS_DIR.mkdir(parents=True, exist_ok=True)
     BORESIGHT_DIR.mkdir(parents=True, exist_ok=True)
+    MTF_DIR.mkdir(parents=True, exist_ok=True)
+    TORQUE_DIR.mkdir(parents=True, exist_ok=True)
     EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     with get_db() as conn:
@@ -98,6 +102,43 @@ def init_db() -> None:
                 image_path TEXT,
                 inter_channel_mrad REAL,
                 drift_mrad REAL,
+                params TEXT
+            );
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS mtf_tests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ts TEXT NOT NULL,
+                inspector TEXT,
+                serial_no TEXT,
+                channel TEXT,
+                mtf50_cyc_px REAL,
+                mtf50_lpmm REAL,
+                mtf_nyquist REAL,
+                edge_angle_deg REAL,
+                spec_mtf50 REAL,
+                result TEXT,
+                image_path TEXT,
+                params TEXT
+            );
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS torque_tests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ts TEXT NOT NULL,
+                inspector TEXT,
+                serial_no TEXT,
+                stage TEXT,
+                paint_color TEXT,
+                angle_deg REAL,
+                offset_px REAL,
+                tolerance_deg REAL,
+                result TEXT,
+                image_path TEXT,
                 params TEXT
             );
             """
@@ -527,6 +568,191 @@ def list_boresight(
     return results
 
 
+def _f(v: Any) -> float | None:
+    try:
+        return None if v is None else float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _save_image(image: Any, dest: Path) -> bool:
+    try:
+        if isinstance(image, Image.Image):
+            image.convert("RGB").save(dest, format="PNG")
+            return True
+        if isinstance(image, (str, Path)) and Path(image).exists():
+            Image.open(image).convert("RGB").save(dest, format="PNG")
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _normalize_result(result: str | None) -> str:
+    r = (result or "").strip().upper()
+    if r in ("PASS", "GEÇTİ", "GECTI", "GEÇTI"):
+        return "PASS"
+    if r in ("FAIL", "KALDI", "RET", "REJECT"):
+        return "FAIL"
+    return "UNCERTAIN"
+
+
+def save_mtf(
+    inspector: str,
+    serial_no: str,
+    channel: str,
+    mtf50_cyc_px: float | None,
+    mtf50_lpmm: float | None,
+    mtf_nyquist: float | None,
+    edge_angle_deg: float | None,
+    spec_mtf50: float | None,
+    result: str,
+    image: Any = None,
+    params: dict[str, Any] | None = None,
+) -> int:
+    """Saves an MTF (slanted-edge) test record. Returns the record ID."""
+    init_db()
+    ts = datetime.now(timezone.utc).isoformat()
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO mtf_tests (ts, inspector, serial_no, channel, mtf50_cyc_px, mtf50_lpmm,
+                mtf_nyquist, edge_angle_deg, spec_mtf50, result, image_path, params)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                ts,
+                inspector or "Muayene Uzmanı",
+                serial_no or f"SN-{int(datetime.now().timestamp())}",
+                channel or "Görünür",
+                _f(mtf50_cyc_px), _f(mtf50_lpmm), _f(mtf_nyquist), _f(edge_angle_deg), _f(spec_mtf50),
+                _normalize_result(result),
+                "",
+                json.dumps(_clean_for_json(params or {}), ensure_ascii=False),
+            ),
+        )
+        rid = cur.lastrowid
+        assert rid is not None
+        if image is not None:
+            dest = MTF_DIR / f"{rid}.png"
+            if _save_image(image, dest):
+                cur.execute("UPDATE mtf_tests SET image_path = ? WHERE id = ?", (str(dest), rid))
+        conn.commit()
+    return rid
+
+
+def save_torque(
+    inspector: str,
+    serial_no: str,
+    stage: str,
+    paint_color: str,
+    angle_deg: float | None,
+    offset_px: float | None,
+    tolerance_deg: float | None,
+    result: str,
+    image: Any = None,
+    params: dict[str, Any] | None = None,
+) -> int:
+    """Saves a torque-mark test record (GEÇTİ/KALDI/BELİRSİZ -> PASS/FAIL/UNCERTAIN). Returns the record ID."""
+    init_db()
+    ts = datetime.now(timezone.utc).isoformat()
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO torque_tests (ts, inspector, serial_no, stage, paint_color, angle_deg,
+                offset_px, tolerance_deg, result, image_path, params)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                ts,
+                inspector or "Muayene Uzmanı",
+                serial_no or f"SN-{int(datetime.now().timestamp())}",
+                stage or "son test",
+                paint_color or "auto",
+                _f(angle_deg), _f(offset_px), _f(tolerance_deg),
+                _normalize_result(result),
+                "",
+                json.dumps(_clean_for_json(params or {}), ensure_ascii=False),
+            ),
+        )
+        rid = cur.lastrowid
+        assert rid is not None
+        if image is not None:
+            dest = TORQUE_DIR / f"{rid}.png"
+            if _save_image(image, dest):
+                cur.execute("UPDATE torque_tests SET image_path = ? WHERE id = ?", (str(dest), rid))
+        conn.commit()
+    return rid
+
+
+def _list_table(table: str, serial_no: str | None, limit: int) -> list[dict[str, Any]]:
+    init_db()
+    with get_db() as conn:
+        cur = conn.cursor()
+        if serial_no:
+            cur.execute(f"SELECT * FROM {table} WHERE serial_no = ? ORDER BY id DESC LIMIT ?", (serial_no, limit))
+        else:
+            cur.execute(f"SELECT * FROM {table} ORDER BY id DESC LIMIT ?", (limit,))
+        rows = [dict(r) for r in cur.fetchall()]
+    for d in rows:
+        try:
+            d["params"] = json.loads(d["params"]) if d.get("params") else {}
+        except Exception:
+            pass
+    return rows
+
+
+def list_mtf(serial_no: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+    """Returns recent MTF test records, optionally filtered by serial number."""
+    return _list_table("mtf_tests", serial_no, limit)
+
+
+def list_torque(serial_no: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+    """Returns recent torque-mark test records, optionally filtered by serial number."""
+    return _list_table("torque_tests", serial_no, limit)
+
+
+def _export_table_csv(table: str, target: Path) -> Path:
+    init_db()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(f"SELECT * FROM {table} ORDER BY id ASC")
+        rows = cur.fetchall()
+        cols = [d[0] for d in cur.description]
+    with open(target, mode="w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(cols)
+        for r in rows:
+            w.writerow(list(r))
+    return target
+
+
+def export_mtf_csv(dest_path: Path | str | None = None) -> Path:
+    return _export_table_csv("mtf_tests", Path(dest_path) if dest_path else EXPORTS_DIR / "mtf_tests.csv")
+
+
+def export_torque_csv(dest_path: Path | str | None = None) -> Path:
+    return _export_table_csv("torque_tests", Path(dest_path) if dest_path else EXPORTS_DIR / "torque_tests.csv")
+
+
+def export_post_production_zip(dest_path: Path | str | None = None) -> Path:
+    """Bundles boresight, MTF and torque-mark CSVs into one ZIP."""
+    target = Path(dest_path) if dest_path else EXPORTS_DIR / "post_production_tests.zip"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    files = {
+        "boresight_tests.csv": export_boresight_csv(),
+        "mtf_tests.csv": export_mtf_csv(),
+        "torque_tests.csv": export_torque_csv(),
+    }
+    with zipfile.ZipFile(target, mode="w", compression=zipfile.ZIP_DEFLATED) as z:
+        for arc, p in files.items():
+            z.write(p, arcname=arc)
+    return target
+
+
 def stats() -> dict[str, Any]:
     """Computes summary statistics for the dashboard:
 
@@ -690,6 +916,8 @@ def export_csv(dest_path: Path | str | None = None) -> Path:
     # Also generate boresight_tests.csv alongside inspections.csv
     try:
         export_boresight_csv(EXPORTS_DIR / "boresight_tests.csv")
+        export_mtf_csv()
+        export_torque_csv()
     except Exception:
         pass
 
@@ -707,12 +935,16 @@ def export_csv_bundle(dest_path: Path | str | None = None) -> Path:
 
     insp_csv = export_csv()
     bore_csv = export_boresight_csv()
+    mtf_csv = export_mtf_csv()
+    torque_csv = export_torque_csv()
 
     with zipfile.ZipFile(target, mode="w", compression=zipfile.ZIP_DEFLATED) as zip_f:
         if insp_csv.exists():
             zip_f.write(insp_csv, arcname="inspections.csv")
         if bore_csv.exists():
             zip_f.write(bore_csv, arcname="boresight_tests.csv")
+        zip_f.write(mtf_csv, arcname="mtf_tests.csv")
+        zip_f.write(torque_csv, arcname="torque_tests.csv")
 
     return target
 
@@ -1300,6 +1532,21 @@ def serial_status(serial_no: str) -> SerialStatus:
         )
         bore_rows = [dict(r) for r in cursor.fetchall()]
 
+        cursor.execute("SELECT * FROM mtf_tests WHERE serial_no = ? ORDER BY id DESC", (serial_no,))
+        mtf_rows = [dict(r) for r in cursor.fetchall()]
+        cursor.execute("SELECT * FROM torque_tests WHERE serial_no = ? ORDER BY id DESC", (serial_no,))
+        torque_rows = [dict(r) for r in cursor.fetchall()]
+
+    def _tr(rows: list[dict[str, Any]]) -> str:
+        if not rows:
+            return "none"
+        return {"PASS": "GEÇTİ", "FAIL": "KALDI"}.get(_normalize_result(rows[0].get("result")), "BELİRSİZ")
+
+    mtf_result = _tr(mtf_rows)
+    torque_result = _tr(torque_rows)
+    extra_failed = "KALDI" in (mtf_result, torque_result)
+    extra_uncertain = "BELİRSİZ" in (mtf_result, torque_result)
+
     # Product group from latest inspection (or boresight params)
     product_group = "-"
     if insp_rows and insp_rows[0].get("product_group"):
@@ -1409,10 +1656,10 @@ def serial_status(serial_no: str) -> SerialStatus:
                 drift_status = "none"
 
     # 4. Overall Decision
-    if visual_failed or boresight_failed or drift_failed:
+    if visual_failed or boresight_failed or drift_failed or extra_failed:
         overall = "RET"
         emoji = "🔴"
-    elif visual_missing or boresight_missing or not visual_passed or not boresight_passed:
+    elif visual_missing or boresight_missing or not visual_passed or not boresight_passed or extra_uncertain:
         overall = "BEKLEMEDE"
         emoji = "🟡"
     elif visual_passed and boresight_passed and (drift_passed is None or drift_passed is True):
@@ -1429,6 +1676,8 @@ def serial_status(serial_no: str) -> SerialStatus:
         "boresight_result": boresight_result,
         "drift_status": drift_status,
         "drift_mrad": drift_val,
+        "mtf_result": mtf_result,
+        "torque_result": torque_result,
         "overall": overall,
         "status": overall,
         "emoji": emoji,
@@ -1440,6 +1689,8 @@ def serial_status(serial_no: str) -> SerialStatus:
         "boresight_raw": boresight_raw,
         "inspections": insp_rows,
         "boresight_tests": bore_rows,
+        "mtf_tests": mtf_rows,
+        "torque_tests": torque_rows,
     })
 
 
@@ -1454,6 +1705,10 @@ def list_serial_status() -> list[SerialStatus]:
                 SELECT serial_no, ts FROM inspections WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
                 UNION ALL
                 SELECT serial_no, ts FROM boresight_tests WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
+                UNION ALL
+                SELECT serial_no, ts FROM mtf_tests WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
+                UNION ALL
+                SELECT serial_no, ts FROM torque_tests WHERE serial_no IS NOT NULL AND TRIM(serial_no) != ''
             ) GROUP BY serial_no ORDER BY max_ts DESC
             """
         )

@@ -1002,7 +1002,7 @@ def get_quality_gate_dataframe() -> pd.DataFrame:
     statuses = storage.list_serial_status()
     if not statuses:
         return pd.DataFrame(
-            columns=["Seri No", "Ürün Grubu", "Görsel Muayene", "Son Test", "Kayma", "Genel Durum"]
+            columns=["Seri No", "Ürün Grubu", "Görsel Muayene", "Son Test", "Kayma", "MTF", "Tork İşareti", "Genel Durum"]
         )
     rows = []
     for s in statuses:
@@ -1012,6 +1012,8 @@ def get_quality_gate_dataframe() -> pd.DataFrame:
             "Görsel Muayene": s.get("visual_decision", "-"),
             "Son Test": s.get("boresight_result", "-"),
             "Kayma": s.get("drift_status", "-"),
+            "MTF": s.get("mtf_result", "none"),
+            "Tork İşareti": s.get("torque_result", "none"),
             "Genel Durum": s.get("genel_durum", f"{s.get('emoji', '')} {s.get('overall', '-')}"),
         })
     return pd.DataFrame(rows)
@@ -1040,6 +1042,8 @@ def on_lookup_serial(serial_no: str) -> tuple[str, pd.DataFrame, pd.DataFrame]:
     b_res = status.get("boresight_result", "none")
     d_stat = status.get("drift_status", "none")
     p_grp = status.get("product_group", "-")
+    m_res = status.get("mtf_result", "none")
+    t_res = status.get("torque_result", "none")
 
     if overall == "SEVKE HAZIR":
         card_bg = "#ecfdf5"
@@ -1072,6 +1076,8 @@ def on_lookup_serial(serial_no: str) -> tuple[str, pd.DataFrame, pd.DataFrame]:
             <div><strong>🏭 Görsel Muayene:</strong> <span style="font-weight: 700;">{v_dec}</span></div>
             <div><strong>🧪 Son Test (Boresight):</strong> <span style="font-weight: 700;">{b_res}</span></div>
             <div><strong>📈 Titreşim Kayması:</strong> <span style="font-weight: 700;">{d_stat}</span></div>
+            <div><strong>🔬 MTF:</strong> <span style="font-weight: 700;">{m_res}</span></div>
+            <div><strong>🔩 Tork İşareti:</strong> <span style="font-weight: 700;">{t_res}</span></div>
         </div>
         <div style="margin-top: 8px; font-size: 13px; color: #374151;">{summary_txt}</div>
     </div>
@@ -1326,7 +1332,34 @@ def on_measure_mtf(image: Any, pixel_pitch_um: float, spec_mtf50: float, channel
         res = mtf_engine.measure_mtf(image, pitch, channel, spec_mtf50=spec)
     except ValueError as e:
         raise gr.Error(f"MTF ölçülemedi: {e}")
-    return render_mtf_badge(res), res["plot_image"], res["roi_image"], build_mtf_metrics_dataframe(res)
+    return render_mtf_badge(res), res["plot_image"], res["roi_image"], build_mtf_metrics_dataframe(res), res
+
+
+def on_save_mtf(last_res: dict[str, Any] | None, serial_no: str, inspector: str) -> str:
+    """Persists the last MTF measurement to SQLite."""
+    if not last_res:
+        raise gr.Error("Lütfen önce 'MTF Ölç' butonuna basarak ölçüm yapınız.")
+    passed = last_res.get("passed")
+    result = "PASS" if passed is True else ("FAIL" if passed is False else "UNCERTAIN")
+    rid = storage.save_mtf(
+        inspector=inspector,
+        serial_no=(serial_no or "").strip(),
+        channel=last_res.get("channel", "Görünür"),
+        mtf50_cyc_px=last_res.get("mtf50_cy_px"),
+        mtf50_lpmm=last_res.get("mtf50_lp_mm"),
+        mtf_nyquist=last_res.get("mtf_nyquist"),
+        edge_angle_deg=last_res.get("edge_angle_deg"),
+        spec_mtf50=last_res.get("spec_mtf50"),
+        result=result,
+        image=last_res.get("roi_image"),
+        params={
+            "pixel_pitch_um": last_res.get("pixel_pitch_um"),
+            "mtf10_cy_px": last_res.get("mtf10_cy_px"),
+            "snr": last_res.get("snr"),
+            "warnings": last_res.get("warnings"),
+        },
+    )
+    return f"✅ **MTF Testi Kaydedildi!** Kayıt ID: **#{rid}** (Seri No: **{serial_no}**, Sonuç: **{result}**)"
 
 
 def on_boresight_channel_change(channel: str) -> tuple[float, float]:
@@ -1444,10 +1477,31 @@ def on_inspect_torque_mark(
 
 **Sınırlılık:** Tork işareti yalnızca *dönerek gevşemeyi* tespit eder; dönme olmadan tork kaybını (örn. termal gevşeme, basınç kaybı) saptayamaz. Tork-açı eğrisi verisi ile birleştirilmesi (akıllı tork aletleri entegrasyonu) yol haritasındadır.
 
-**Kayıt:** yol haritası (bu sürümde sonuçlar veritabanına yazılmaz).
+**Kayıt:** sonuçlar 'Kaydet' butonuyla veritabanına yazılır ve kalite kapısına dahil edilir.
 """
 
-    return badge, anno, df, explanation_md
+    return badge, anno, df, explanation_md, res
+
+
+def on_save_torque(
+    last_res: dict[str, Any] | None, serial_no: str, inspector: str, stage: str, paint_color: str
+) -> str:
+    """Persists the last torque-mark inspection to SQLite."""
+    if not last_res:
+        raise gr.Error("Lütfen önce 'Kontrol Et' butonuna basarak ölçüm yapınız.")
+    rid = storage.save_torque(
+        inspector=inspector,
+        serial_no=(serial_no or "").strip(),
+        stage=stage,
+        paint_color=paint_color,
+        angle_deg=last_res.get("angle_deg"),
+        offset_px=last_res.get("offset_px"),
+        tolerance_deg=last_res.get("tolerance_deg"),
+        result=last_res.get("decision", "BELİRSİZ"),
+        image=last_res.get("annotated_image"),
+        params={"head_pixels": last_res.get("head_pixels"), "housing_pixels": last_res.get("housing_pixels")},
+    )
+    return f"✅ **Tork İşareti Kaydedildi!** Kayıt ID: **#{rid}** (Seri No: **{serial_no}**, Karar: **{last_res.get('decision')}**)"
 
 
 def validate_boresight_image(image: Any) -> Image.Image:
@@ -1685,6 +1739,8 @@ with gr.Blocks(
     css="""
     .metric-box { border-radius: 8px; padding: 12px; }
     .gr-button-primary { font-weight: 700 !important; }
+    div[style*="background: #f"], div[style*="background: #e"], div[style*="background: white"] { color: #1f2937; }
+    div[style*="background: #f"] :where(p, li, td, th, span, strong, b, div, h1, h2, h3, h4, code, em, label):not([style*="color"]), div[style*="background: #e"] :where(p, li, td, th, span, strong, b, div, h1, h2, h3, h4, code, em, label):not([style*="color"]), div[style*="background: white"] :where(p, li, td, th, span, strong, b, div, h1, h2, h3, h4, code, em, label):not([style*="color"]) { color: #1f2937 !important; }
     """,
 ) as demo:
     # State keeping last pipeline result
@@ -2060,7 +2116,7 @@ with gr.Blocks(
 
                 with gr.Tab("🔬 MTF (Keskinlik)", id="sub_mtf"):
                     gr.Markdown(
-                        "**Eğimli kenar (ISO 12233) MTF testi.** Kayıt: yol haritası (bu sürümde sonuçlar veritabanına yazılmaz)."
+                        "**Eğimli kenar (ISO 12233) MTF testi.** Sonuç 'Kaydet' ile veritabanına yazılır ve kalite kapısına dahil edilir."
                     )
                     with gr.Row():
                         with gr.Column(scale=5):
@@ -2073,6 +2129,9 @@ with gr.Blocks(
                                 spec_input_mtf = gr.Number(label="Spec MTF50 (cycles/pixel)", value=0.25, minimum=0.0)
                             image_input_mtf = gr.Image(label="Eğimli Kenar Görseli", type="pil", image_mode="RGB")
                             measure_mtf_btn = gr.Button("🔬 MTF Ölç", variant="primary", size="lg")
+                            save_mtf_btn = gr.Button("💾 Kaydet", variant="secondary")
+                            save_mtf_status = gr.Markdown(value="")
+                            last_mtf_state = gr.State(value=None)
                             mtf_examples = load_mtf_examples()
                             if mtf_examples:
                                 gr.Examples(
@@ -2098,7 +2157,7 @@ with gr.Blocks(
                     measure_mtf_btn.click(
                         fn=on_measure_mtf,
                         inputs=[image_input_mtf, pitch_input_mtf, spec_input_mtf, channel_dropdown_mtf],
-                        outputs=[badge_mtf_view, plot_mtf_view, roi_mtf_view, table_mtf_view],
+                        outputs=[badge_mtf_view, plot_mtf_view, roi_mtf_view, table_mtf_view, last_mtf_state],
                         api_name="measure_mtf",
                     )
                     channel_dropdown_mtf.change(
@@ -2107,18 +2166,12 @@ with gr.Blocks(
                         outputs=[pitch_input_mtf, spec_input_mtf],
                         api_name=False,
                     )
-                    serial_input_boresight.change(
-                        fn=lambda s: s, inputs=[serial_input_boresight], outputs=[serial_input_mtf], api_name=False
-                    )
-                    serial_input_mtf.change(
-                        fn=lambda s: s, inputs=[serial_input_mtf], outputs=[serial_input_boresight], api_name=False
-                    )
 
                 with gr.Tab("🔩 Tork İşareti", id="sub_torque_mark"):
                     gr.Markdown(
                         "**Tork işareti (witness mark / torque stripe) kontrolü.** "
                         "Titreşim testi sonrasında vida bağlantılarının gevşeyip gevşemediğini, "
-                        "boya çizgisinin açısal kaymasıyla tespit eder. Kayıt: yol haritası."
+                        "boya çizgisinin açısal kaymasıyla tespit eder. Sonuç 'Kaydet' ile veritabanına yazılır ve kalite kapısına dahil edilir."
                     )
                     with gr.Row():
                         with gr.Column(scale=5):
@@ -2147,6 +2200,9 @@ with gr.Blocks(
                             inspect_torque_btn = gr.Button(
                                 "🔩 Kontrol Et", variant="primary", size="lg"
                             )
+                            save_torque_btn = gr.Button("💾 Kaydet", variant="secondary")
+                            save_torque_status = gr.Markdown(value="")
+                            last_torque_state = gr.State(value=None)
                             torque_examples = load_torque_mark_examples()
                             if torque_examples:
                                 gr.Examples(
@@ -2167,21 +2223,14 @@ with gr.Blocks(
                     inspect_torque_btn.click(
                         fn=on_inspect_torque_mark,
                         inputs=[image_input_torque, color_dropdown_torque, tolerance_input_torque],
-                        outputs=[badge_torque_view, image_torque_view, table_torque_view, explanation_torque_view],
+                        outputs=[badge_torque_view, image_torque_view, table_torque_view, explanation_torque_view, last_torque_state],
                         api_name="inspect_torque_mark",
-                    )
-                    # Serial number sync with boresight and MTF
-                    serial_input_boresight.change(
-                        fn=lambda s: s, inputs=[serial_input_boresight], outputs=[serial_input_torque], api_name=False
-                    )
-                    serial_input_torque.change(
-                        fn=lambda s: s, inputs=[serial_input_torque], outputs=[serial_input_boresight], api_name=False
                     )
 
         # ===================================================================
         # TAB 3: GEÇMİŞ VE PANO
         # ===================================================================
-        with gr.Tab("📊 Geçmiş ve Pano", id="tab_pano"):
+        with gr.Tab("📊 Geçmiş ve Pano", id="tab_pano") as tab_pano:
             with gr.Row():
                 gr.Markdown("### 📈 Muayene İstatistikleri ve Kalite Kontrol Panosu")
                 refresh_btn = gr.Button("🔄 Panoyu Yenile", variant="secondary", size="sm")
@@ -2257,6 +2306,7 @@ with gr.Blocks(
                     with gr.Row():
                         export_csv_btn = gr.Button("📥 Muayene Kayıtlarını İndir (CSV)", variant="secondary")
                         export_boresight_csv_btn = gr.Button("🎯 Boresight Kayıtlarını İndir (CSV)", variant="secondary")
+                        export_post_btn = gr.Button("🧪 Üretim Sonrası Testleri İndir (ZIP: boresight+MTF+tork)", variant="secondary")
                         export_yolo_btn = gr.Button("📦 YOLO Etiket Paketini İndir (ZIP)", variant="primary")
                     export_file_view = gr.File(label="İndirme Bağlantısı", interactive=False)
 
@@ -2448,7 +2498,7 @@ with gr.Blocks(
         api_name="sam_segment",
     )
 
-    save_btn.click(
+    save_evt = save_btn.click(
         fn=on_save_click,
         inputs=[
             last_result_state,
@@ -2498,10 +2548,17 @@ with gr.Blocks(
     )
 
     export_boresight_csv_btn.click(
-        fn=storage.export_boresight_csv,
+        fn=lambda: str(storage.export_boresight_csv()),
         inputs=[],
         outputs=[export_file_view],
         api_name="export_boresight_csv",
+    )
+
+    export_post_btn.click(
+        fn=lambda: str(storage.export_post_production_zip()),
+        inputs=[],
+        outputs=[export_file_view],
+        api_name="export_post_production",
     )
 
     channel_dropdown_boresight.change(
@@ -2528,7 +2585,7 @@ with gr.Blocks(
         api_name="measure_boresight",
     )
 
-    save_boresight_btn.click(
+    save_bore_evt = save_boresight_btn.click(
         fn=on_save_boresight,
         inputs=[
             last_boresight_state,
@@ -2585,17 +2642,34 @@ with gr.Blocks(
         outputs=[serial_input_boresight, drift_serial_input, copy_to_stage2_status],
     )
 
-    serial_no_input.change(
-        fn=lambda s: s,
-        inputs=[serial_no_input],
-        outputs=[serial_input_boresight],
-    )
+    # --- Ortak seri numarası: herhangi bir kutuda kullanıcı düzenlemesi tüm kutulara yayılır ---
+    _serial_boxes = [
+        serial_no_input,
+        serial_input_boresight,
+        serial_input_mtf,
+        serial_input_torque,
+        drift_serial_input,
+        serial_lookup_input,
+    ]
 
-    serial_input_boresight.change(
-        fn=lambda s: s,
-        inputs=[serial_input_boresight],
-        outputs=[serial_no_input],
-    )
+    def _make_fanout(n: int):
+        def _fan(s):
+            return tuple(s for _ in range(n))
+
+        return _fan
+
+    def _wire_serial_fanout(src, trigger="input"):
+        others = [b for b in _serial_boxes if b is not src]
+        getattr(src, trigger)(
+            fn=_make_fanout(len(others)),
+            inputs=[src],
+            outputs=others,
+            api_name=False,
+            show_progress="hidden",
+        )
+
+    for _box in _serial_boxes:
+        _wire_serial_fanout(_box, "input")
 
     serial_lookup_btn.click(
         fn=on_lookup_serial,
@@ -2621,20 +2695,41 @@ with gr.Blocks(
         fn=get_quality_gate_dataframe,
         inputs=[],
         outputs=[quality_gate_table],
+        api_name=False,
     )
 
-    save_btn.click(
-        fn=get_quality_gate_dataframe,
-        inputs=[],
-        outputs=[quality_gate_table],
+    _dash_outputs = [metrics_cards_view, defect_bar_plot, history_table, quality_gate_table]
+
+    def _refresh_all_dashboard():
+        m, d, h = on_refresh_dashboard()
+        return m, d, h, get_quality_gate_dataframe()
+
+    _others_s1 = [b for b in _serial_boxes if b is not serial_no_input]
+    _others_s2 = [b for b in _serial_boxes if b is not serial_input_boresight]
+    save_evt.then(_make_fanout(len(_others_s1)), inputs=[serial_no_input], outputs=_others_s1, api_name=False, show_progress="hidden").then(
+        _refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False
+    )
+    save_bore_evt.then(_make_fanout(len(_others_s2)), inputs=[serial_input_boresight], outputs=_others_s2, api_name=False, show_progress="hidden").then(
+        _refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False
     )
 
-    save_boresight_btn.click(
-        fn=get_quality_gate_dataframe,
-        inputs=[],
-        outputs=[quality_gate_table],
+    save_mtf_evt = save_mtf_btn.click(
+        fn=on_save_mtf,
+        inputs=[last_mtf_state, serial_input_mtf, inspector_input_boresight],
+        outputs=[save_mtf_status],
+        api_name="save_mtf",
     )
+    save_mtf_evt.then(_refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False)
+    save_torque_evt = save_torque_btn.click(
+        fn=on_save_torque,
+        inputs=[last_torque_state, serial_input_torque, inspector_input_boresight, stage_dropdown_torque, color_dropdown_torque],
+        outputs=[save_torque_status],
+        api_name="save_torque",
+    )
+    save_torque_evt.then(_refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False)
 
+    tab_pano.select(_refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False)
+    demo.load(_refresh_all_dashboard, inputs=[], outputs=_dash_outputs, api_name=False)
 
 # ---------------------------------------------------------------------------
 # Application Startup
