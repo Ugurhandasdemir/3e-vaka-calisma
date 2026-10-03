@@ -12,6 +12,9 @@ license: cc-by-nc-sa-4.0
 
 # 3E Elektro Optik — AI Destekli Görsel Kalite Kontrol Sistemi (PoC)
 
+![Mimari](docs/img/mimari.png)
+
+
 [![Canlı Demo](https://img.shields.io/badge/HuggingFace-Spaces_Canlı_Demo-blue)](https://huggingface.co/spaces/ugurhandasdemir/3e-vaka-calisma)
 [![GitHub Kod](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/Ugurhandasdemir/3e-vaka-calisma)
 [![Teknik Doküman](https://img.shields.io/badge/Doküman-teknik--dokuman.pdf-red)](docs/teknik-dokuman.pdf)

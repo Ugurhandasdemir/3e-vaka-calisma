@@ -1,0 +1,46 @@
+digraph G {
+  graph [rankdir=LR, splines=spline, nodesep=0.35, ranksep=0.55, bgcolor="white", fontname="DejaVu Sans", pad=0.3, newrank=true];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11, penwidth=1.2, margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#555555", arrowsize=0.7, penwidth=1.2];
+
+  giris [label="Görsel + Seri No\n(ürün grubu, muayeneci)", fillcolor="#FFF4C2", color="#C9A400"];
+
+  subgraph cluster_s1 {
+    label="1. ÜRETİM İÇİ MUAYENE  (yapay zekâ)"; labeljust="l"; fontsize=13; fontname="DejaVu Sans Bold";
+    style="rounded,filled"; fillcolor="#EAF3FF"; color="#3B82F6"; penwidth=1.6;
+    anomali [label="Anomali Tespiti\nPatchCore + DINOv2\n(yalnız sağlam görselle)\n→ ısı haritası + güven değeri", fillcolor="#FFFFFF", color="#3B82F6"];
+    yolo    [label="Kusur Tespiti\nYOLO11n\n→ kusur türü ve konumu", fillcolor="#FFFFFF", color="#3B82F6"];
+    vlm     [label="Görsel Dil Modeli\nGemini\n→ uzmana gerekçe", fillcolor="#FFFFFF", color="#3B82F6"];
+    fuzyon  [label="Karar Katmanı\nKABUL  ·  İNSAN İNCELEMESİ  ·  RET", fillcolor="#DBEAFE", color="#1D4ED8", fontname="DejaVu Sans Bold"];
+    uzman   [label="Uzman Kararı\nonayla / değiştir\n+ kutu çiz → SAM maske", fillcolor="#FFFFFF", color="#3B82F6"];
+    anomali -> fuzyon; yolo -> fuzyon; vlm -> fuzyon;
+    anomali -> vlm [style=dashed, label="ipucu", color="#3B82F6"];
+    yolo -> vlm [style=dashed, color="#3B82F6"];
+    fuzyon -> uzman;
+  }
+
+  subgraph cluster_s2 {
+    label="2. ÜRETİM SONRASI TEST  (ölçüm, görüntü işleme)"; labeljust="l"; fontsize=13; fontname="DejaVu Sans Bold";
+    style="rounded,filled"; fillcolor="#ECFDF3"; color="#16A34A"; penwidth=1.6;
+    bore [label="Optik Eksen (Boresight)\nkanal arası + titreşim sonrası kayma", fillcolor="#FFFFFF", color="#16A34A"];
+    mtf  [label="Keskinlik (MTF)\nISO 12233 eğik kenar", fillcolor="#FFFFFF", color="#16A34A"];
+    tork [label="Tork İşareti\nvida gevşemesi", fillcolor="#FFFFFF", color="#16A34A"];
+  }
+
+  kapi [label="KALİTE KAPISI\n(seri no bazında)\n\nmuayene KABUL + test GEÇTİ\n→ SEVKE HAZIR", shape=box, style="rounded,filled", fillcolor="#FDE68A", color="#B45309", fontname="DejaVu Sans Bold", penwidth=2];
+
+  kayit [label="Kayıt ve İzlenebilirlik\ngörsel · model sürümü · AI önerisi\nuzman kararı · kullanıcı · zaman", fillcolor="#F3F4F6", color="#6B7280"];
+  cikti [label="Dışa Aktarma\nCSV (ERP) · YOLO etiketleri", fillcolor="#F3F4F6", color="#6B7280"];
+  egitim [label="Yeniden Eğitim\n(aktif öğrenme)", fillcolor="#FCE7F3", color="#DB2777"];
+
+  giris -> anomali; giris -> yolo;
+  giris -> bore [style=dotted, label="aynı seri no"];
+  uzman -> kapi;
+  bore -> kapi; mtf -> kapi [style=dashed, label="yol haritası"]; tork -> kapi [style=dashed];
+  kapi -> kayit; uzman -> kayit [style=dotted];
+  kayit -> cikti;
+  cikti -> egitim [label="etiketli veri", color="#DB2777"];
+  egitim -> yolo [style=dashed, color="#DB2777", constraint=false];
+
+  {rank=same; bore; mtf; tork;}
+}
