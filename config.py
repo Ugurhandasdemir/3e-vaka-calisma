@@ -46,6 +46,8 @@ CLASS_MAP = {
     "cable_swap": "Konektör/montaj kusuru",
     "missing": "Konektör/montaj kusuru",
     "insulation": "Kaplama kusuru",
+    "coating": "Kaplama kusuru",
+    "connector": "Konektör/montaj kusuru",
 }
 
 
